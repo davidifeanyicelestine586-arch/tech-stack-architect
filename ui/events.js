@@ -50,11 +50,22 @@ export default class Events {
 
         if (searchInput) {
 
+            const debounce = (func, delay) => {
+                let timer;
+                return (...args) => {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => func(...args), delay);
+                };
+            };
+
+            const debouncedRender = debounce((val) => {
+                State.setSearch(val);
+                Renderer.render();
+            }, 250);
+
             searchInput.addEventListener("input", (e) => {
 
-                State.setSearch(e.target.value);
-
-                Renderer.render();
+                debouncedRender(e.target.value);
 
             });
 

@@ -10,6 +10,16 @@ import State from "./state.js";
 
 export default class Renderer {
 
+    static escapeHTML(str) {
+        if (typeof str !== "string") return "";
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
     static render() {
 
         this.renderComponents();
@@ -84,7 +94,10 @@ export default class Renderer {
 
             if (nameEl) nameEl.textContent = comp.name;
 
-            if (diffEl) diffEl.style.display = "none";
+            if (diffEl) {
+                diffEl.textContent = comp.difficulty || "Beginner";
+                diffEl.style.display = "inline-flex";
+            }
 
             if (descEl) descEl.textContent = comp.description || "";
 
@@ -253,21 +266,28 @@ export default class Renderer {
 
         // Status class
         let statusClass = "status-info";
+        let circleColor = "var(--info)";
 
-        if (report.score >= 90) statusClass = "status-success";
-
-        else if (report.score >= 75) statusClass = "status-info";
-
-        else if (report.score >= 60) statusClass = "status-warning";
-
-        else statusClass = "status-danger";
+        if (report.score >= 90) {
+            statusClass = "status-success";
+            circleColor = "var(--success)";
+        } else if (report.score >= 75) {
+            statusClass = "status-info";
+            circleColor = "var(--info)";
+        } else if (report.score >= 60) {
+            statusClass = "status-warning";
+            circleColor = "var(--warning)";
+        } else {
+            statusClass = "status-danger";
+            circleColor = "var(--danger)";
+        }
 
         // Build report UI
         let html = `
 
             <div class="score-wrapper">
 
-                <div class="score-circle" style="border-color: ${report.score >= 75 ? "var(--success)" : report.score >= 50 ? "var(--warning)" : "var(--danger)"}; color: ${report.score >= 75 ? "var(--success)" : report.score >= 50 ? "var(--warning)" : "var(--danger)"}">
+                <div class="score-circle" style="border-color: ${circleColor}; color: ${circleColor}">
 
                     ${report.score}
 
@@ -512,11 +532,15 @@ export default class Renderer {
 
         panel.innerHTML = "";
 
-        const recommendations = State.architect.recommendRecipes(State.selectedComponents);
+        let recommendations = State.architect.recommendRecipes(State.selectedComponents);
+
+        if (State.activeDomain) {
+            recommendations = recommendations.filter(rec => rec.recipe.domain === State.activeDomain);
+        }
 
         if (recommendations.length === 0) {
 
-            panel.innerHTML = `<div class="empty-state">No recipes registered.</div>`;
+            panel.innerHTML = `<div class="empty-state">No recipes registered for this domain.</div>`;
 
             return;
 
@@ -745,13 +769,15 @@ export default class Renderer {
 
         if (bp.starterCommands && bp.starterCommands.length > 0) {
 
+            const escapedCommands = bp.starterCommands.map(cmd => this.escapeHTML(cmd)).join("\n");
+
             html += `
 
                 <div class="blueprint-section">
 
                     <h3>Starter Commands</h3>
 
-                    <pre class="blueprint-code"><code>${bp.starterCommands.join("\n")}</code></pre>
+                    <pre class="blueprint-code"><code>${escapedCommands}</code></pre>
 
                 </div>
 

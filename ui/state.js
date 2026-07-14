@@ -74,6 +74,8 @@ class State {
 
         }
 
+        this.blueprint = null;
+
         this.validate();
 
     }
@@ -81,6 +83,8 @@ class State {
     selectComponents(ids) {
 
         this.selectedComponents = [...new Set(ids)];
+
+        this.blueprint = null;
 
         this.validate();
 

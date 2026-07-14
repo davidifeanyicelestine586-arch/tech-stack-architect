@@ -9,8 +9,6 @@
  *
  */
 
-import DependencyEngine from "./dependencyEngine.js";
-import ConflictEngine from "./conflictEngine.js";
 import Validator from "./validator.js";
 import RecipeEngine from "./recipeEngine.js";
 import Exporter from "./exporter.js";
@@ -29,15 +27,7 @@ export default class TechStackArchitect {
         this.recipes =
             config.recipes || [];
 
-        this.dependency =
-            new DependencyEngine(
-                this.components
-            );
 
-        this.conflicts =
-            new ConflictEngine(
-                this.components
-            );
 
         this.validator =
             new Validator(

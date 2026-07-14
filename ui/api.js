@@ -9,20 +9,20 @@
 export default class API {
 
     static async load() {
+        try {
+            const componentsResponse = await fetch("../data/components.json");
+            const domainsResponse = await fetch("../data/domain.json");
+            const recipesResponse = await fetch("../data/recipes.json");
 
-        const componentsResponse = await fetch("../data/components.json");
+            if (!componentsResponse.ok || !domainsResponse.ok || !recipesResponse.ok) {
+                throw new Error(`Failed to load data: components (${componentsResponse.status}), domains (${domainsResponse.status}), recipes (${recipesResponse.status})`);
+            }
 
-        const domainsResponse = await fetch("../data/domain.json");
+            let components = await componentsResponse.json();
+            const jsonDomains = await domainsResponse.json();
+            const recipes = await recipesResponse.json();
 
-        const recipesResponse = await fetch("../data/recipes.json");
-
-        let components = await componentsResponse.json();
-
-        const jsonDomains = await domainsResponse.json();
-
-        const recipes = await recipesResponse.json();
-
-        let domains = jsonDomains;
+            let domains = jsonDomains;
 
         try {
             let mdText = "";
@@ -91,7 +91,42 @@ export default class API {
             recipes
 
         };
+        } catch (error) {
+            console.error("Critical error loading database configurations:", error);
+            const errorDiv = document.createElement("div");
+            errorDiv.style.position = "fixed";
+            errorDiv.style.top = "0";
+            errorDiv.style.left = "0";
+            errorDiv.style.width = "100%";
+            errorDiv.style.height = "100%";
+            errorDiv.style.background = "rgba(15, 23, 42, 0.95)";
+            errorDiv.style.color = "#FFFFFF";
+            errorDiv.style.display = "flex";
+            errorDiv.style.flexDirection = "column";
+            errorDiv.style.alignItems = "center";
+            errorDiv.style.justifyContent = "center";
+            errorDiv.style.zIndex = "9999";
+            errorDiv.style.fontFamily = "sans-serif";
+            errorDiv.style.padding = "20px";
+            errorDiv.style.textAlign = "center";
+            
+            errorDiv.innerHTML = `
+                <div style="max-width: 500px; background: #1e1e2f; padding: 30px; border-radius: 12px; border: 1px solid #EF4444; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+                    <h2 style="color: #EF4444; margin-bottom: 15px;">Database Load Error</h2>
+                    <p style="color: #94A3B8; margin-bottom: 20px; font-size: 14px; line-height: 1.6;">
+                        Failed to fetch or parse the required tech-stack data files. This usually happens if the server is offline or the configuration files are missing/malformed.
+                    </p>
+                    <pre style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; font-size: 12px; overflow-x: auto; color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.2); text-align: left; white-space: pre-wrap; word-break: break-all;">${error.message}</pre>
+                </div>
+            `;
+            document.body.appendChild(errorDiv);
 
+            return {
+                components: [],
+                domains: [],
+                recipes: []
+            };
+        }
     }
 
     static parseDomainsFromMarkdown(mdText) {
@@ -192,21 +227,33 @@ export default class API {
                     } else if (key === 'validation rules') {
                         currentComponent.description = value.trim();
                     } else if (key === 'system requirements') {
-                        const cleanVal = value.replace(/`/g, "").trim();
+                        let cleanVal = value.replace(/`/g, "").trim();
+                        const closeIdx = cleanVal.lastIndexOf(']');
+                        if (closeIdx !== -1) {
+                            cleanVal = cleanVal.substring(0, closeIdx + 1);
+                        }
                         try {
                             currentComponent.requires = JSON.parse(cleanVal);
                         } catch (e) {
                             currentComponent.requires = [];
                         }
                     } else if (key === 'pins provided') {
-                        const cleanVal = value.replace(/`/g, "").trim();
+                        let cleanVal = value.replace(/`/g, "").trim();
+                        const closeIdx = cleanVal.lastIndexOf(']');
+                        if (closeIdx !== -1) {
+                            cleanVal = cleanVal.substring(0, closeIdx + 1);
+                        }
                         try {
                             currentComponent.pinsProvided = JSON.parse(cleanVal);
                         } catch (e) {
                             currentComponent.pinsProvided = [];
                         }
                     } else if (key === 'pins demanded') {
-                        const cleanVal = value.replace(/`/g, "").trim();
+                        let cleanVal = value.replace(/`/g, "").trim();
+                        const closeIdx = cleanVal.lastIndexOf(']');
+                        if (closeIdx !== -1) {
+                            cleanVal = cleanVal.substring(0, closeIdx + 1);
+                        }
                         try {
                             currentComponent.pinsRequired = JSON.parse(cleanVal);
                         } catch (e) {
