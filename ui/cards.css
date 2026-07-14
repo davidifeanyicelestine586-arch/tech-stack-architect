@@ -36,6 +36,8 @@
 
     overflow: hidden;
 
+    cursor: pointer;
+
 }
 
 .component-card:hover,

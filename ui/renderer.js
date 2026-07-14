@@ -84,7 +84,7 @@ export default class Renderer {
 
             if (nameEl) nameEl.textContent = comp.name;
 
-            if (diffEl) diffEl.textContent = comp.difficulty || "Beginner";
+            if (diffEl) diffEl.style.display = "none";
 
             if (descEl) descEl.textContent = comp.description || "";
 
@@ -110,18 +110,6 @@ export default class Renderer {
 
                 }
 
-                (comp.tags || []).forEach(tag => {
-
-                    const tagEl = document.createElement("span");
-
-                    tagEl.className = "tag";
-
-                    tagEl.textContent = tag;
-
-                    tagsContainer.appendChild(tagEl);
-
-                });
-
             }
 
             const isSelected = State.selectedComponents.includes(comp.id);
@@ -140,7 +128,11 @@ export default class Renderer {
 
             } else {
 
+                card.classList.remove("selected");
+
                 if (button) {
+
+                    button.classList.remove("selected");
 
                     button.textContent = "Select";
 
@@ -148,17 +140,13 @@ export default class Renderer {
 
             }
 
-            if (button) {
+            card.addEventListener("click", (e) => {
 
-                button.addEventListener("click", () => {
+                State.toggleComponent(comp.id);
 
-                    State.toggleComponent(comp.id);
+                this.render();
 
-                    this.render();
-
-                });
-
-            }
+            });
 
             grid.appendChild(card);
 
