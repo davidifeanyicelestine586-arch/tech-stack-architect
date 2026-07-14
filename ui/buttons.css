@@ -336,6 +336,8 @@ button:disabled {
 
 .fab {
 
+    display: none;
+
     position: fixed;
 
     right: 24px;

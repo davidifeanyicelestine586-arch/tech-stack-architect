@@ -65,7 +65,70 @@
 
     .inspector {
 
-        display: none;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        right: -340px; /* Hide off-screen by default */
+        width: 320px;
+        height: 100vh;
+        z-index: 1000;
+        background: var(--bg-panel, #1e1e2f);
+        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
+        transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: var(--space-5);
+
+    }
+
+    .inspector.active {
+
+        right: 0; /* Slide in when active */
+
+    }
+
+    .fab {
+
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        cursor: pointer;
+        z-index: 999;
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: white;
+        box-shadow: var(--shadow-lg);
+        transition: transform var(--transition-fast), background var(--transition-fast);
+
+    }
+
+    .fab:hover {
+
+        transform: scale(1.08);
+
+    }
+
+    .fab .badge {
+
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: var(--danger, #EF4444);
+        color: white;
+        font-size: 0.75rem;
+        font-weight: bold;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--bg-panel);
 
     }
 

@@ -175,6 +175,17 @@ export default class Renderer {
 
         const container = document.getElementById("selectedComponents");
 
+        // Update mobile floating action button badge
+        const badge = document.getElementById("mobileSelectedBadge");
+
+        if (badge) {
+
+            badge.textContent = State.selectedComponents.length;
+
+            badge.style.display = State.selectedComponents.length > 0 ? "flex" : "none";
+
+        }
+
         if (!container) return;
 
         if (State.selectedComponents.length === 0) {

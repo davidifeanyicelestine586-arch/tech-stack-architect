@@ -79,9 +79,7 @@
     "requires": [
       "browser-runtime"
     ],
-    "optional": [
-      "firebase"
-    ],
+    "optional": [],
     "conflicts": [],
     "warnings": [
       "Large initial bundle sizes may reduce performance on slow mobile networks."
@@ -114,11 +112,7 @@
       "llm-gateway",
       "secure-token-vault"
     ],
-    "optional": [
-      "github",
-      "filesystem",
-      "postgres"
-    ],
+    "optional": [],
     "conflicts": [],
     "warnings": [
       "Never expose unrestricted shell access or write permissions."

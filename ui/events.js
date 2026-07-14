@@ -14,6 +14,36 @@ export default class Events {
 
     static initialize() {
 
+        // Mobile Inspector Toggle Button
+
+        const mobileInspectorToggle = document.getElementById("mobileInspectorToggle");
+
+        const inspectorElement = document.querySelector(".inspector");
+
+        if (mobileInspectorToggle && inspectorElement) {
+
+            mobileInspectorToggle.addEventListener("click", (e) => {
+
+                e.stopPropagation();
+
+                inspectorElement.classList.toggle("active");
+
+            });
+
+            // Close the inspector if user clicks anywhere outside
+
+            document.addEventListener("click", (e) => {
+
+                if (!inspectorElement.contains(e.target) && e.target !== mobileInspectorToggle && !mobileInspectorToggle.contains(e.target)) {
+
+                    inspectorElement.classList.remove("active");
+
+                }
+
+            });
+
+        }
+
         // Search Input
 
         const searchInput = document.getElementById("searchInput");
@@ -115,6 +145,13 @@ export default class Events {
                 if (blueprintPanel) {
 
                     blueprintPanel.scrollIntoView({ behavior: "smooth" });
+
+                }
+
+                // Close mobile drawer on generate
+                if (inspectorElement) {
+
+                    inspectorElement.classList.remove("active");
 
                 }
 
