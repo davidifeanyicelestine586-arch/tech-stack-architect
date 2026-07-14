@@ -1,0 +1,706 @@
+[
+  {
+    "id": "nextjs",
+    "name": "Next.js",
+    "domain": "web-saas",
+    "category": "Frontend Framework",
+    "description": "React framework optimized for server-side rendering, static generation, API routes, and modern SaaS applications.",
+    "requires": [
+      "nodejs",
+      "vercel"
+    ],
+    "optional": [
+      "tailwindcss",
+      "typescript"
+    ],
+    "conflicts": [],
+    "warnings": [
+      "Avoid heavy real-time processing on the client. Use server actions, APIs, or background workers."
+    ],
+    "difficulty": "Intermediate",
+    "complexity": 3,
+    "estimatedLearningHours": 35,
+    "supports": [
+      "website",
+      "dashboard",
+      "blog",
+      "saas",
+      "api"
+    ],
+    "outputs": [
+      "architecture",
+      "starter-code",
+      "deployment"
+    ],
+    "tags": [
+      "react",
+      "seo",
+      "ssr",
+      "typescript"
+    ]
+  },
+  {
+    "id": "sqlite",
+    "name": "SQLite",
+    "domain": "web-saas",
+    "category": "Database",
+    "description": "Embedded SQL database for prototypes and lightweight production applications.",
+    "requires": [
+      "local-filesystem"
+    ],
+    "optional": [],
+    "conflicts": [],
+    "warnings": [
+      "Concurrent write operations become a bottleneck under heavy traffic."
+    ],
+    "difficulty": "Beginner",
+    "complexity": 1,
+    "estimatedLearningHours": 6,
+    "supports": [
+      "mvp",
+      "prototype",
+      "offline-app"
+    ],
+    "outputs": [
+      "database"
+    ],
+    "tags": [
+      "sql",
+      "database",
+      "storage"
+    ]
+  },
+  {
+    "id": "flutter-web",
+    "name": "Flutter Web",
+    "domain": "web-saas",
+    "category": "Frontend",
+    "description": "Cross-platform UI toolkit targeting browsers, Android, iOS and desktop.",
+    "requires": [
+      "browser-runtime"
+    ],
+    "optional": [
+      "firebase"
+    ],
+    "conflicts": [],
+    "warnings": [
+      "Large initial bundle sizes may reduce performance on slow mobile networks."
+    ],
+    "difficulty": "Intermediate",
+    "complexity": 3,
+    "estimatedLearningHours": 45,
+    "supports": [
+      "mobile-web",
+      "pwa",
+      "cross-platform"
+    ],
+    "outputs": [
+      "ui",
+      "starter-code"
+    ],
+    "tags": [
+      "flutter",
+      "dart",
+      "mobile"
+    ]
+  },
+  {
+    "id": "mcp-server",
+    "name": "Model Context Protocol Server",
+    "domain": "ai-automation",
+    "category": "Protocol",
+    "description": "Secure bridge that allows AI assistants to communicate with external tools and data sources.",
+    "requires": [
+      "llm-gateway",
+      "secure-token-vault"
+    ],
+    "optional": [
+      "github",
+      "filesystem",
+      "postgres"
+    ],
+    "conflicts": [],
+    "warnings": [
+      "Never expose unrestricted shell access or write permissions."
+    ],
+    "difficulty": "Advanced",
+    "complexity": 5,
+    "estimatedLearningHours": 40,
+    "supports": [
+      "agents",
+      "automation",
+      "tool-calling"
+    ],
+    "outputs": [
+      "workflow",
+      "integration"
+    ],
+    "tags": [
+      "mcp",
+      "ai",
+      "protocol"
+    ]
+  },
+  {
+    "id": "pydroid3",
+    "name": "Pydroid 3",
+    "domain": "ai-automation",
+    "category": "Runtime",
+    "description": "Android-based Python development environment.",
+    "requires": [
+      "android-os"
+    ],
+    "optional": [],
+    "conflicts": [],
+    "warnings": [
+      "Long-running processes may drain battery and trigger Android memory cleanup."
+    ],
+    "difficulty": "Beginner",
+    "complexity": 2,
+    "estimatedLearningHours": 3,
+    "supports": [
+      "python",
+      "automation",
+      "learning"
+    ],
+    "outputs": [
+      "scripts"
+    ],
+    "tags": [
+      "android",
+      "python"
+    ]
+  },
+  {
+    "id": "ai-stacker",
+    "name": "AI Tool Stacker",
+    "domain": "ai-automation",
+    "category": "Workflow",
+    "description": "Combines specialized AI tools into a structured workflow.",
+    "requires": [
+      "api-orchestrator"
+    ],
+    "optional": [
+      "mcp-server"
+    ],
+    "conflicts": [],
+    "warnings": [
+      "Using many disconnected AI tools without orchestration increases maintenance complexity."
+    ],
+    "difficulty": "Intermediate",
+    "complexity": 4,
+    "estimatedLearningHours": 20,
+    "supports": [
+      "automation",
+      "content",
+      "coding"
+    ],
+    "outputs": [
+      "workflow"
+    ],
+    "tags": [
+      "ai",
+      "automation",
+      "productivity"
+    ]
+  },
+  {
+    "id": "arduino-uno",
+    "name": "Arduino Uno",
+    "domain": "mechatronics",
+    "category": "Microcontroller",
+    "description": "ATmega328P-based development board widely used for embedded projects.",
+    "requires": [
+      "usb-serial-interface"
+    ],
+    "pins": {
+      "digital": [
+        0,1,2,3,4,5,6,7,8,9,10,11,12,13
+      ],
+      "analog": [
+        "A0","A1","A2","A3","A4","A5"
+      ]
+    },
+    "warnings": [
+      "Only 2 KB SRAM available. Avoid large buffers."
+    ],
+    "difficulty": "Beginner",
+    "complexity": 2,
+    "estimatedLearningHours": 8,
+    "supports": [
+      "robotics",
+      "iot",
+      "automation"
+    ],
+    "outputs": [
+      "firmware"
+    ],
+    "tags": [
+      "arduino",
+      "embedded"
+    ]
+  },
+  {
+    "id": "l298n",
+    "name": "L298N Motor Driver",
+    "domain": "mechatronics",
+    "category": "Motor Driver",
+    "description": "Dual H-Bridge driver for DC motors.",
+    "requires": [
+      "external-power-supply"
+    ],
+    "pinsRequired": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      11
+    ],
+    "warnings": [
+      "Voltage drop of approximately 2V. Ensure sufficient supply voltage."
+    ],
+    "difficulty": "Intermediate",
+    "complexity": 3,
+    "estimatedLearningHours": 5,
+    "supports": [
+      "robotics"
+    ],
+    "outputs": [
+      "motor-control"
+    ],
+    "tags": [
+      "motor",
+      "driver"
+    ]
+  },
+  {
+    "id": "hc-sr04",
+    "name": "HC-SR04",
+    "domain": "mechatronics",
+    "category": "Sensor",
+    "description": "Ultrasonic distance sensor.",
+    "requires": [
+      "5v-power-bus"
+    ],
+    "pinsRequired": [
+      9,
+      10
+    ],
+    "conflicts": [
+      {
+        "component": "l298n",
+        "reason": "Pin 9 conflict"
+      }
+    ],
+    "recommendedPins": {
+      "trigger": 3,
+      "echo": 4
+    },
+    "warnings": [
+      "Move Trigger/Echo pins when using common motor driver layouts."
+    ],
+    "difficulty": "Beginner",
+    "complexity": 1,
+    "estimatedLearningHours": 2,
+    "supports": [
+      "distance-measurement",
+      "obstacle-avoidance"
+    ],
+    "outputs": [
+      "sensor-data"
+    ],
+    "tags": [
+      "sensor",
+      "ultrasonic"
+    ]
+  },
+  {
+    "id": "nodejs",
+    "name": "Node.js",
+    "domain": "web-saas",
+    "category": "Runtime",
+    "description": "JavaScript runtime for executing code outside the browser.",
+    "requires": [],
+    "optional": [],
+    "conflicts": [],
+    "warnings": [],
+    "difficulty": "Beginner",
+    "complexity": 1,
+    "estimatedLearningHours": 10,
+    "supports": [
+      "api",
+      "backend"
+    ],
+    "outputs": [
+      "runtime"
+    ],
+    "tags": [
+      "javascript",
+      "runtime",
+      "node"
+    ]
+  },
+  {
+    "id": "vercel",
+    "name": "Vercel",
+    "domain": "web-saas",
+    "category": "Hosting",
+    "description": "Cloud platform for serverless deployment of web applications.",
+    "requires": [],
+    "optional": [],
+    "conflicts": [],
+    "warnings": [],
+    "difficulty": "Beginner",
+    "complexity": 1,
+    "estimatedLearningHours": 3,
+    "supports": [
+      "hosting",
+      "saas"
+    ],
+    "outputs": [
+      "deployment"
+    ],
+    "tags": [
+      "cloud",
+      "hosting",
+      "deployment"
+    ]
+  },
+  {
+    "id": "local-filesystem",
+    "name": "Local Filesystem",
+    "domain": "web-saas",
+    "category": "Storage",
+    "description": "Access to local persistent disk storage.",
+    "requires": [],
+    "optional": [],
+    "conflicts": [],
+    "warnings": [],
+    "difficulty": "Beginner",
+    "complexity": 1,
+    "estimatedLearningHours": 1,
+    "supports": [
+      "offline-app",
+      "mvp"
+    ],
+    "outputs": [
+      "storage"
+    ],
+    "tags": [
+      "filesystem",
+      "storage"
+    ]
+  },
+  {
+    "id": "browser-runtime",
+    "name": "Browser Runtime",
+    "domain": "web-saas",
+    "category": "Runtime",
+    "description": "Client-side web execution environment.",
+    "requires": [],
+    "optional": [],
+    "conflicts": [],
+    "warnings": [],
+    "difficulty": "Beginner",
+    "complexity": 1,
+    "estimatedLearningHours": 2,
+    "supports": [
+      "website",
+      "cross-platform"
+    ],
+    "outputs": [
+      "ui"
+    ],
+    "tags": [
+      "browser",
+      "client"
+    ]
+  },
+  {
+    "id": "llm-gateway",
+    "name": "LLM Gateway",
+    "domain": "ai-automation",
+    "category": "AI Gateway",
+    "description": "Proxy connecting workflows to Large Language Model endpoints.",
+    "requires": [],
+    "optional": [],
+    "conflicts": [],
+    "warnings": [],
+    "difficulty": "Intermediate",
+    "complexity": 2,
+    "estimatedLearningHours": 6,
+    "supports": [
+      "ai",
+      "agents"
+    ],
+    "outputs": [
+      "integration"
+    ],
+    "tags": [
+      "llm",
+      "ai",
+      "gateway"
+    ]
+  },
+  {
+    "id": "secure-token-vault",
+    "name": "Secure Token Vault",
+    "domain": "ai-automation",
+    "category": "Security",
+    "description": "Encrypted storage for API keys and secrets.",
+    "requires": [],
+    "optional": [],
+    "conflicts": [],
+    "warnings": [],
+    "difficulty": "Intermediate",
+    "complexity": 2,
+    "estimatedLearningHours": 5,
+    "supports": [
+      "security",
+      "mcp"
+    ],
+    "outputs": [
+      "security"
+    ],
+    "tags": [
+      "security",
+      "vault",
+      "secrets"
+    ]
+  },
+  {
+    "id": "android-os",
+    "name": "Android OS",
+    "domain": "ai-automation",
+    "category": "Operating System",
+    "description": "Google's mobile operating system environment.",
+    "requires": [],
+    "optional": [],
+    "conflicts": [],
+    "warnings": [],
+    "difficulty": "Beginner",
+    "complexity": 1,
+    "estimatedLearningHours": 2,
+    "supports": [
+      "mobile-web",
+      "offline-app"
+    ],
+    "outputs": [
+      "system"
+    ],
+    "tags": [
+      "android",
+      "os",
+      "mobile"
+    ]
+  },
+  {
+    "id": "api-orchestrator",
+    "name": "API Orchestrator",
+    "domain": "ai-automation",
+    "category": "Orchestration",
+    "description": "Orchestration server coordinating API requests across tools.",
+    "requires": [],
+    "optional": [],
+    "conflicts": [],
+    "warnings": [],
+    "difficulty": "Intermediate",
+    "complexity": 3,
+    "estimatedLearningHours": 12,
+    "supports": [
+      "automation",
+      "agents"
+    ],
+    "outputs": [
+      "workflow"
+    ],
+    "tags": [
+      "api",
+      "orchestrator",
+      "workflow"
+    ]
+  },
+  {
+    "id": "usb-serial-interface",
+    "name": "USB Serial Interface",
+    "domain": "mechatronics",
+    "category": "Interface",
+    "description": "Hardware bridge connecting microcontrollers to computer hosts via USB.",
+    "requires": [],
+    "optional": [],
+    "conflicts": [],
+    "warnings": [],
+    "difficulty": "Beginner",
+    "complexity": 1,
+    "estimatedLearningHours": 2,
+    "supports": [
+      "embedded",
+      "electronics"
+    ],
+    "outputs": [
+      "connection"
+    ],
+    "tags": [
+      "usb",
+      "serial",
+      "interface"
+    ]
+  },
+  {
+    "id": "external-power-supply",
+    "name": "External Power Supply",
+    "domain": "mechatronics",
+    "category": "Power",
+    "description": "Supplies voltage and current separate from USB bus.",
+    "requires": [],
+    "optional": [],
+    "conflicts": [],
+    "warnings": [],
+    "difficulty": "Beginner",
+    "complexity": 1,
+    "estimatedLearningHours": 3,
+    "supports": [
+      "robotics",
+      "motor-control"
+    ],
+    "outputs": [
+      "power"
+    ],
+    "tags": [
+      "power",
+      "battery",
+      "supply"
+    ]
+  },
+  {
+    "id": "5v-power-bus",
+    "name": "5V Power Bus",
+    "domain": "mechatronics",
+    "category": "Power",
+    "description": "A 5-volt rail commonly supplied by Arduino or external regulators.",
+    "requires": [],
+    "optional": [],
+    "conflicts": [],
+    "warnings": [],
+    "difficulty": "Beginner",
+    "complexity": 1,
+    "estimatedLearningHours": 1,
+    "supports": [
+      "sensors",
+      "electronics"
+    ],
+    "outputs": [
+      "power"
+    ],
+    "tags": [
+      "power",
+      "bus",
+      "5v"
+    ]
+  },
+  {
+    "id": "tailwindcss",
+    "name": "TailwindCSS",
+    "domain": "web-saas",
+    "category": "Styling",
+    "description": "A utility-first CSS framework for rapid UI styling.",
+    "requires": [],
+    "optional": [],
+    "conflicts": [],
+    "warnings": [],
+    "difficulty": "Beginner",
+    "complexity": 1,
+    "estimatedLearningHours": 8,
+    "supports": [
+      "frontend",
+      "website"
+    ],
+    "outputs": [
+      "css"
+    ],
+    "tags": [
+      "css",
+      "styling",
+      "tailwind"
+    ]
+  },
+  {
+    "id": "typescript",
+    "name": "TypeScript",
+    "domain": "web-saas",
+    "category": "Language",
+    "description": "Strongly typed programming language that builds on JavaScript.",
+    "requires": [],
+    "optional": [],
+    "conflicts": [],
+    "warnings": [],
+    "difficulty": "Intermediate",
+    "complexity": 2,
+    "estimatedLearningHours": 15,
+    "supports": [
+      "frontend",
+      "backend"
+    ],
+    "outputs": [
+      "code"
+    ],
+    "tags": [
+      "javascript",
+      "typescript",
+      "types"
+    ]
+  },
+  {
+    "id": "servo-motor",
+    "name": "Servo Motor",
+    "domain": "mechatronics",
+    "category": "Actuator",
+    "description": "Rotary actuator that allows for precise control of angular position.",
+    "requires": [],
+    "optional": [],
+    "conflicts": [],
+    "warnings": [],
+    "difficulty": "Beginner",
+    "complexity": 2,
+    "estimatedLearningHours": 4,
+    "supports": [
+      "robotics",
+      "automation"
+    ],
+    "outputs": [
+      "actuator"
+    ],
+    "tags": [
+      "motor",
+      "servo",
+      "actuator"
+    ]
+  },
+  {
+    "id": "18650-battery-pack",
+    "name": "18650 Battery Pack",
+    "domain": "mechatronics",
+    "category": "Power",
+    "description": "Rechargeable Lithium-Ion battery pack supplying high current.",
+    "requires": [],
+    "optional": [],
+    "conflicts": [],
+    "warnings": [],
+    "difficulty": "Beginner",
+    "complexity": 1,
+    "estimatedLearningHours": 2,
+    "supports": [
+      "robotics",
+      "power"
+    ],
+    "outputs": [
+      "power"
+    ],
+    "tags": [
+      "battery",
+      "power",
+      "pack"
+    ]
+  }
+]

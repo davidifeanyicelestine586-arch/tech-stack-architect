@@ -1,0 +1,23 @@
+{
+  "name": "ediccrew-tech-stack-architect",
+  "version": "1.0.0",
+  "description": "Ediccrew Tech Stack Architect - Interactive validation and blueprint generation tool.",
+  "type": "module",
+  "scripts": {
+    "dev": "npx http-server ./ -p 5000 -c-1",
+    "start": "npx http-server ./ -p 5000 -c-1"
+  },
+  "keywords": [
+    "tech-stack",
+    "architect",
+    "validator",
+    "blueprint",
+    "mechatronics",
+    "mcp"
+  ],
+  "author": "Ediccrew",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

@@ -1,0 +1,475 @@
+/* ==========================================================
+   Ediccrew Tech Stack Architect
+   Components
+   Version: 1.0.0
+   ========================================================== */
+
+/* ==========================================
+   Domain Cards
+========================================== */
+
+.domain-card {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: var(--space-4);
+
+    padding: var(--space-4);
+
+    margin-bottom: var(--space-3);
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    cursor: pointer;
+
+    transition: var(--transition);
+
+}
+
+.domain-card:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow: var(--shadow);
+
+    border-color: var(--primary);
+
+}
+
+.domain-card.active {
+
+    background: rgba(70,50,218,.08);
+
+    border-color: var(--primary);
+
+}
+
+.domain-card .icon {
+
+    font-size: 1.4rem;
+
+}
+
+.domain-card .title {
+
+    font-weight: var(--weight-semibold);
+
+}
+
+/* ==========================================
+   Search
+========================================== */
+
+#searchInput {
+
+    transition: var(--transition);
+
+}
+
+#searchInput:focus {
+
+    transform: scale(1.02);
+
+}
+
+/* ==========================================
+   Tags
+========================================== */
+
+.tags {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: var(--space-2);
+
+    margin-top: var(--space-3);
+
+}
+
+.tag {
+
+    padding: 4px 10px;
+
+    font-size: var(--text-xs);
+
+    border-radius: var(--radius-pill);
+
+    background: rgba(6,217,250,.12);
+
+    color: var(--secondary-dark);
+
+    font-weight: var(--weight-medium);
+
+}
+
+/* ==========================================
+   Difficulty Badge
+========================================== */
+
+.difficulty {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 4px 10px;
+
+    border-radius: var(--radius-pill);
+
+    font-size: var(--text-xs);
+
+    font-weight: var(--weight-semibold);
+
+    background: #EEF2FF;
+
+    color: var(--primary);
+
+}
+
+/* ==========================================
+   Status Badge
+========================================== */
+
+.status-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 6px 14px;
+
+    border-radius: var(--radius-pill);
+
+    font-size: var(--text-sm);
+
+    font-weight: var(--weight-semibold);
+
+}
+
+.status-success {
+
+    background: rgba(16,185,129,.12);
+
+    color: var(--success);
+
+}
+
+.status-warning {
+
+    background: rgba(245,158,11,.12);
+
+    color: var(--warning);
+
+}
+
+.status-danger {
+
+    background: rgba(239,68,68,.12);
+
+    color: var(--danger);
+
+}
+
+.status-info {
+
+    background: rgba(59,130,246,.12);
+
+    color: var(--info);
+
+}
+
+/* ==========================================
+   Selected Components
+========================================== */
+
+.selected-list {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: var(--space-2);
+
+}
+
+.selected-chip {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 8px 12px;
+
+    border-radius: var(--radius-pill);
+
+    background: var(--primary);
+
+    color: white;
+
+    font-size: var(--text-sm);
+
+}
+
+.selected-chip button {
+
+    background: transparent;
+
+    border: none;
+
+    color: inherit;
+
+    cursor: pointer;
+
+    font-size: 1rem;
+
+}
+
+/* ==========================================
+   Validation Items
+========================================== */
+
+.validation-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: var(--space-3);
+
+}
+
+.validation-item {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: var(--space-3);
+
+    padding: var(--space-4);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    background: var(--background);
+
+}
+
+.validation-icon {
+
+    font-size: 1.25rem;
+
+}
+
+.validation-content {
+
+    flex: 1;
+
+}
+
+.validation-title {
+
+    font-weight: var(--weight-semibold);
+
+    margin-bottom: 4px;
+
+}
+
+.validation-message {
+
+    color: var(--text-secondary);
+
+    font-size: var(--text-sm);
+
+}
+
+/* ==========================================
+   Score Circle
+========================================== */
+
+.score-wrapper {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: var(--space-6);
+
+}
+
+.score-circle {
+
+    width: 90px;
+
+    height: 90px;
+
+    border-radius: 50%;
+
+    border: 8px solid var(--primary);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 1.4rem;
+
+    font-weight: bold;
+
+    color: var(--primary);
+
+    background: white;
+
+}
+
+.score-details {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 6px;
+
+}
+
+/* ==========================================
+   Blueprint Sections
+========================================== */
+
+.blueprint-section {
+
+    margin-bottom: var(--space-5);
+
+}
+
+.blueprint-section h3 {
+
+    margin-bottom: var(--space-3);
+
+}
+
+.blueprint-code {
+
+    background: #0F172A;
+
+    color: #F8FAFC;
+
+    padding: var(--space-4);
+
+    border-radius: var(--radius);
+
+    overflow-x: auto;
+
+    font-family:
+
+        Consolas,
+
+        monospace;
+
+    font-size: .9rem;
+
+}
+
+/* ==========================================
+   Information Grid
+========================================== */
+
+.info-grid {
+
+    display: grid;
+
+    grid-template-columns:
+
+        repeat(
+
+            auto-fit,
+
+            minmax(180px,1fr)
+
+        );
+
+    gap: var(--space-4);
+
+}
+
+.info-card {
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    padding: var(--space-4);
+
+}
+
+.info-card h4 {
+
+    margin-bottom: var(--space-2);
+
+    color: var(--text-secondary);
+
+    font-size: var(--text-sm);
+
+}
+
+.info-card strong {
+
+    font-size: var(--text-lg);
+
+}
+
+/* ==========================================
+   Loading Spinner
+========================================== */
+
+.spinner {
+
+    width: 34px;
+
+    height: 34px;
+
+    border-radius: 50%;
+
+    border: 4px solid #E2E8F0;
+
+    border-top-color: var(--primary);
+
+    animation: spin 1s linear infinite;
+
+}
+
+/* ==========================================
+   Divider
+========================================== */
+
+.divider {
+
+    width: 100%;
+
+    height: 1px;
+
+    background: var(--border);
+
+    margin: var(--space-5) 0;
+
+}

@@ -1,0 +1,326 @@
+/* ==========================================================
+   Ediccrew Tech Stack Architect
+   Responsive Styles
+   Version: 1.0.0
+   ========================================================== */
+
+/* ==========================================================
+   Large Desktop (1400px+)
+   ========================================================== */
+
+@media (min-width: 1400px) {
+
+    .component-grid {
+
+        grid-template-columns:
+            repeat(auto-fill, minmax(320px, 1fr));
+
+    }
+
+}
+
+/* ==========================================================
+   Desktop (1200px and below)
+   ========================================================== */
+
+@media (max-width: 1200px) {
+
+    .layout {
+
+        grid-template-columns:
+
+            240px
+
+            1fr
+
+            300px;
+
+    }
+
+    :root {
+
+        --sidebar-width: 240px;
+
+        --inspector-width: 300px;
+
+    }
+
+}
+
+/* ==========================================================
+   Tablet (1024px and below)
+   ========================================================== */
+
+@media (max-width: 1024px) {
+
+    .layout {
+
+        grid-template-columns:
+
+            220px
+
+            1fr;
+
+    }
+
+    .inspector {
+
+        display: none;
+
+    }
+
+    .component-grid {
+
+        grid-template-columns:
+
+            repeat(auto-fill, minmax(260px, 1fr));
+
+    }
+
+    .header {
+
+        padding:
+
+            0 var(--space-5);
+
+    }
+
+}
+
+/* ==========================================================
+   Mobile Landscape
+   ========================================================== */
+
+@media (max-width: 900px) {
+
+    .layout {
+
+        display: block;
+
+    }
+
+    .sidebar {
+
+        border-right: none;
+
+        border-bottom:
+
+            1px solid var(--border);
+
+    }
+
+    .content {
+
+        padding:
+
+            var(--space-5);
+
+    }
+
+}
+
+/* ==========================================================
+   Mobile
+   ========================================================== */
+
+@media (max-width: 768px) {
+
+    .header {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        justify-content: center;
+
+        gap: var(--space-3);
+
+        height: auto;
+
+        padding:
+
+            var(--space-4);
+
+    }
+
+    .header-actions {
+
+        width: 100%;
+
+    }
+
+    .header-actions input {
+
+        width: 100%;
+
+    }
+
+    .sidebar {
+
+        padding:
+
+            var(--space-4);
+
+    }
+
+    .content {
+
+        padding:
+
+            var(--space-4);
+
+    }
+
+    .panel {
+
+        padding:
+
+            var(--space-4);
+
+    }
+
+    .component-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .validation-summary {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .metrics {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .info-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .button-group {
+
+        flex-direction: column;
+
+    }
+
+    .score-wrapper {
+
+        flex-direction: column;
+
+        text-align: center;
+
+    }
+
+}
+
+/* ==========================================================
+   Small Phones
+   ========================================================== */
+
+@media (max-width: 480px) {
+
+    :root {
+
+        --panel-padding: 16px;
+
+    }
+
+    h1 {
+
+        font-size: 1.6rem;
+
+    }
+
+    h2 {
+
+        font-size: 1.2rem;
+
+    }
+
+    h3 {
+
+        font-size: 1rem;
+
+    }
+
+    .component-card,
+
+    .recipe-card {
+
+        min-height: auto;
+
+    }
+
+    .score-circle {
+
+        width: 70px;
+
+        height: 70px;
+
+        font-size: 1.1rem;
+
+    }
+
+    .fab {
+
+        width: 54px;
+
+        height: 54px;
+
+        right: 16px;
+
+        bottom: 16px;
+
+    }
+
+}
+
+/* ==========================================================
+   Print
+   ========================================================== */
+
+@media print {
+
+    .sidebar,
+
+    .header,
+
+    .inspector,
+
+    button,
+
+    .fab {
+
+        display: none !important;
+
+    }
+
+    .layout {
+
+        display: block;
+
+    }
+
+    .panel {
+
+        box-shadow: none;
+
+        border: 1px solid #999;
+
+        page-break-inside: avoid;
+
+    }
+
+    body {
+
+        background: white;
+
+    }
+
+}

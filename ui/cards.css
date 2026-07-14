@@ -1,0 +1,385 @@
+/* ==========================================================
+   Ediccrew Tech Stack Architect
+   Cards
+   Version: 1.0.0
+   ========================================================== */
+
+/* ==========================================
+   Base Card
+========================================== */
+
+.component-card,
+.recipe-card {
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-lg);
+
+    padding: var(--space-5);
+
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition),
+        border-color var(--transition);
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: var(--space-4);
+
+    min-height: var(--card-min-height);
+
+    position: relative;
+
+    overflow: hidden;
+
+}
+
+.component-card:hover,
+.recipe-card:hover {
+
+    transform: translateY(-6px);
+
+    border-color: var(--primary);
+
+    box-shadow: var(--shadow-lg);
+
+}
+
+/* ==========================================
+   Selected Card
+========================================== */
+
+.component-card.selected {
+
+    border: 2px solid var(--primary);
+
+    background: rgba(70, 50, 218, 0.05);
+
+}
+
+.component-card.selected::before {
+
+    content: "✓ Selected";
+
+    position: absolute;
+
+    top: 12px;
+
+    right: 12px;
+
+    background: var(--primary);
+
+    color: white;
+
+    padding: 4px 10px;
+
+    font-size: var(--text-xs);
+
+    font-weight: var(--weight-semibold);
+
+    border-radius: var(--radius-pill);
+
+}
+
+/* ==========================================
+   Card Header
+========================================== */
+
+.component-top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    gap: var(--space-3);
+
+}
+
+.component-top h3 {
+
+    color: var(--text);
+
+    line-height: 1.3;
+
+}
+
+.description {
+
+    color: var(--text-secondary);
+
+    font-size: var(--text-sm);
+
+    flex-grow: 1;
+
+}
+
+/* ==========================================
+   Component Metadata
+========================================== */
+
+.metadata {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: var(--space-2);
+
+}
+
+.metadata-item {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 6px 10px;
+
+    border-radius: var(--radius-pill);
+
+    background: var(--background);
+
+    font-size: var(--text-xs);
+
+    color: var(--text-secondary);
+
+}
+
+/* ==========================================
+   Recipe Card
+========================================== */
+
+.recipe-card {
+
+    border-left: 5px solid var(--secondary);
+
+}
+
+.recipe-card .title {
+
+    color: var(--text);
+
+    font-weight: var(--weight-bold);
+
+}
+
+.recipe-card .match {
+
+    color: var(--success);
+
+    font-weight: var(--weight-semibold);
+
+}
+
+.recipe-card .details {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-top: auto;
+
+}
+
+/* ==========================================
+   Match Meter
+========================================== */
+
+.match-bar {
+
+    width: 100%;
+
+    height: 8px;
+
+    background: var(--border-light);
+
+    border-radius: var(--radius-pill);
+
+    overflow: hidden;
+
+}
+
+.match-fill {
+
+    height: 100%;
+
+    width: 0;
+
+    background: linear-gradient(
+        90deg,
+        var(--primary),
+        var(--secondary)
+    );
+
+    transition: width var(--transition-slow);
+
+}
+
+/* ==========================================
+   Recommendation Ribbon
+========================================== */
+
+.ribbon {
+
+    position: absolute;
+
+    top: 14px;
+
+    left: -36px;
+
+    transform: rotate(-45deg);
+
+    background: var(--success);
+
+    color: white;
+
+    width: 140px;
+
+    text-align: center;
+
+    font-size: var(--text-xs);
+
+    font-weight: var(--weight-semibold);
+
+    padding: 4px 0;
+
+}
+
+/* ==========================================
+   Footer Actions
+========================================== */
+
+.card-footer {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-top: auto;
+
+    gap: var(--space-3);
+
+}
+
+/* ==========================================
+   Tiny Stats
+========================================== */
+
+.card-stat {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+
+}
+
+.card-stat small {
+
+    color: var(--text-light);
+
+    font-size: var(--text-xs);
+
+}
+
+.card-stat strong {
+
+    color: var(--text);
+
+    font-size: var(--text-md);
+
+}
+
+/* ==========================================
+   Icon Badge
+========================================== */
+
+.icon-badge {
+
+    width: 46px;
+
+    height: 46px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(70,50,218,.1);
+
+    color: var(--primary);
+
+    font-size: 1.4rem;
+
+}
+
+/* ==========================================
+   Empty Card
+========================================== */
+
+.empty-card {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 220px;
+
+    border: 2px dashed var(--border);
+
+    border-radius: var(--radius-lg);
+
+    color: var(--text-light);
+
+    text-align: center;
+
+    background: var(--background);
+
+}
+
+/* ==========================================
+   Hover Overlay
+========================================== */
+
+.card-overlay {
+
+    position: absolute;
+
+    inset: 0;
+
+    background: rgba(70,50,218,.03);
+
+    opacity: 0;
+
+    transition: opacity var(--transition);
+
+    pointer-events: none;
+
+}
+
+.component-card:hover .card-overlay,
+.recipe-card:hover .card-overlay {
+
+    opacity: 1;
+
+}

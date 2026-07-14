@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Ediccrew Tech Stack Architect</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css">
+
+</head>
+
+<body>
+
+    <!-- ===================================== -->
+    <!-- Header -->
+    <!-- ===================================== -->
+
+    <header class="header">
+
+        <div class="logo">
+
+            <h1>Ediccrew</h1>
+
+            <span>Tech Stack Architect</span>
+
+        </div>
+
+        <div class="header-actions">
+
+            <input
+                id="searchInput"
+                type="search"
+                placeholder="Search components...">
+
+        </div>
+
+    </header>
+
+    <!-- ===================================== -->
+    <!-- Main Layout -->
+    <!-- ===================================== -->
+
+    <main class="layout">
+
+        <!-- ================================= -->
+        <!-- Sidebar -->
+        <!-- ================================= -->
+
+        <aside class="sidebar">
+
+            <h2>Domains</h2>
+
+            <div id="domainList">
+
+            </div>
+
+        </aside>
+
+        <!-- ================================= -->
+        <!-- Main Content -->
+        <!-- ================================= -->
+
+        <section class="content">
+
+            <!-- =========================== -->
+
+            <section class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+
+                        Components
+
+                    </h2>
+
+                </div>
+
+                <div
+                    id="componentGrid"
+                    class="component-grid">
+
+                </div>
+
+            </section>
+
+            <!-- =========================== -->
+
+            <section class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+
+                        Validation Report
+
+                    </h2>
+
+                </div>
+
+                <div
+                    id="validationPanel">
+
+                    <div class="empty-state">
+
+                        Select components to begin.
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- =========================== -->
+
+            <section class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+
+                        Recommended Recipes
+
+                    </h2>
+
+                </div>
+
+                <div
+                    id="recipePanel">
+
+                </div>
+
+            </section>
+
+            <!-- =========================== -->
+
+            <section class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+
+                        Blueprint
+
+                    </h2>
+
+                </div>
+
+                <div
+                    id="blueprintPanel">
+
+                    <div class="empty-state">
+
+                        No blueprint generated.
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </section>
+
+        <!-- ================================= -->
+        <!-- Inspector -->
+        <!-- ================================= -->
+
+        <aside class="inspector">
+
+            <div class="panel sticky">
+
+                <h2>
+
+                    Current Stack
+
+                </h2>
+
+                <div
+                    id="selectedComponents">
+
+                    <p>
+
+                        No components selected.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="panel">
+
+                <button
+                    id="generateButton"
+                    class="primary">
+
+                    Generate Blueprint
+
+                </button>
+
+                <button
+                    id="exportMarkdown"
+                    class="secondary">
+
+                    Export Markdown
+
+                </button>
+
+                <button
+                    id="exportJSON"
+                    class="secondary">
+
+                    Export JSON
+
+                </button>
+
+            </div>
+
+        </aside>
+
+    </main>
+
+    <!-- ===================================== -->
+    <!-- Templates -->
+    <!-- ===================================== -->
+
+    <template id="domainTemplate">
+
+        <button class="domain-card">
+
+            <span class="icon"></span>
+
+            <span class="title"></span>
+
+        </button>
+
+    </template>
+
+    <template id="componentTemplate">
+
+        <div class="component-card">
+
+            <div class="component-top">
+
+                <h3 class="name"></h3>
+
+                <span class="difficulty"></span>
+
+            </div>
+
+            <p class="description">
+
+            </p>
+
+            <div class="tags">
+
+            </div>
+
+            <button class="selectButton">
+
+                Select
+
+            </button>
+
+        </div>
+
+    </template>
+
+    <template id="recipeTemplate">
+
+        <div class="recipe-card">
+
+            <h3 class="title">
+
+            </h3>
+
+            <p class="match">
+
+            </p>
+
+            <button class="recipeButton">
+
+                Generate
+
+            </button>
+
+        </div>
+
+    </template>
+
+    <!-- ===================================== -->
+    <!-- JavaScript -->
+    <!-- ===================================== -->
+
+    <script
+        type="module"
+        src="app.js">
+
+    </script>
+
+</body>
+
+</html>

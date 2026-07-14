@@ -1,0 +1,21 @@
+/* ==========================================================
+   Ediccrew Tech Stack Architect
+   Main Stylesheet
+   Version: 1.0.0
+   ========================================================== */
+
+/* Core */
+@import url("./variables.css");
+
+/* Layout */
+@import url("./layout.css");
+
+/* UI Components */
+@import url("./components.css");
+@import url("./cards.css");
+@import url("./panels.css");
+@import url("./buttons.css");
+
+/* Utilities */
+@import url("./animations.css");
+@import url("./responsive.css");

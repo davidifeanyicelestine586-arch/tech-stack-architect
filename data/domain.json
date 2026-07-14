@@ -1,0 +1,111 @@
+[
+  {
+    "id": "web-saas",
+    "title": "Web Development & SaaS",
+    "shortTitle": "Web & SaaS",
+    "description": "Build modern websites, web applications, SaaS products, APIs, dashboards, and payment-enabled platforms.",
+    "icon": "🌐",
+    "color": "#2563EB",
+    "priority": 1,
+
+    "tags": [
+      "frontend",
+      "backend",
+      "database",
+      "cloud",
+      "deployment",
+      "performance",
+      "seo",
+      "payments"
+    ],
+
+    "blogReference": {
+      "title": "How to Build a SaaS MVP Without a Developer in 2026",
+      "slug": "build-saas-mvp-without-developer-2026"
+    },
+
+    "supportedOutputs": [
+      "architecture",
+      "starter-code",
+      "folder-structure",
+      "deployment-guide",
+      "learning-roadmap",
+      "markdown",
+      "json"
+    ]
+  },
+
+  {
+    "id": "ai-automation",
+    "title": "AI Workflows & Automation",
+    "shortTitle": "AI Automation",
+    "description": "Design intelligent workflows, AI agents, automation pipelines, MCP integrations, prompt systems, and orchestration engines.",
+
+    "icon": "🤖",
+    "color": "#7C3AED",
+    "priority": 2,
+
+    "tags": [
+      "llm",
+      "automation",
+      "mcp",
+      "agents",
+      "api",
+      "workflow",
+      "prompt-engineering",
+      "orchestration"
+    ],
+
+    "blogReference": {
+      "title": "What Is MCP? The Protocol That Makes AI Actually Act",
+      "slug": "what-is-model-context-protocol"
+    },
+
+    "supportedOutputs": [
+      "architecture",
+      "workflow-diagram",
+      "starter-code",
+      "api-template",
+      "learning-roadmap",
+      "markdown",
+      "json"
+    ]
+  },
+
+  {
+    "id": "mechatronics",
+    "title": "Hardware & Mechatronics",
+    "shortTitle": "Mechatronics",
+    "description": "Design embedded systems, robotics, IoT devices, automation systems, sensors, actuators, and microcontroller projects.",
+
+    "icon": "⚙️",
+    "color": "#059669",
+    "priority": 3,
+
+    "tags": [
+      "arduino",
+      "robotics",
+      "embedded",
+      "electronics",
+      "iot",
+      "motor-control",
+      "sensors",
+      "pcb"
+    ],
+
+    "blogReference": {
+      "title": "Building a Smart Obstacle-Avoiding Self-Balancing Robot",
+      "slug": "smart-obstacle-avoiding-self-balancing-robot"
+    },
+
+    "supportedOutputs": [
+      "pin-layout",
+      "wiring-diagram",
+      "starter-code",
+      "component-list",
+      "learning-roadmap",
+      "markdown",
+      "json"
+    ]
+  }
+]

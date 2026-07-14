@@ -1,0 +1,365 @@
+/* ==========================================================
+   Ediccrew Tech Stack Architect
+   Buttons
+   Version: 1.0.0
+   ========================================================== */
+
+/* ==========================================
+   Base Button
+========================================== */
+
+button {
+
+    appearance: none;
+
+    border: none;
+
+    outline: none;
+
+    cursor: pointer;
+
+    user-select: none;
+
+    transition:
+        background var(--transition),
+        color var(--transition),
+        border-color var(--transition),
+        transform var(--transition),
+        box-shadow var(--transition);
+
+    font-weight: var(--weight-semibold);
+
+    border-radius: var(--button-radius);
+
+}
+
+/* ==========================================
+   Primary Button
+========================================== */
+
+.primary {
+
+    width: 100%;
+
+    height: var(--button-height);
+
+    background: var(--primary);
+
+    color: var(--text-white);
+
+    margin-bottom: var(--space-4);
+
+    box-shadow: var(--shadow-sm);
+
+}
+
+.primary:hover {
+
+    background: var(--primary-light);
+
+    transform: translateY(-2px);
+
+    box-shadow: var(--shadow);
+
+}
+
+.primary:active {
+
+    transform: translateY(0);
+
+}
+
+.primary:focus-visible {
+
+    box-shadow:
+        0 0 0 4px rgba(70,50,218,.2);
+
+}
+
+/* ==========================================
+   Secondary Button
+========================================== */
+
+.secondary {
+
+    width: 100%;
+
+    height: var(--button-height);
+
+    background: var(--surface);
+
+    color: var(--text);
+
+    border: 1px solid var(--border);
+
+    margin-bottom: var(--space-3);
+
+}
+
+.secondary:hover {
+
+    background: var(--surface-hover);
+
+    border-color: var(--primary);
+
+}
+
+/* ==========================================
+   Outline Button
+========================================== */
+
+.outline {
+
+    background: transparent;
+
+    border: 2px solid var(--primary);
+
+    color: var(--primary);
+
+    padding: 10px 20px;
+
+}
+
+.outline:hover {
+
+    background: var(--primary);
+
+    color: white;
+
+}
+
+/* ==========================================
+   Ghost Button
+========================================== */
+
+.ghost {
+
+    background: transparent;
+
+    color: var(--text-secondary);
+
+    padding: 10px 16px;
+
+}
+
+.ghost:hover {
+
+    background: var(--surface-hover);
+
+}
+
+/* ==========================================
+   Icon Button
+========================================== */
+
+.icon-button {
+
+    width: 42px;
+
+    height: 42px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: var(--background);
+
+    border: 1px solid var(--border);
+
+}
+
+.icon-button:hover {
+
+    background: var(--surface-hover);
+
+    border-color: var(--primary);
+
+}
+
+/* ==========================================
+   Card Buttons
+========================================== */
+
+.selectButton,
+.recipeButton {
+
+    margin-top: auto;
+
+    width: 100%;
+
+    height: 42px;
+
+    border-radius: var(--radius);
+
+    background: var(--primary);
+
+    color: white;
+
+}
+
+.selectButton:hover,
+.recipeButton:hover {
+
+    background: var(--primary-light);
+
+}
+
+/* ==========================================
+   Selected State
+========================================== */
+
+.selectButton.selected {
+
+    background: var(--success);
+
+}
+
+.selectButton.selected:hover {
+
+    background: #0E9F6E;
+
+}
+
+/* ==========================================
+   Danger Button
+========================================== */
+
+.danger {
+
+    background: var(--danger);
+
+    color: white;
+
+}
+
+.danger:hover {
+
+    filter: brightness(1.05);
+
+}
+
+/* ==========================================
+   Success Button
+========================================== */
+
+.success {
+
+    background: var(--success);
+
+    color: white;
+
+}
+
+.success:hover {
+
+    filter: brightness(1.05);
+
+}
+
+/* ==========================================
+   Disabled
+========================================== */
+
+button:disabled {
+
+    opacity: .55;
+
+    cursor: not-allowed;
+
+    transform: none !important;
+
+    box-shadow: none !important;
+
+}
+
+/* ==========================================
+   Loading Button
+========================================== */
+
+.button-loading {
+
+    position: relative;
+
+    color: transparent !important;
+
+    pointer-events: none;
+
+}
+
+.button-loading::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 18px;
+
+    height: 18px;
+
+    border-radius: 50%;
+
+    border: 2px solid rgba(255,255,255,.35);
+
+    border-top-color: white;
+
+    animation: spin 1s linear infinite;
+
+}
+
+/* ==========================================
+   Button Groups
+========================================== */
+
+.button-group {
+
+    display: flex;
+
+    gap: var(--space-3);
+
+    flex-wrap: wrap;
+
+}
+
+.button-group button {
+
+    flex: 1;
+
+}
+
+/* ==========================================
+   Floating Action Button
+========================================== */
+
+.fab {
+
+    position: fixed;
+
+    right: 24px;
+
+    bottom: 24px;
+
+    width: 60px;
+
+    height: 60px;
+
+    border-radius: 50%;
+
+    background: var(--primary);
+
+    color: white;
+
+    box-shadow: var(--shadow-lg);
+
+    z-index: var(--z-overlay);
+
+}
+
+.fab:hover {
+
+    transform: scale(1.08);
+
+}

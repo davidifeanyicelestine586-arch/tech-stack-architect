@@ -1,0 +1,371 @@
+/* ==========================================================
+   Ediccrew Tech Stack Architect
+   Layout
+   Version: 1.0.0
+   ========================================================== */
+
+/* ===========================
+   Header
+=========================== */
+
+.header {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: var(--z-sticky);
+
+    height: var(--header-height);
+
+    background: var(--header);
+
+    border-bottom: 1px solid var(--border);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 var(--space-7);
+
+    box-shadow: var(--shadow-sm);
+
+}
+
+.logo {
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+}
+
+.logo h1 {
+
+    color: var(--primary);
+
+    line-height: 1.1;
+
+}
+
+.logo span {
+
+    font-size: var(--text-sm);
+
+    color: var(--text-secondary);
+
+}
+
+.header-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: var(--space-4);
+
+}
+
+.header-actions input {
+
+    width: 320px;
+
+    max-width: 100%;
+
+    height: 42px;
+
+    padding: 0 var(--space-4);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    background: var(--surface);
+
+    transition: var(--transition);
+
+}
+
+.header-actions input:focus {
+
+    outline: none;
+
+    border-color: var(--primary);
+
+    box-shadow: 0 0 0 3px rgba(70,50,218,.15);
+
+}
+
+/* ===========================
+   Main Layout
+=========================== */
+
+.layout {
+
+    display: grid;
+
+    grid-template-columns:
+
+        var(--sidebar-width)
+
+        minmax(0, 1fr)
+
+        var(--inspector-width);
+
+    min-height:
+
+        calc(100vh - var(--header-height));
+
+}
+
+/* ===========================
+   Sidebar
+=========================== */
+
+.sidebar {
+
+    background: var(--sidebar);
+
+    border-right: 1px solid var(--border);
+
+    padding: var(--space-6);
+
+    overflow-y: auto;
+
+}
+
+.sidebar h2 {
+
+    margin-bottom: var(--space-5);
+
+}
+
+/* ===========================
+   Content
+=========================== */
+
+.content {
+
+    padding: var(--space-6);
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: var(--space-6);
+
+    overflow-y: auto;
+
+}
+
+/* ===========================
+   Inspector
+=========================== */
+
+.inspector {
+
+    border-left: 1px solid var(--border);
+
+    background: var(--surface);
+
+    padding: var(--space-6);
+
+    overflow-y: auto;
+
+}
+
+/* ===========================
+   Panels
+=========================== */
+
+.panel {
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-lg);
+
+    padding: var(--panel-padding);
+
+    box-shadow: var(--shadow-sm);
+
+}
+
+.panel-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: var(--space-5);
+
+}
+
+/* ===========================
+   Sticky Card
+=========================== */
+
+.sticky {
+
+    position: sticky;
+
+    top:
+
+        calc(var(--header-height) + var(--space-5));
+
+}
+
+/* ===========================
+   Component Grid
+=========================== */
+
+.component-grid {
+
+    display: grid;
+
+    grid-template-columns:
+
+        repeat(
+
+            auto-fill,
+
+            minmax(280px, 1fr)
+
+        );
+
+    gap: var(--space-5);
+
+}
+
+/* ===========================
+   Empty States
+=========================== */
+
+.empty-state {
+
+    min-height: 180px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    color: var(--text-light);
+
+    border: 2px dashed var(--border);
+
+    border-radius: var(--radius);
+
+    background: var(--background);
+
+}
+
+/* ===========================
+   Generic Scrollbar
+=========================== */
+
+::-webkit-scrollbar {
+
+    width: 10px;
+
+    height: 10px;
+
+}
+
+::-webkit-scrollbar-track {
+
+    background: transparent;
+
+}
+
+::-webkit-scrollbar-thumb {
+
+    background: #CBD5E1;
+
+    border-radius: 999px;
+
+}
+
+::-webkit-scrollbar-thumb:hover {
+
+    background: #94A3B8;
+
+}
+
+/* ===========================
+   Utility Layout Classes
+=========================== */
+
+.flex {
+
+    display: flex;
+
+}
+
+.flex-column {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+.flex-center {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+.space-between {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+.gap-sm {
+
+    gap: var(--space-3);
+
+}
+
+.gap {
+
+    gap: var(--space-5);
+
+}
+
+.gap-lg {
+
+    gap: var(--space-7);
+
+}
+
+.full-width {
+
+    width: 100%;
+
+}
+
+.text-center {
+
+    text-align: center;
+
+}

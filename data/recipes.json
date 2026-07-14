@@ -1,0 +1,258 @@
+[
+  {
+    "id": "bootstrapped-payment-dashboard",
+
+    "title": "Bootstrapped Payment Dashboard",
+
+    "description": "A lightweight SaaS dashboard suitable for startups validating an idea before scaling.",
+
+    "domain": "web-saas",
+
+    "difficulty": "Beginner",
+
+    "estimatedHours": 8,
+
+    "projectTypes": [
+      "saas",
+      "dashboard",
+      "mvp"
+    ],
+
+    "components": [
+      "nextjs",
+      "sqlite"
+    ],
+
+    "recommended": [
+      "tailwindcss",
+      "typescript",
+      "vercel"
+    ],
+
+    "learningGoals": [
+      "Server-side rendering",
+      "Database fundamentals",
+      "Deployment workflow"
+    ],
+
+    "expectedOutputs": [
+      "architecture",
+      "folder-structure",
+      "starter-code",
+      "deployment-guide"
+    ],
+
+    "starterCommands": [
+      "npx create-next-app@latest ediccrew-mvp --typescript --tailwind --app",
+      "npm install better-sqlite3",
+      "npm run dev"
+    ],
+
+    "warnings": [
+      "SQLite is ideal for MVPs but not high-concurrency production workloads."
+    ]
+  },
+
+  {
+    "id": "mobile-ai-workspace",
+
+    "title": "Mobile AI Developer Workspace",
+
+    "description": "Develop Python automation and AI workflows directly from an Android device.",
+
+    "domain": "ai-automation",
+
+    "difficulty": "Intermediate",
+
+    "estimatedHours": 4,
+
+    "projectTypes": [
+      "automation",
+      "python",
+      "ai"
+    ],
+
+    "components": [
+      "pydroid3",
+      "mcp-server"
+    ],
+
+    "recommended": [
+      "ai-stacker"
+    ],
+
+    "learningGoals": [
+      "Model Context Protocol",
+      "Python automation",
+      "Secure AI integrations"
+    ],
+
+    "expectedOutputs": [
+      "workflow",
+      "starter-code",
+      "architecture"
+    ],
+
+    "starterCommands": [
+      "pip install mcp",
+      "python main.py"
+    ],
+
+    "warnings": [
+      "Avoid exposing MCP credentials on mobile devices."
+    ]
+  },
+
+  {
+    "id": "ai-content-studio",
+
+    "title": "AI Content Studio",
+
+    "description": "A structured content generation system powered by multiple AI services.",
+
+    "domain": "ai-automation",
+
+    "difficulty": "Intermediate",
+
+    "estimatedHours": 12,
+
+    "projectTypes": [
+      "content",
+      "automation",
+      "saas"
+    ],
+
+    "components": [
+      "nextjs",
+      "mcp-server",
+      "ai-stacker"
+    ],
+
+    "recommended": [
+      "sqlite",
+      "typescript"
+    ],
+
+    "learningGoals": [
+      "Workflow orchestration",
+      "Prompt pipelines",
+      "API integrations"
+    ],
+
+    "expectedOutputs": [
+      "architecture",
+      "starter-code",
+      "workflow",
+      "deployment-guide"
+    ],
+
+    "starterCommands": [
+      "npm install",
+      "npm run dev"
+    ],
+
+    "warnings": [
+      "Monitor API costs when chaining multiple AI providers."
+    ]
+  },
+
+  {
+    "id": "robot-obstacle-avoidance",
+
+    "title": "Obstacle Avoidance Robot",
+
+    "description": "An autonomous robot capable of detecting and avoiding nearby obstacles.",
+
+    "domain": "mechatronics",
+
+    "difficulty": "Intermediate",
+
+    "estimatedHours": 10,
+
+    "projectTypes": [
+      "robotics",
+      "embedded",
+      "automation"
+    ],
+
+    "components": [
+      "arduino-uno",
+      "l298n",
+      "hc-sr04"
+    ],
+
+    "recommended": [
+      "servo-motor",
+      "18650-battery-pack"
+    ],
+
+    "learningGoals": [
+      "Motor control",
+      "Sensor integration",
+      "Embedded programming"
+    ],
+
+    "expectedOutputs": [
+      "firmware",
+      "pin-layout",
+      "wiring-guide"
+    ],
+
+    "starterCommands": [
+      "Open Arduino IDE",
+      "Select Arduino Uno",
+      "Upload firmware"
+    ],
+
+    "warnings": [
+      "HC-SR04 pin configuration must be changed to avoid PWM conflicts."
+    ]
+  },
+
+  {
+    "id": "blog-platform",
+
+    "title": "SEO Blog Platform",
+
+    "description": "Modern blog optimized for SEO, speed, and scalability.",
+
+    "domain": "web-saas",
+
+    "difficulty": "Beginner",
+
+    "estimatedHours": 6,
+
+    "projectTypes": [
+      "blog",
+      "cms"
+    ],
+
+    "components": [
+      "nextjs"
+    ],
+
+    "recommended": [
+      "sqlite",
+      "tailwindcss"
+    ],
+
+    "learningGoals": [
+      "SEO optimization",
+      "Static generation",
+      "Content management"
+    ],
+
+    "expectedOutputs": [
+      "starter-code",
+      "deployment-guide"
+    ],
+
+    "starterCommands": [
+      "npx create-next-app@latest blog"
+    ],
+
+    "warnings": [
+      "Use incremental static regeneration for frequently updated content."
+    ]
+  }
+]
