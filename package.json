@@ -4,8 +4,8 @@
   "description": "Ediccrew Tech Stack Architect - Interactive validation and blueprint generation tool.",
   "type": "module",
   "scripts": {
-    "dev": "npx http-server ./ -p 5000 -c-1",
-    "start": "npx http-server ./ -p 5000 -c-1"
+    "dev": "node node_modules/http-server/bin/http-server ./ -p 5000 -c-1",
+    "start": "node node_modules/http-server/bin/http-server ./ -p 5000 -c-1"
   },
   "keywords": [
     "tech-stack",

@@ -73,7 +73,8 @@
         width: 320px;
         height: 100vh;
         z-index: 1000;
-        background: var(--bg-panel, #1e1e2f);
+        background: var(--surface);
+        border-left: 1px solid var(--border);
         box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
         transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         padding: var(--space-5);
@@ -169,6 +170,48 @@
         border-bottom:
 
             1px solid var(--border);
+
+    }
+
+    #domainList {
+
+        flex-direction: row;
+
+        gap: var(--space-3);
+
+        overflow-x: auto;
+
+        padding-bottom: var(--space-3);
+
+        -webkit-overflow-scrolling: touch;
+
+        scroll-snap-type: x mandatory;
+
+    }
+
+    #domainList::-webkit-scrollbar {
+
+        height: 6px;
+
+    }
+
+    #domainList::-webkit-scrollbar-thumb {
+
+        background: var(--border);
+
+        border-radius: 3px;
+
+    }
+
+    .domain-card {
+
+        width: auto;
+
+        margin-bottom: 0 !important;
+
+        flex-shrink: 0;
+
+        scroll-snap-align: start;
 
     }
 

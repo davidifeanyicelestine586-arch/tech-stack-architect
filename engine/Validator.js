@@ -22,9 +22,11 @@ import ConflictEngine from "./conflictEngine.js";
 
 export default class Validator {
 
-    constructor(components = []) {
+    constructor(components = [], pluginManager = null) {
 
         this.components = components;
+
+        this.pluginManager = pluginManager;
 
         this.dependencyEngine = new DependencyEngine(components);
 
@@ -37,6 +39,26 @@ export default class Validator {
             this.index[component.id] = component;
 
         });
+
+    }
+
+    addComponents(newComponents) {
+
+        newComponents.forEach(component => {
+
+            if (!this.index[component.id]) {
+
+                this.components.push(component);
+
+                this.index[component.id] = component;
+
+            }
+
+        });
+
+        this.dependencyEngine.addComponents(newComponents);
+
+        this.conflictEngine.addComponents(newComponents);
 
     }
 
@@ -109,6 +131,7 @@ export default class Validator {
             if (!component) return;
 
             domains[component.domain] =
+
                 (domains[component.domain] || 0) + 1;
 
         });
@@ -150,15 +173,19 @@ export default class Validator {
     determineStatus(score) {
 
         if (score >= 90)
+
             return "Production Ready";
 
         if (score >= 75)
+
             return "Good";
 
         if (score >= 60)
+
             return "Needs Review";
 
         if (score >= 40)
+
             return "High Risk";
 
         return "Invalid Configuration";
@@ -220,27 +247,75 @@ export default class Validator {
         if (!Array.isArray(selectedIds)) selectedIds = [];
 
         const dependencyReport =
+
             this.dependencyEngine.analyze(selectedIds);
 
         const conflictReport =
+
             this.conflictEngine.analyze(selectedIds);
 
+        if (this.pluginManager) {
+
+            const pluginRules = this.pluginManager.getRules();
+
+            pluginRules.forEach(ruleFn => {
+
+                try {
+
+                    const result = ruleFn(selectedIds, this.components);
+
+                    if (result) {
+
+                        if (Array.isArray(result)) {
+
+                            conflictReport.ruleViolations.push(...result);
+
+                        } else {
+
+                            conflictReport.ruleViolations.push(result);
+
+                        }
+
+                        conflictReport.hasConflicts = true;
+
+                    }
+
+                } catch (e) {
+
+                    console.error("Error executing plugin rule:", e);
+
+                }
+
+            });
+
+        }
+
         const warnings =
+
             this.collectWarnings(selectedIds);
 
         const score =
+
             this.calculateScore(
+
                 dependencyReport,
+
                 conflictReport
+
             );
 
         const status =
+
             this.determineStatus(score);
 
         const suggestions =
+
             this.generateSuggestions(
+
                 dependencyReport,
+
                 conflictReport
+
             );
 
         return {
@@ -256,6 +331,7 @@ export default class Validator {
             status,
 
             domains:
+
                 this.summarizeDomains(selectedIds),
 
             dependencyReport,
@@ -267,6 +343,7 @@ export default class Validator {
             suggestions,
 
             timestamp:
+
                 new Date().toISOString()
 
         };

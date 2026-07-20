@@ -9,7 +9,7 @@
  *
  */
 
-import Validator from "./validator.js";
+import Validator from "./Validator.js";
 import RecipeEngine from "./recipeEngine.js";
 import Exporter from "./exporter.js";
 import PluginManager from "./PluginManager.js";
@@ -29,9 +29,13 @@ export default class TechStackArchitect {
 
 
 
+        this.pluginManager =
+            new PluginManager();
+
         this.validator =
             new Validator(
-                this.components
+                this.components,
+                this.pluginManager
             );
 
         this.recipesEngine =
@@ -42,9 +46,6 @@ export default class TechStackArchitect {
 
         this.exporter =
             new Exporter();
-
-        this.pluginManager =
-            new PluginManager();
 
     }
 
@@ -184,6 +185,24 @@ export default class TechStackArchitect {
 
     }
 
+    export(format, report) {
+
+        const customExporter = this.pluginManager.getExporter(format);
+
+        if (customExporter) {
+
+            return customExporter(report);
+
+        }
+
+        if (format.toLowerCase() === "json") return this.exportJSON(report);
+
+        if (format.toLowerCase() === "markdown" || format.toLowerCase() === "md") return this.exportMarkdown(report);
+
+        throw new Error(`Unsupported export format: ${format}`);
+
+    }
+
     downloadJSON(filename, report) {
 
         this.exporter.downloadJSON(
@@ -208,6 +227,40 @@ export default class TechStackArchitect {
 
     }
 
+    download(format, filename, report) {
+
+        const customExporter = this.pluginManager.getExporter(format);
+
+        if (customExporter) {
+
+            const content = customExporter(report);
+
+            let contentString = content;
+
+            let mimeType = "text/plain";
+
+            if (content && typeof content === "object") {
+
+                contentString = content.content;
+
+                mimeType = content.mimeType || "text/plain";
+
+            }
+
+            this.exporter.download(filename, contentString, mimeType);
+
+            return;
+
+        }
+
+        if (format.toLowerCase() === "json") return this.downloadJSON(filename, report);
+
+        if (format.toLowerCase() === "markdown" || format.toLowerCase() === "md") return this.downloadMarkdown(filename, report);
+
+        throw new Error(`Unsupported download format: ${format}`);
+
+    }
+
     /**
      * ------------------------------
      * Plugins
@@ -217,6 +270,24 @@ export default class TechStackArchitect {
     registerPlugin(plugin) {
 
         this.pluginManager.registerPlugin(plugin);
+
+        if (plugin.components && Array.isArray(plugin.components)) {
+
+            this.components.push(...plugin.components);
+
+            this.validator.addComponents(plugin.components);
+
+            this.recipesEngine.addComponents(plugin.components);
+
+        }
+
+        if (plugin.recipes && Array.isArray(plugin.recipes)) {
+
+            this.recipes.push(...plugin.recipes);
+
+            this.recipesEngine.addRecipes(plugin.recipes);
+
+        }
 
     }
 

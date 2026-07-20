@@ -235,6 +235,7 @@ export default class API {
                         try {
                             currentComponent.requires = JSON.parse(cleanVal);
                         } catch (e) {
+                            console.warn(`[API] Failed to parse system requirements for ${currentComponent.name || 'unknown'}: "${cleanVal}"`, e);
                             currentComponent.requires = [];
                         }
                     } else if (key === 'pins provided') {
@@ -246,6 +247,7 @@ export default class API {
                         try {
                             currentComponent.pinsProvided = JSON.parse(cleanVal);
                         } catch (e) {
+                            console.warn(`[API] Failed to parse pins provided for ${currentComponent.name || 'unknown'}: "${cleanVal}"`, e);
                             currentComponent.pinsProvided = [];
                         }
                     } else if (key === 'pins demanded') {
@@ -257,6 +259,7 @@ export default class API {
                         try {
                             currentComponent.pinsRequired = JSON.parse(cleanVal);
                         } catch (e) {
+                            console.warn(`[API] Failed to parse pins demanded for ${currentComponent.name || 'unknown'}: "${cleanVal}"`, e);
                             currentComponent.pinsRequired = [];
                         }
                     } else if (key === 'architectural warning') {

@@ -30,6 +30,15 @@ export default class ConflictEngine {
 
     }
 
+    addComponents(newComponents) {
+        newComponents.forEach(component => {
+            if (!this.index[component.id]) {
+                this.components.push(component);
+                this.index[component.id] = component;
+            }
+        });
+    }
+
     /**
      * ----------------------------------------
      * Lookup Component
@@ -81,6 +90,7 @@ export default class ConflictEngine {
         if (!Array.isArray(selectedIds)) selectedIds = [];
 
         const conflicts = [];
+        const seenPairs = new Set();
 
         selectedIds.forEach(id => {
 
@@ -97,17 +107,25 @@ export default class ConflictEngine {
 
                 if (selectedIds.includes(target)) {
 
-                    conflicts.push({
+                    const pairKey = [id, target].sort().join("::");
 
-                        source: id,
+                    if (!seenPairs.has(pairKey)) {
 
-                        target,
+                        seenPairs.add(pairKey);
 
-                        reason:
-                            conflict.reason ||
-                            "Components are incompatible."
+                        conflicts.push({
 
-                    });
+                            source: id,
+
+                            target,
+
+                            reason:
+                                conflict.reason ||
+                                "Components are incompatible."
+
+                        });
+
+                    }
 
                 }
 
@@ -249,7 +267,7 @@ export default class ConflictEngine {
 
             violations.push({
 
-                rule: "Insufficent Motor Power Supply",
+                rule: "Insufficient Motor Power Supply",
 
                 severity: "high",
 

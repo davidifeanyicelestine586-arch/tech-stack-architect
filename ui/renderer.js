@@ -54,13 +54,29 @@ export default class Renderer {
 
             const matchesDomain = !State.activeDomain || comp.domain === State.activeDomain;
 
-            const matchesSearch = !State.searchQuery || 
+            const query = State.searchQuery;
 
-                comp.name.toLowerCase().includes(State.searchQuery) ||
+            const matchesSearch = !query || 
 
-                (comp.category || "").toLowerCase().includes(State.searchQuery) ||
+                comp.name.toLowerCase().includes(query) ||
 
-                (comp.description || "").toLowerCase().includes(State.searchQuery);
+                comp.id.toLowerCase().includes(query) ||
+
+                (comp.category || "").toLowerCase().includes(query) ||
+
+                (comp.tags || []).some(tag => tag.toLowerCase().includes(query)) ||
+
+                (comp.requires || []).some(reqId => {
+
+                    if (reqId.toLowerCase().includes(query)) return true;
+
+                    const reqComp = State.components.find(c => c.id === reqId);
+
+                    return reqComp && reqComp.name.toLowerCase().includes(query);
+
+                }) ||
+
+                (comp.description || "").toLowerCase().includes(query);
 
             return matchesDomain && matchesSearch;
 
@@ -299,7 +315,7 @@ export default class Renderer {
 
                     <p style="font-size: var(--text-sm); margin-top: 4px;">
 
-                        ${report.valid ? "✓ Configuration is viable." : "❌ Configuration has critical conflicts."}
+                        ${report.valid ? "✓ Configuration is viable." : (report.conflictReport?.hasConflicts ? "❌ Configuration has critical conflicts." : "⚠️ Configuration is incomplete or has warnings.")}
 
                     </p>
 
@@ -322,9 +338,11 @@ export default class Renderer {
 
                 itemsCount++;
 
-                const srcName = State.components.find(comp => comp.id === c.source)?.name || c.source;
+                const srcName = this.escapeHTML(State.components.find(comp => comp.id === c.source)?.name || c.source);
 
-                const trgName = State.components.find(comp => comp.id === c.target)?.name || c.target;
+                const trgName = this.escapeHTML(State.components.find(comp => comp.id === c.target)?.name || c.target);
+
+                const reason = this.escapeHTML(c.reason);
 
                 html += `
 
@@ -336,7 +354,7 @@ export default class Renderer {
 
                             <div class="validation-title">Incompatible Stack</div>
 
-                            <div class="validation-message"><strong>${srcName}</strong> is incompatible with <strong>${trgName}</strong>: ${c.reason}</div>
+                            <div class="validation-message"><strong>${srcName}</strong> is incompatible with <strong>${trgName}</strong>: ${reason}</div>
 
                         </div>
 
@@ -355,6 +373,12 @@ export default class Renderer {
 
                 itemsCount++;
 
+                const pin = this.escapeHTML(String(p.pin));
+
+                const components = this.escapeHTML(p.components.join(", "));
+
+                const recommendation = this.escapeHTML(p.recommendation);
+
                 html += `
 
                     <div class="validation-item" style="border-left: 4px solid var(--danger);">
@@ -365,7 +389,7 @@ export default class Renderer {
 
                             <div class="validation-title">Hardware Pin Conflict</div>
 
-                            <div class="validation-message">Pin <strong>${p.pin}</strong> is requested by multiple components: ${p.components.join(", ")}. Recommendation: ${p.recommendation}</div>
+                            <div class="validation-message">Pin <strong>${pin}</strong> is requested by multiple components: ${components}. Recommendation: ${recommendation}</div>
 
                         </div>
 
@@ -384,6 +408,10 @@ export default class Renderer {
 
                 itemsCount++;
 
+                const rule = this.escapeHTML(r.rule);
+
+                const message = this.escapeHTML(r.message);
+
                 html += `
 
                     <div class="validation-item" style="border-left: 4px solid var(--danger);">
@@ -392,9 +420,9 @@ export default class Renderer {
 
                         <div class="validation-content">
 
-                            <div class="validation-title">Rule Violation: ${r.rule}</div>
+                            <div class="validation-title">Rule Violation: ${rule}</div>
 
-                            <div class="validation-message">${r.message}</div>
+                            <div class="validation-message">${message}</div>
 
                         </div>
 
@@ -413,7 +441,7 @@ export default class Renderer {
 
                 itemsCount++;
 
-                const depName = State.components.find(comp => comp.id === depId)?.name || depId;
+                const depName = this.escapeHTML(State.components.find(comp => comp.id === depId)?.name || depId);
 
                 html += `
 
@@ -444,6 +472,10 @@ export default class Renderer {
 
                 itemsCount++;
 
+                const component = this.escapeHTML(w.component);
+
+                const message = this.escapeHTML(w.message);
+
                 html += `
 
                     <div class="validation-item" style="border-left: 4px solid var(--warning);">
@@ -452,9 +484,9 @@ export default class Renderer {
 
                         <div class="validation-content">
 
-                            <div class="validation-title">Advisory Warning (${w.component})</div>
+                            <div class="validation-title">Advisory Warning (${component})</div>
 
-                            <div class="validation-message">${w.message}</div>
+                            <div class="validation-message">${message}</div>
 
                         </div>
 
@@ -477,6 +509,8 @@ export default class Renderer {
 
                 itemsCount++;
 
+                const suggestion = this.escapeHTML(s);
+
                 html += `
 
                     <div class="validation-item" style="border-left: 4px solid var(--info);">
@@ -487,7 +521,7 @@ export default class Renderer {
 
                             <div class="validation-title">Actionable Recommendation</div>
 
-                            <div class="validation-message">${s}</div>
+                            <div class="validation-message">${suggestion}</div>
 
                         </div>
 
@@ -636,7 +670,7 @@ export default class Renderer {
 
     /**
      * --------------------------------------------------------
-     * Render Blueprint Details Panel
+     * Render Blueprint Panel
      * --------------------------------------------------------
      */
     static renderBlueprint() {
@@ -655,13 +689,21 @@ export default class Renderer {
 
         const bp = State.blueprint;
 
+        const title = this.escapeHTML(bp.title);
+
+        const description = this.escapeHTML(bp.description);
+
+        const difficulty = this.escapeHTML(bp.difficulty);
+
+        const hours = this.escapeHTML(String(bp.estimatedHours));
+
         let html = `
 
             <div class="blueprint-section">
 
-                <h2 style="color: var(--primary); margin-bottom: var(--space-2)">${bp.title}</h2>
+                <h2 style="color: var(--primary); margin-bottom: var(--space-2)">${title}</h2>
 
-                <p style="margin-bottom: var(--space-4); font-size: var(--text-md)">${bp.description}</p>
+                <p style="margin-bottom: var(--space-4); font-size: var(--text-md)">${description}</p>
 
                 
 
@@ -679,7 +721,7 @@ export default class Renderer {
 
                         <h4>Difficulty</h4>
 
-                        <strong style="color: var(--primary)">${bp.difficulty}</strong>
+                        <strong style="color: var(--primary)">${difficulty}</strong>
 
                     </div>
 
@@ -687,7 +729,7 @@ export default class Renderer {
 
                         <h4>Est. Development</h4>
 
-                        <strong>${bp.estimatedHours} Hours</strong>
+                        <strong>${hours} Hours</strong>
 
                     </div>
 
@@ -707,11 +749,13 @@ export default class Renderer {
 
         bp.components.forEach(comp => {
 
+            const name = this.escapeHTML(comp.name);
+
             html += `
 
                 <span class="selected-chip" style="background: var(--surface); color: var(--text); border: 1px solid var(--border)">
 
-                    ${comp.name}
+                    ${name}
 
                 </span>
 
@@ -725,6 +769,71 @@ export default class Renderer {
 
             </div>
 
+        `;
+
+        // Render Recommended Additions if present
+        if (bp.recommended && bp.recommended.length > 0) {
+
+            html += `
+
+                <div class="blueprint-section">
+
+                    <h3>Recommended Additions</h3>
+
+                    <div class="selected-list" style="margin-bottom: var(--space-4)">
+
+            `;
+
+            bp.recommended.forEach(recId => {
+
+                const comp = State.components.find(c => c.id === recId);
+
+                const name = comp ? comp.name : recId;
+
+                const escapedName = this.escapeHTML(name);
+
+                const isSelected = State.selectedComponents.includes(recId);
+
+                if (isSelected) {
+
+                    html += `
+
+                        <span class="selected-chip" style="background: var(--surface); color: var(--text-secondary); border: 1px solid var(--border); opacity: 0.6;">
+
+                            ✓ ${escapedName}
+
+                        </span>
+
+                    `;
+
+                } else {
+
+                    html += `
+
+                        <button class="selected-chip recommended-add-chip" data-id="${recId}" style="background: rgba(70, 50, 218, 0.05); color: var(--primary); border: 1px dashed var(--primary); cursor: pointer; transition: background 0.2s;">
+
+                            + ${escapedName}
+
+                        </button>
+
+                    `;
+
+                }
+
+            });
+
+            html += `
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+        html += `
+
             <div class="blueprint-section">
 
                 <h3>Learning Goals</h3>
@@ -735,7 +844,9 @@ export default class Renderer {
 
         (bp.learningGoals || []).forEach(goal => {
 
-            html += `<li style="margin-bottom: 4px; color: var(--text-secondary);">${goal}</li>`;
+            const escapedGoal = this.escapeHTML(goal);
+
+            html += `<li style="margin-bottom: 4px; color: var(--text-secondary);">${escapedGoal}</li>`;
 
         });
 
@@ -755,7 +866,9 @@ export default class Renderer {
 
         (bp.outputs || []).forEach(output => {
 
-            html += `<span class="tag" style="background: rgba(6, 217, 250, 0.1); color: var(--secondary-dark); padding: 6px 12px;">${output}</span>`;
+            const escapedOutput = this.escapeHTML(output);
+
+            html += `<span class="tag" style="background: rgba(6, 217, 250, 0.1); color: var(--secondary-dark); padding: 6px 12px;">${escapedOutput}</span>`;
 
         });
 
@@ -799,11 +912,13 @@ export default class Renderer {
 
             bp.warnings.forEach(w => {
 
+                const warning = this.escapeHTML(w);
+
                 html += `
 
                     <li style="padding: 10px; background: rgba(245, 158, 11, 0.08); border-radius: var(--radius); border-left: 4px solid var(--warning); margin-bottom: var(--space-2); color: var(--text);">
 
-                        ⚠️ ${w}
+                        ⚠️ ${warning}
 
                     </li>
 
@@ -822,6 +937,23 @@ export default class Renderer {
         }
 
         panel.innerHTML = html;
+
+        // Attach listeners for recommended add button clicks
+        panel.querySelectorAll(".recommended-add-chip").forEach(btn => {
+
+            btn.addEventListener("click", (e) => {
+
+                e.stopPropagation();
+
+                const compId = btn.dataset.id;
+
+                State.toggleComponent(compId);
+
+                this.render();
+
+            });
+
+        });
 
     }
 

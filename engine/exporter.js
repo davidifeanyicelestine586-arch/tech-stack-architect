@@ -63,6 +63,34 @@ export default class Exporter {
 
         }
 
+        if (report.learningGoals?.length) {
+
+            md += `## Learning Goals\n`;
+
+            report.learningGoals.forEach(goal => {
+
+                md += `- ${goal}\n`;
+
+            });
+
+            md += `\n`;
+
+        }
+
+        if (report.outputs?.length) {
+
+            md += `## Expected Outputs\n`;
+
+            report.outputs.forEach(output => {
+
+                md += `- ${output}\n`;
+
+            });
+
+            md += `\n`;
+
+        }
+
         if (report.warnings?.length) {
 
             md += `## Warnings\n`;

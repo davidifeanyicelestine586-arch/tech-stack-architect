@@ -144,6 +144,14 @@
 
 }
 
+#domainList {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
 /* ===========================
    Content
 =========================== */

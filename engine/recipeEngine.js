@@ -39,6 +39,24 @@ export default class RecipeEngine {
 
     }
 
+    addRecipes(newRecipes) {
+        newRecipes.forEach(recipe => {
+            if (!this.recipeIndex[recipe.id]) {
+                this.recipes.push(recipe);
+                this.recipeIndex[recipe.id] = recipe;
+            }
+        });
+    }
+
+    addComponents(newComponents) {
+        newComponents.forEach(component => {
+            if (!this.componentIndex[component.id]) {
+                this.components.push(component);
+                this.componentIndex[component.id] = component;
+            }
+        });
+    }
+
     /**
      * ----------------------------------------
      * Get Recipe
@@ -100,6 +118,12 @@ export default class RecipeEngine {
      */
 
     calculateMatch(recipe, selectedComponents = []) {
+
+        if (!recipe.components || recipe.components.length === 0) {
+
+            return 0;
+
+        }
 
         let matches = 0;
 

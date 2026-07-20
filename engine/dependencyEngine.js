@@ -35,6 +35,15 @@ export default class DependencyEngine {
 
     }
 
+    addComponents(newComponents) {
+        newComponents.forEach(component => {
+            if (!this.index[component.id]) {
+                this.components.push(component);
+                this.index[component.id] = component;
+            }
+        });
+    }
+
     /**
      * ----------------------------------------
      * Find Component
