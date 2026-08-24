@@ -6,6 +6,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import Footer from "./layout/footer/page";
 import { AppSidebar } from "./layout/vertical/sidebar/app-sidebar";
 import { TechStackProvider } from "@/context/tech-stack-context";
+import { cn } from "@/lib/utils";
 
 export default function DashboardLayout({
   children,
@@ -19,12 +20,16 @@ export default function DashboardLayout({
         style={{ "--sidebar-width-icon": "52px" } as React.CSSProperties}
       >
         <AppSidebar />
-        <SidebarInset className="overflow-hidden min-h-screen bg-background">
+        <SidebarInset className="outline outline-border m-2 rounded-none! overflow-hidden">
           <Header />
-          <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full flex flex-col gap-6">
-            <div className="min-h-[calc(100vh-180px)]">{children}</div>
-            <Footer />
-          </main>
+          <div className="flex flex-1 flex-col gap-4 p-4">
+            <div className={cn("w-full mx-auto", "container")}>
+              <div className="min-h-[calc(100vh-140px)]">{children}</div>
+              <div className="pt-6">
+                <Footer />
+              </div>
+            </div>
+          </div>
         </SidebarInset>
       </SidebarProvider>
     </TechStackProvider>

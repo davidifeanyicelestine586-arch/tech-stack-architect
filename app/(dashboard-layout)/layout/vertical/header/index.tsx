@@ -1,23 +1,23 @@
 "use client";
 
+import Link from "next/link";
+import { GitFork, PanelLeft } from "lucide-react";
 import Search from "../../shared/header/search";
 import FullLogo from "../../shared/logo/full-logo";
 import { useSidebar } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import LightDark from "../../shared/header/light-dark";
-import { GitFork, PanelLeft } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import Link from "next/link";
 
 const Header = () => {
   const { toggleSidebar } = useSidebar();
 
   return (
-    <header className={cn("sticky top-0 z-20 bg-background/95 backdrop-blur-xs border-b border-border")}>
+    <header className={cn("sticky top-0 z-20 border-b border-border bg-background")}>
       <nav>
-        <div className="mx-auto flex flex-wrap items-center justify-between px-4 py-2.5">
-          <div className="flex gap-2 items-center">
+        <div className="mx-auto flex flex-wrap items-center justify-between p-2">
+          <div className="flex items-center gap-2">
             <div className="block lg:hidden">
               <FullLogo />
             </div>
@@ -25,40 +25,39 @@ const Header = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="p-2 hover:bg-primary/10 hover:text-primary rounded-lg transition cursor-pointer"
+              className="cursor-pointer rounded-full p-2 transition hover:bg-primary/5 hover:text-primary"
               onClick={toggleSidebar}
-              aria-label="Toggle Sidebar"
+              aria-label="Toggle sidebar"
             >
-              <PanelLeft size={19} />
+              <PanelLeft size={21} />
             </Button>
 
             <Separator
               orientation="vertical"
-              className="h-4 mr-2 ml-1 data-[orientation=vertical]:self-center max-lg:hidden"
+              className="ml-2 mr-4 h-4 max-lg:hidden data-[orientation=vertical]:self-center"
             />
 
-            <div className="sm:block hidden w-72">
+            <div className="hidden sm:block sm:w-72">
               <Search />
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <Button
               variant="outline"
               size="sm"
-              className="hidden md:inline-flex items-center gap-1.5 text-xs font-medium h-8"
+              className="hidden h-8 items-center gap-1.5 text-xs font-medium md:inline-flex"
               render={
                 <Link
                   href="https://github.com/davidifeanyicelestine586-arch/tech-stack-architect"
                   target="_blank"
+                  rel="noreferrer"
                 />
               }
             >
-              <GitFork className="w-3.5 h-3.5" />
+              <GitFork className="size-3.5" />
               <span>GitHub</span>
             </Button>
-
-            {/* Theme Toggle */}
             <LightDark />
           </div>
         </div>
