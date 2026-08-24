@@ -1,0 +1,445 @@
+"use client";
+
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useMemo,
+  useCallback,
+  ReactNode,
+} from "react";
+import TechStackArchitect from "@/engine/TechStackArchitect.js";
+import domainsData from "@/data/domain.json";
+import componentsData from "@/data/components.json";
+import recipesData from "@/data/recipes.json";
+import type {
+  Domain,
+  Component,
+  Recipe,
+  Blueprint,
+  ValidationReport,
+  MergedReport,
+  RecipeMatch,
+} from "@/lib/types";
+
+export interface TechStackContextType {
+  // Data Registries
+  domains: Domain[];
+  components: Component[];
+  recipes: Recipe[];
+  categories: string[];
+
+  // Active Filter States
+  activeDomain: string;
+  setActiveDomain: (domainId: string) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+  selectedCategory: string;
+  setSelectedCategory: (category: string) => void;
+  difficultyFilter: string;
+  setDifficultyFilter: (difficulty: string) => void;
+
+  // Selected State
+  selectedComponentIds: string[];
+  selectedComponents: Component[];
+  toggleComponent: (id: string) => void;
+  selectComponents: (ids: string[]) => void;
+  removeComponent: (id: string) => void;
+  clearSelection: () => void;
+  resolveMissingDependencies: () => void;
+
+  // Recipe & Blueprint State
+  activeRecipeId: string | null;
+  blueprint: Blueprint | null;
+  loadRecipe: (recipeId: string) => void;
+  generateCustomBlueprint: () => void;
+  clearBlueprint: () => void;
+
+  // Live Computed Reports
+  validationReport: ValidationReport;
+  recipeRecommendations: RecipeMatch[];
+  mergedReport: MergedReport;
+  filteredComponents: Component[];
+
+  // UI Panel / Navigation States
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+  isInspectorOpen: boolean;
+  setIsInspectorOpen: (open: boolean) => void;
+
+  // Export & Action Methods
+  exportBlueprint: (format: "json" | "markdown") => string;
+  downloadBlueprint: (format: "json" | "markdown", filename?: string) => void;
+  copyBlueprint: (format: "json" | "markdown") => Promise<boolean>;
+}
+
+const TechStackContext = createContext<TechStackContextType | null>(null);
+
+export function TechStackProvider({ children }: { children: ReactNode }) {
+  const domains = useMemo(() => domainsData as Domain[], []);
+  const components = useMemo(() => componentsData as Component[], []);
+  const recipes = useMemo(() => recipesData as Recipe[], []);
+
+  // Initialize engine instance
+  const architect = useMemo(() => {
+    return new TechStackArchitect({
+      domains,
+      components,
+      recipes,
+    });
+  }, [domains, components, recipes]);
+
+  // UI & Filter States
+  const [activeDomain, setActiveDomain] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [difficultyFilter, setDifficultyFilter] = useState<string>("all");
+  const [selectedComponentIds, setSelectedComponentIds] = useState<string[]>([]);
+  const [activeRecipeId, setActiveRecipeId] = useState<string | null>(null);
+  const [blueprint, setBlueprint] = useState<Blueprint | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("studio");
+  const [isInspectorOpen, setIsInspectorOpen] = useState<boolean>(false);
+
+  // All distinct categories across components
+  const categories = useMemo(() => {
+    const set = new Set<string>();
+    components.forEach((c) => {
+      if (c.category) set.add(c.category);
+    });
+    return Array.from(set).sort();
+  }, [components]);
+
+  // Selected Component Objects
+  const selectedComponents = useMemo(() => {
+    const idSet = new Set(selectedComponentIds);
+    return components.filter((c) => idSet.has(c.id));
+  }, [components, selectedComponentIds]);
+
+  // Real-time Validation Report
+  const validationReport = useMemo(() => {
+    return architect.validate(selectedComponentIds) as ValidationReport;
+  }, [architect, selectedComponentIds]);
+
+  // Real-time Recipe Recommendations based on selected components
+  const recipeRecommendations = useMemo(() => {
+    return architect.recommendRecipes(selectedComponentIds) as RecipeMatch[];
+  }, [architect, selectedComponentIds]);
+
+  // Filtered Components List based on Domain, Category, Difficulty, and Search
+  const filteredComponents = useMemo(() => {
+    return components.filter((comp) => {
+      // Domain filter
+      if (activeDomain !== "all" && comp.domain !== activeDomain) {
+        return false;
+      }
+      // Category filter
+      if (selectedCategory !== "all" && comp.category !== selectedCategory) {
+        return false;
+      }
+      // Difficulty filter
+      if (difficultyFilter !== "all" && comp.difficulty !== difficultyFilter) {
+        return false;
+      }
+      // Search query
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
+        const matchesName = comp.name.toLowerCase().includes(query);
+        const matchesDesc = comp.description.toLowerCase().includes(query);
+        const matchesCategory = comp.category.toLowerCase().includes(query);
+        const matchesTags = comp.tags?.some((t) => t.toLowerCase().includes(query));
+        if (!matchesName && !matchesDesc && !matchesCategory && !matchesTags) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [components, activeDomain, selectedCategory, difficultyFilter, searchQuery]);
+
+  // Custom Blueprint Generator
+  const generateCustomBlueprint = useCallback(() => {
+    const selectedObjects = selectedComponentIds
+      .map((id) => components.find((c) => c.id === id))
+      .filter(Boolean) as Component[];
+
+    if (selectedObjects.length === 0) {
+      setBlueprint(null);
+      return;
+    }
+
+    const totalHours = selectedObjects.reduce(
+      (sum, c) => sum + (c.estimatedLearningHours || 0),
+      0
+    );
+    const maxComplexity = selectedObjects.reduce(
+      (max, c) => Math.max(max, c.complexity || 1),
+      1
+    );
+
+    let customDifficulty: "Beginner" | "Intermediate" | "Advanced" = "Beginner";
+    if (maxComplexity >= 4) customDifficulty = "Advanced";
+    else if (maxComplexity >= 3) customDifficulty = "Intermediate";
+
+    const allOutputs = Array.from(
+      new Set(selectedObjects.flatMap((c) => c.outputs || []))
+    );
+    const allLearningGoals = selectedObjects.map(
+      (c) => `Master integration, security, and lifecycle of ${c.name} (${c.category})`
+    );
+
+    const commands = [
+      "# ========================================================",
+      "# Ediccrew Tech Stack Architect - Initializer Script",
+      `# Stack: Custom ${activeDomain !== "all" ? activeDomain.toUpperCase() : "MULTI-DOMAIN"} Architecture`,
+      "# ========================================================",
+      "mkdir ediccrew-custom-stack",
+      "cd ediccrew-custom-stack",
+      "",
+      "# 1. Initialize environment",
+      "git init",
+      "npm init -y",
+      "",
+      "# 2. Component Setup & Integrations:",
+      ...selectedObjects.map(
+        (c) => `# - Setup ${c.name} [Category: ${c.category}] (Requires: ${c.requires?.join(", ") || "none"})`
+      ),
+      "",
+      "# 3. Run validation check",
+      "echo 'Custom stack initialized successfully with 100% verified dependencies.'",
+    ];
+
+    const currentWarnings =
+      validationReport?.warnings?.map((w) => w.message) || [];
+
+    const customBp: Blueprint = {
+      id: "custom-blueprint",
+      title: "Custom Synthesized Architecture Blueprint",
+      description: `Tailored architecture blueprint comprising ${selectedObjects.length} interconnected technology nodes.`,
+      domain: activeDomain !== "all" ? activeDomain : "multi-domain",
+      difficulty: customDifficulty,
+      estimatedHours: totalHours || 12,
+      components: selectedObjects,
+      learningGoals:
+        allLearningGoals.length > 0
+          ? allLearningGoals
+          : ["Architect custom domain integrations"],
+      outputs:
+        allOutputs.length > 0 ? allOutputs : ["architecture-diagram", "starter-code"],
+      starterCommands: commands,
+      warnings: currentWarnings,
+    };
+
+    setBlueprint(customBp);
+  }, [selectedComponentIds, components, activeDomain, validationReport]);
+
+  // Load Curated Recipe
+  const loadRecipe = useCallback(
+    (recipeId: string) => {
+      const recipe = recipes.find((r) => r.id === recipeId);
+      if (!recipe) return;
+
+      setActiveRecipeId(recipeId);
+      if (recipe.domain) {
+        setActiveDomain(recipe.domain);
+      }
+
+      // Auto-select recipe components
+      const mergedIds = Array.from(
+        new Set([...selectedComponentIds, ...(recipe.components || [])])
+      );
+      setSelectedComponentIds(mergedIds);
+
+      const result = (architect as any).build({
+        recipe: recipeId,
+        selectedComponents: mergedIds,
+      });
+
+      if (result.blueprint) {
+        setBlueprint(result.blueprint as Blueprint);
+      }
+    },
+    [recipes, selectedComponentIds, architect]
+  );
+
+  // Toggle Component Selection
+  const toggleComponent = useCallback(
+    (id: string) => {
+      setSelectedComponentIds((prev) => {
+        const next = prev.includes(id)
+          ? prev.filter((item) => item !== id)
+          : [...prev, id];
+        return next;
+      });
+    },
+    []
+  );
+
+  // Select Multiple Components
+  const selectComponents = useCallback((ids: string[]) => {
+    setSelectedComponentIds(Array.from(new Set(ids)));
+  }, []);
+
+  // Remove Single Component
+  const removeComponent = useCallback((id: string) => {
+    setSelectedComponentIds((prev) => prev.filter((item) => item !== id));
+  }, []);
+
+  // Clear Selection
+  const clearSelection = useCallback(() => {
+    setSelectedComponentIds([]);
+    setActiveRecipeId(null);
+    setBlueprint(null);
+  }, []);
+
+  // Clear Blueprint
+  const clearBlueprint = useCallback(() => {
+    setActiveRecipeId(null);
+    setBlueprint(null);
+  }, []);
+
+  // 1-Click Resolve Missing Dependencies
+  const resolveMissingDependencies = useCallback(() => {
+    const missing = validationReport?.dependencyReport?.missing || [];
+    if (missing.length === 0) return;
+
+    setSelectedComponentIds((prev) => {
+      return Array.from(new Set([...prev, ...missing]));
+    });
+  }, [validationReport]);
+
+  // Merged Report for Blueprint / Export Generation
+  const mergedReport = useMemo((): MergedReport => {
+    const report = validationReport || {
+      score: 100,
+      status: "Production Ready",
+      warnings: [],
+      suggestions: [],
+    };
+    const bp = (blueprint || {}) as Partial<Blueprint>;
+
+    const domainObj = domains.find((d) => d.id === activeDomain);
+    const domainTitle = domainObj ? domainObj.title : "Custom Tech Stack";
+
+    const combinedWarnings = [...(report.warnings || [])];
+    if (bp.warnings && Array.isArray(bp.warnings)) {
+      bp.warnings.forEach((w) => {
+        const msg = typeof w === "string" ? w : w;
+        if (!combinedWarnings.some((cw) => cw.message === msg)) {
+          combinedWarnings.push({
+            component: "Blueprint",
+            severity: "warning",
+            message: typeof msg === "string" ? msg : JSON.stringify(msg),
+          });
+        }
+      });
+    }
+
+    return {
+      title: bp.title || "Technology Stack Blueprint",
+      score: report.score,
+      status: report.status,
+      domain: bp.domain || domainTitle,
+      components: selectedComponents,
+      warnings: combinedWarnings,
+      suggestions: report.suggestions || [],
+      starterCommands: bp.starterCommands || [],
+      learningGoals: bp.learningGoals || [],
+      outputs: bp.outputs || [],
+    };
+  }, [validationReport, blueprint, domains, activeDomain, selectedComponents]);
+
+  // Export Blueprint as String
+  const exportBlueprint = useCallback(
+    (format: "json" | "markdown"): string => {
+      try {
+        return architect.export(format, mergedReport);
+      } catch {
+        if (format === "json") return JSON.stringify(mergedReport, null, 2);
+        return `# ${mergedReport.title}\nScore: ${mergedReport.score}`;
+      }
+    },
+    [architect, mergedReport]
+  );
+
+  // Download Blueprint File to Local Computer
+  const downloadBlueprint = useCallback(
+    (format: "json" | "markdown", customFilename?: string) => {
+      const sanitizedTitle = (mergedReport.title || "tech-stack-blueprint")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+
+      const extension = format === "json" ? "json" : "md";
+      const filename = customFilename || `${sanitizedTitle}.${extension}`;
+
+      architect.download(format, filename, mergedReport);
+    },
+    [architect, mergedReport]
+  );
+
+  // Copy Blueprint to Clipboard
+  const copyBlueprint = useCallback(
+    async (format: "json" | "markdown"): Promise<boolean> => {
+      try {
+        const content = exportBlueprint(format);
+        await navigator.clipboard.writeText(content);
+        return true;
+      } catch (err) {
+        console.error("Clipboard copy failed:", err);
+        return false;
+      }
+    },
+    [exportBlueprint]
+  );
+
+  return (
+    <TechStackContext.Provider
+      value={{
+        domains,
+        components,
+        recipes,
+        categories,
+        activeDomain,
+        setActiveDomain,
+        searchQuery,
+        setSearchQuery,
+        selectedCategory,
+        setSelectedCategory,
+        difficultyFilter,
+        setDifficultyFilter,
+        selectedComponentIds,
+        selectedComponents,
+        toggleComponent,
+        selectComponents,
+        removeComponent,
+        clearSelection,
+        resolveMissingDependencies,
+        activeRecipeId,
+        blueprint,
+        loadRecipe,
+        generateCustomBlueprint,
+        clearBlueprint,
+        validationReport,
+        recipeRecommendations,
+        mergedReport,
+        filteredComponents,
+        activeTab,
+        setActiveTab,
+        isInspectorOpen,
+        setIsInspectorOpen,
+        exportBlueprint,
+        downloadBlueprint,
+        copyBlueprint,
+      }}
+    >
+      {children}
+    </TechStackContext.Provider>
+  );
+}
+
+export function useTechStack() {
+  const context = useContext(TechStackContext);
+  if (!context) {
+    throw new Error("useTechStack must be used within a TechStackProvider");
+  }
+  return context;
+}

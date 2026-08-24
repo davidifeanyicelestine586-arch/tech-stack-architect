@@ -1,6 +1,6 @@
 "use client";
 
-import { BookMarked, Github, LifeBuoy } from "lucide-react";
+import { BookMarked, GitFork } from "lucide-react";
 import {
   SidebarMenu,
   SidebarMenuItem,
@@ -15,7 +15,7 @@ export function NavUser() {
     {
       title: "GitHub Repository",
       url: "https://github.com/davidifeanyicelestine586-arch/tech-stack-architect",
-      icon: Github,
+      icon: GitFork,
     },
     {
       title: "Database Specification",
@@ -30,11 +30,13 @@ export function NavUser() {
         <SidebarMenu>
           {navItems.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton size="sm" className="h-8 cursor-pointer text-xs" asChild>
-                <Link href={item.url} target={item.url.startsWith("http") ? "_blank" : undefined}>
-                  <item.icon className="size-4 shrink-0 text-muted-foreground" />
-                  <span className="truncate">{item.title}</span>
-                </Link>
+              <SidebarMenuButton
+                size="sm"
+                className="h-8 cursor-pointer text-xs"
+                render={<Link href={item.url} target={item.url.startsWith("http") ? "_blank" : undefined} />}
+              >
+                <item.icon className="size-4 shrink-0 text-muted-foreground" />
+                <span className="truncate">{item.title}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}

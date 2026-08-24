@@ -6,7 +6,7 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import LightDark from "../../shared/header/light-dark";
-import { PanelLeft, Github, Layers, Sparkles } from "lucide-react";
+import { GitFork, PanelLeft } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 
@@ -47,15 +47,15 @@ const Header = () => {
               variant="outline"
               size="sm"
               className="hidden md:inline-flex items-center gap-1.5 text-xs font-medium h-8"
-              asChild
+              render={
+                <Link
+                  href="https://github.com/davidifeanyicelestine586-arch/tech-stack-architect"
+                  target="_blank"
+                />
+              }
             >
-              <Link
-                href="https://github.com/davidifeanyicelestine586-arch/tech-stack-architect"
-                target="_blank"
-              >
-                <Github className="w-3.5 h-3.5" />
-                <span>GitHub</span>
-              </Link>
+              <GitFork className="w-3.5 h-3.5" />
+              <span>GitHub</span>
             </Button>
 
             {/* Theme Toggle */}

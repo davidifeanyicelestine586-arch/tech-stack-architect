@@ -1,4 +1,11 @@
 export type DifficultyLevel = "Beginner" | "Intermediate" | "Advanced";
+export type PinValue = number | string;
+
+export interface PinInventory {
+  digital?: PinValue[];
+  analog?: PinValue[];
+  [group: string]: PinValue[] | undefined;
+}
 
 export interface ComponentConflict {
   component: string;
@@ -23,8 +30,8 @@ export interface Component {
   tags?: string[];
 
   // Hardware/Mechatronics specific fields
-  pins?: (number | string)[];
-  pinsProvided?: (number | string)[];
-  pinsRequired?: (number | string)[];
+  pins?: PinValue[] | PinInventory;
+  pinsProvided?: PinValue[];
+  pinsRequired?: PinValue[];
   recommendedPins?: Record<string, number | string>;
 }
