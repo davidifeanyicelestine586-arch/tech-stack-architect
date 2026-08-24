@@ -1,6 +1,6 @@
 'use client'
 
-import { SidebarMenuButton, SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarMenuButton } from "@/components/ui/sidebar";
 import Image from "next/image";
 import Link from 'next/link';
 

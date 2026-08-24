@@ -11,8 +11,6 @@ import {
   ClipboardList,
   House,
   LucideIcon,
-  Workflow,
-  CheckCircle2,
 } from "lucide-react";
 import { uniqueId } from "lodash";
 

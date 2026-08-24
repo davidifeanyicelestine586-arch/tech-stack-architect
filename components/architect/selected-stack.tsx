@@ -2,11 +2,10 @@
 
 import React from "react";
 import { useTechStack } from "@/hooks/use-tech-stack";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { X, Layers, Trash2, Zap } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export function SelectedStack() {
   const { 
