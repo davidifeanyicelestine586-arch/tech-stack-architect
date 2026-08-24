@@ -1,6 +1,7 @@
 import { Component } from "./component";
 
 export type BuildStatus =
+  | "No Stack"
   | "Production Ready"
   | "Good"
   | "Needs Review"

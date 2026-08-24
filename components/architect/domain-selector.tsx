@@ -71,6 +71,7 @@ export function DomainSelector() {
           return (
             <button
               key={dom.id}
+              id={`domain-${dom.id}`}
               type="button"
               onClick={() => setActiveDomain(dom.id)}
               className={cn(

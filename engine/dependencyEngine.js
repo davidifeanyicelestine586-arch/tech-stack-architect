@@ -144,6 +144,24 @@ export default class DependencyEngine {
 
     /**
      * ----------------------------------------
+     * Resolve Missing Dependencies
+     * ----------------------------------------
+     */
+    resolveMissingDependencies(selectedIds = []) {
+
+        if (!Array.isArray(selectedIds)) selectedIds = [];
+
+        return Array.from(
+            new Set([
+                ...selectedIds,
+                ...this.getMissingDependencies(selectedIds)
+            ])
+        );
+
+    }
+
+    /**
+     * ----------------------------------------
      * Full Dependency Report
      * ----------------------------------------
      */

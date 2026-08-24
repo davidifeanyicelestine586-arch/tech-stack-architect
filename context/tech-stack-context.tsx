@@ -204,7 +204,9 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
       ),
       "",
       "# 3. Run validation check",
-      "echo 'Custom stack initialized successfully with 100% verified dependencies.'",
+      validationReport.valid
+        ? "echo 'Custom stack initialized successfully with validated dependencies and no conflicts.'"
+        : "echo 'Review the validation report before treating this stack as ready.'",
     ];
 
     const currentWarnings =
@@ -298,13 +300,8 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
 
   // 1-Click Resolve Missing Dependencies
   const resolveMissingDependencies = useCallback(() => {
-    const missing = validationReport?.dependencyReport?.missing || [];
-    if (missing.length === 0) return;
-
-    setSelectedComponentIds((prev) => {
-      return Array.from(new Set([...prev, ...missing]));
-    });
-  }, [validationReport]);
+    setSelectedComponentIds((prev) => architect.resolveMissingDependencies(prev));
+  }, [architect]);
 
   // Merged Report for Blueprint / Export Generation
   const mergedReport = useMemo((): MergedReport => {

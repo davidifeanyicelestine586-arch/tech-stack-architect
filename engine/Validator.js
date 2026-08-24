@@ -170,7 +170,15 @@ export default class Validator {
      * ---------------------------------------
      */
 
-    determineStatus(score) {
+    determineStatus(score, { hasSelection = true, hasMissingDependencies = false, hasConflicts = false } = {}) {
+
+        if (!hasSelection)
+
+            return "No Stack";
+
+        if (hasMissingDependencies || hasConflicts)
+
+            return score >= 60 ? "Needs Review" : score >= 40 ? "High Risk" : "Invalid Configuration";
 
         if (score >= 90)
 
@@ -304,9 +312,14 @@ export default class Validator {
 
             );
 
+        const hasMissingDependencies = dependencyReport.missing.length > 0;
+        const hasConflicts = conflictReport.hasConflicts;
         const status =
-
-            this.determineStatus(score);
+            this.determineStatus(score, {
+                hasSelection: selectedIds.length > 0,
+                hasMissingDependencies,
+                hasConflicts,
+            });
 
         const suggestions =
 
@@ -321,10 +334,10 @@ export default class Validator {
         return {
 
             valid:
-
+                selectedIds.length > 0 &&
                 score >= 60 &&
-
-                !conflictReport.hasConflicts,
+                !hasMissingDependencies &&
+                !hasConflicts,
 
             score,
 
