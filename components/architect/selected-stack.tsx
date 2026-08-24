@@ -82,10 +82,10 @@ export function SelectedStack() {
               <Zap className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
               <div className="flex flex-col gap-0.5">
                 <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400">
-                  Missing Dependencies Detected
+                  Missing Required Dependencies
                 </span>
                 <p className="text-[10px] text-amber-600/80 dark:text-amber-400/80 leading-tight">
-                  Your stack requires {missingCount} more components to be production-ready.
+                  This stack is missing {missingCount} required dependency nodes.
                 </p>
               </div>
             </div>
@@ -93,7 +93,7 @@ export function SelectedStack() {
               className="w-full h-7 text-[10px] bg-amber-600 hover:bg-amber-700 text-white"
               onClick={resolveMissingDependencies}
             >
-              Resolve All Automatically
+              Add Missing Dependencies
             </Button>
           </div>
         )}

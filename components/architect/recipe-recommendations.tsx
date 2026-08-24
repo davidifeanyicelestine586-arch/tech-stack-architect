@@ -10,7 +10,28 @@ import { Sparkles, ArrowRight, Clock, Trophy } from "lucide-react";
 export function RecipeRecommendations() {
   const { recipeRecommendations, loadRecipe, selectedComponents } = useTechStack();
 
-  if (selectedComponents.length === 0) return null;
+  if (selectedComponents.length === 0) {
+    return (
+      <div id="recipes" className="flex flex-col gap-4">
+        <div className="flex items-center justify-between px-1">
+          <h3 className="text-sm font-bold flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-primary" />
+            Recipe Catalog
+          </h3>
+          <Badge variant="outline" className="text-[10px] font-mono">
+            Select a stack first
+          </Badge>
+        </div>
+        <Card className="border-dashed bg-muted/20">
+          <CardContent className="p-6 text-center">
+            <p className="text-xs text-muted-foreground">
+              Add technology nodes to receive recipe recommendations matched to your stack.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div id="recipes" className="flex flex-col gap-4">

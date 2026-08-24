@@ -20,7 +20,21 @@ export function BlueprintPanel() {
   const [copiedJson, setCopiedJson] = React.useState(false);
   const [copiedMd, setCopiedMd] = React.useState(false);
 
-  if (selectedComponents.length === 0) return null;
+  if (selectedComponents.length === 0) {
+    return (
+      <div id="blueprint" className="flex flex-col gap-4">
+        <Card id="exports" className="border-dashed bg-muted/20">
+          <CardContent className="flex flex-col items-center justify-center p-8 text-center">
+            <FileCode2 className="mb-3 size-6 text-muted-foreground" />
+            <h3 className="text-sm font-semibold text-foreground">Blueprint & Export Center</h3>
+            <p className="mt-1 max-w-sm text-xs text-muted-foreground">
+              Select technology nodes to generate a blueprint and enable Markdown or JSON exports.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const handleCopy = async (format: "json" | "markdown") => {
     const success = await copyBlueprint(format);
@@ -37,14 +51,15 @@ export function BlueprintPanel() {
 
   if (!blueprint) {
     return (
-      <Card id="blueprint" className="border-dashed bg-muted/20">
-        <CardContent className="flex flex-col items-center justify-center p-12 text-center">
+      <div id="blueprint" className="flex flex-col gap-4">
+        <Card id="exports" className="border-dashed bg-muted/20">
+          <CardContent className="flex flex-col items-center justify-center p-12 text-center">
           <div className="p-3 rounded-full bg-muted/60 mb-3">
             <FileCode2 className="w-6 h-6 text-muted-foreground" />
           </div>
           <h3 className="text-sm font-semibold text-foreground">Synthesize Your Blueprint</h3>
           <p className="text-xs text-muted-foreground mt-1 max-w-sm">
-            Once you've selected your technology nodes, generate a full architecture blueprint with starter scripts.
+            Once you&apos;ve selected your technology nodes, generate a full architecture blueprint with starter scripts.
           </p>
           <Button 
             className="mt-6 text-xs gap-2" 
@@ -52,9 +67,10 @@ export function BlueprintPanel() {
           >
             <Terminal className="w-3.5 h-3.5" />
             Generate Custom Blueprint
-          </Button>
-        </CardContent>
-      </Card>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 

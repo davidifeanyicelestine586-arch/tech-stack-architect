@@ -121,6 +121,12 @@ export default class TechStackArchitect {
 
     }
 
+    resolveMissingDependencies(selected) {
+
+        return this.validator.dependencyEngine.resolveMissingDependencies(selected);
+
+    }
+
     /**
      * ------------------------------
      * Build Project
