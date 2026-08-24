@@ -13,6 +13,7 @@ import Validator from "./Validator.js";
 import RecipeEngine from "./recipeEngine.js";
 import Exporter from "./exporter.js";
 import PluginManager from "./PluginManager.js";
+import RequirementAnalyzer from "./requirementAnalyzer.js";
 
 export default class TechStackArchitect {
 
@@ -46,6 +47,13 @@ export default class TechStackArchitect {
 
         this.exporter =
             new Exporter();
+
+        this.requirementAnalyzer =
+            new RequirementAnalyzer({
+                domains: this.domains,
+                components: this.components,
+                recipes: this.recipes,
+            });
 
     }
 
@@ -106,6 +114,12 @@ export default class TechStackArchitect {
     recommendRecipes(selected) {
 
         return this.recipesEngine.recommend(selected);
+
+    }
+
+    analyzeRequirements(project) {
+
+        return this.requirementAnalyzer.analyze(project);
 
     }
 

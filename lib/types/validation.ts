@@ -1,4 +1,5 @@
 import { Component } from "./component";
+import type { ProjectDefinition } from "./project";
 
 export type BuildStatus =
   | "No Stack"
@@ -72,4 +73,12 @@ export interface MergedReport {
   starterCommands: string[];
   learningGoals: string[];
   outputs: string[];
+  project?: ProjectDefinition;
+  validation?: {
+    valid: boolean;
+    score: number;
+    status: string;
+    missingDependencies: string[];
+    conflicts: string[];
+  };
 }

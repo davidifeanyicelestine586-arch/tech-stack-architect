@@ -20,6 +20,8 @@ import type {
   ValidationReport,
   MergedReport,
   RecipeMatch,
+  ProjectDefinition,
+  RequirementAnalysis,
 } from "@/lib/types";
 
 export interface TechStackContextType {
@@ -38,6 +40,15 @@ export interface TechStackContextType {
   setSelectedCategory: (category: string) => void;
   difficultyFilter: string;
   setDifficultyFilter: (difficulty: string) => void;
+
+  // Project Definition & Analysis
+  projectDefinition: ProjectDefinition;
+  analyzeProject: (project: ProjectDefinition) => RequirementAnalysis;
+  requirementAnalysis: RequirementAnalysis | null;
+  ignoredRecommendationIds: string[];
+  addRecommendation: (componentId: string) => void;
+  addAllCompatibleRecommendations: () => void;
+  ignoreRecommendation: (componentId: string) => void;
 
   // Selected State
   selectedComponentIds: string[];
@@ -75,6 +86,22 @@ export interface TechStackContextType {
 
 const TechStackContext = createContext<TechStackContextType | null>(null);
 
+const toValidationSummary = (report: ValidationReport) => ({
+  valid: report.valid,
+  score: report.score,
+  status: report.status,
+  missingDependencies: report.dependencyReport.missing,
+  conflicts: [
+    ...report.conflictReport.componentConflicts.map(
+      (conflict) => `${conflict.source} conflicts with ${conflict.target}: ${conflict.reason}`
+    ),
+    ...report.conflictReport.pinConflicts.map(
+      (conflict) => `Pin ${conflict.pin} is shared by ${conflict.components.join(", ")}.`
+    ),
+    ...report.conflictReport.ruleViolations.map((violation) => violation.message),
+  ],
+});
+
 export function TechStackProvider({ children }: { children: ReactNode }) {
   const domains = useMemo(() => domainsData as Domain[], []);
   const components = useMemo(() => componentsData as Component[], []);
@@ -91,6 +118,15 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
 
   // UI & Filter States
   const [activeDomain, setActiveDomain] = useState<string>("all");
+  const [projectDefinition, setProjectDefinition] = useState<ProjectDefinition>({
+    name: "",
+    description: "",
+    domain: domains[0]?.id || "web-saas",
+    difficulty: "Intermediate",
+    requirements: "",
+  });
+  const [requirementAnalysis, setRequirementAnalysis] = useState<RequirementAnalysis | null>(null);
+  const [ignoredRecommendationIds, setIgnoredRecommendationIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [difficultyFilter, setDifficultyFilter] = useState<string>("all");
@@ -124,6 +160,57 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
   const recipeRecommendations = useMemo(() => {
     return architect.recommendRecipes(selectedComponentIds) as RecipeMatch[];
   }, [architect, selectedComponentIds]);
+
+  const analyzeProject = useCallback(
+    (project: ProjectDefinition): RequirementAnalysis => {
+      const normalizedProject = {
+        ...project,
+        name: project.name.trim(),
+        description: project.description.trim(),
+        requirements: project.requirements.trim(),
+      };
+      const analysis = architect.analyzeRequirements(normalizedProject);
+
+      setProjectDefinition(normalizedProject);
+      setActiveDomain(normalizedProject.domain);
+      setRequirementAnalysis(analysis);
+      setIgnoredRecommendationIds([]);
+      setActiveRecipeId(null);
+      setBlueprint(null);
+
+      return analysis;
+    },
+    [architect]
+  );
+
+  const addRecommendation = useCallback((componentId: string) => {
+    setSelectedComponentIds((previous) =>
+      previous.includes(componentId) ? previous : [...previous, componentId]
+    );
+    setIgnoredRecommendationIds((previous) => previous.filter((id) => id !== componentId));
+  }, []);
+
+  const addAllCompatibleRecommendations = useCallback(() => {
+    if (!requirementAnalysis) return;
+
+    const additions = requirementAnalysis.recommendations
+      .filter(
+        (recommendation) =>
+          recommendation.compatible &&
+          !ignoredRecommendationIds.includes(recommendation.component.id)
+      )
+      .map((recommendation) => recommendation.component.id);
+
+    setSelectedComponentIds((previous) =>
+      Array.from(new Set([...previous, ...additions]))
+    );
+  }, [ignoredRecommendationIds, requirementAnalysis]);
+
+  const ignoreRecommendation = useCallback((componentId: string) => {
+    setIgnoredRecommendationIds((previous) =>
+      previous.includes(componentId) ? previous : [...previous, componentId]
+    );
+  }, []);
 
   // Filtered Components List based on Domain, Category, Difficulty, and Search
   const filteredComponents = useMemo(() => {
@@ -214,9 +301,13 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
 
     const customBp: Blueprint = {
       id: "custom-blueprint",
-      title: "Custom Synthesized Architecture Blueprint",
-      description: `Tailored architecture blueprint comprising ${selectedObjects.length} interconnected technology nodes.`,
-      domain: activeDomain !== "all" ? activeDomain : "multi-domain",
+      title:
+        projectDefinition.name.trim() || "Custom Synthesized Architecture Blueprint",
+      description: projectDefinition.description.trim()
+        ? projectDefinition.description.trim()
+        : `Tailored architecture blueprint comprising ${selectedObjects.length} interconnected technology nodes.`,
+      domain:
+        projectDefinition.domain || (activeDomain !== "all" ? activeDomain : "multi-domain"),
       difficulty: customDifficulty,
       estimatedHours: totalHours || 12,
       components: selectedObjects,
@@ -228,10 +319,15 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
         allOutputs.length > 0 ? allOutputs : ["architecture-diagram", "starter-code"],
       starterCommands: commands,
       warnings: currentWarnings,
+      project:
+        projectDefinition.name.trim() || projectDefinition.description.trim()
+          ? projectDefinition
+          : undefined,
+      validation: toValidationSummary(validationReport),
     };
 
     setBlueprint(customBp);
-  }, [selectedComponentIds, components, activeDomain, validationReport]);
+  }, [selectedComponentIds, components, activeDomain, projectDefinition, validationReport]);
 
   // Load Curated Recipe
   const loadRecipe = useCallback(
@@ -256,10 +352,17 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
       });
 
       if (result.blueprint) {
-        setBlueprint(result.blueprint as Blueprint);
+        setBlueprint({
+          ...(result.blueprint as Blueprint),
+          project:
+            projectDefinition.name.trim() || projectDefinition.description.trim()
+              ? projectDefinition
+              : undefined,
+          validation: toValidationSummary(result.report as ValidationReport),
+        });
       }
     },
-    [recipes, selectedComponentIds, architect]
+    [recipes, selectedComponentIds, architect, projectDefinition]
   );
 
   // Toggle Component Selection
@@ -331,7 +434,8 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
     }
 
     return {
-      title: bp.title || "Technology Stack Blueprint",
+      title:
+        projectDefinition.name.trim() || bp.title || "Technology Stack Blueprint",
       score: report.score,
       status: report.status,
       domain: bp.domain || domainTitle,
@@ -341,8 +445,13 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
       starterCommands: bp.starterCommands || [],
       learningGoals: bp.learningGoals || [],
       outputs: bp.outputs || [],
+      project:
+        projectDefinition.name.trim() || projectDefinition.description.trim()
+          ? projectDefinition
+          : undefined,
+      validation: toValidationSummary(report),
     };
-  }, [validationReport, blueprint, domains, activeDomain, selectedComponents]);
+  }, [validationReport, blueprint, domains, activeDomain, selectedComponents, projectDefinition]);
 
   // Export Blueprint as String
   const exportBlueprint = useCallback(
@@ -395,6 +504,13 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
         components,
         recipes,
         categories,
+        projectDefinition,
+        analyzeProject,
+        requirementAnalysis,
+        ignoredRecommendationIds,
+        addRecommendation,
+        addAllCompatibleRecommendations,
+        ignoreRecommendation,
         activeDomain,
         setActiveDomain,
         searchQuery,

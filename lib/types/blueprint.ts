@@ -1,4 +1,5 @@
 import { Component, DifficultyLevel } from "./component";
+import type { ProjectDefinition } from "./project";
 
 export interface Blueprint {
   id: string;
@@ -14,4 +15,12 @@ export interface Blueprint {
   outputs: string[];
   starterCommands: string[];
   warnings: string[];
+  project?: ProjectDefinition;
+  validation?: {
+    valid: boolean;
+    score: number;
+    status: string;
+    missingDependencies: string[];
+    conflicts: string[];
+  };
 }

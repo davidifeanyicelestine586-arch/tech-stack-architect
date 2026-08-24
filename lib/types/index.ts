@@ -4,3 +4,4 @@ export * from "./recipe";
 export * from "./blueprint";
 export * from "./validation";
 export * from "./plugin";
+export * from "./project";

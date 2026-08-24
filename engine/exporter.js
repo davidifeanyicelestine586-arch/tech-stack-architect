@@ -42,9 +42,37 @@ export default class Exporter {
         md += `- Score: ${report.score ?? "N/A"}\n`;
         md += `- Status: ${report.status ?? "Unknown"}\n\n`;
 
+        if (report.project) {
+
+            md += `## Project Definition\n`;
+            if (report.project.name) md += `- Name: ${report.project.name}\n`;
+            if (report.project.description) md += `- Description: ${report.project.description}\n`;
+            if (report.project.domain) md += `- Project type/domain: ${report.project.domain}\n`;
+            if (report.project.difficulty) md += `- Difficulty preference: ${report.project.difficulty}\n`;
+            if (report.project.requirements) md += `- Goals and requirements: ${report.project.requirements}\n`;
+            md += `\n`;
+
+        }
+
+        if (report.validation) {
+
+            md += `## Validation Details\n`;
+            md += `- Valid: ${report.validation.valid ? "Yes" : "No"}\n`;
+            md += `- Score: ${report.validation.score ?? "N/A"}\n`;
+            md += `- Status: ${report.validation.status ?? "Unknown"}\n`;
+            if (report.validation.missingDependencies?.length) {
+                md += `- Missing dependencies: ${report.validation.missingDependencies.join(", ")}\n`;
+            }
+            if (report.validation.conflicts?.length) {
+                md += `- Conflicts: ${report.validation.conflicts.join(" | ")}\n`;
+            }
+            md += `\n`;
+
+        }
+
         if (report.domain) {
 
-            md += `## Domain\n`;
+            md += `## Domain`;
             md += `${report.domain}\n\n`;
 
         }
