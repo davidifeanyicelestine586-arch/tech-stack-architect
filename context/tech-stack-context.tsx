@@ -10,6 +10,9 @@ import React, {
 } from "react";
 import TechStackArchitect from "@/engine/TechStackArchitect.js";
 import domainsData from "@/data/domain.json";
+import { createProjectPersistenceClient } from "@/lib/persistence/client/project-persistence-client.js";
+import { createProviderPersistenceController } from "@/lib/persistence/client/provider-persistence.js";
+import type { ProjectSnapshotV1 } from "@/lib/persistence/types";
 import componentsData from "@/data/components.json";
 import recipesData from "@/data/recipes.json";
 import type {
@@ -23,6 +26,35 @@ import type {
   ProjectDefinition,
   RequirementAnalysis,
 } from "@/lib/types";
+
+export type PersistenceStatus = "idle" | "saving" | "saved" | "loading" | "error";
+
+export interface ProviderPersistenceErrorInfo {
+  code: string;
+  message: string;
+}
+
+export class ProviderPersistenceError extends Error {
+  readonly code: string;
+
+  constructor(code: string, message: string) {
+    super(message);
+    this.name = "ProviderPersistenceError";
+    this.code = code;
+  }
+}
+
+export interface SavedProjectSummary {
+  id: string;
+  revision: number;
+  createdAt: string;
+  updatedAt: string;
+  name: string;
+  description: string;
+  domain: string;
+  difficulty: string;
+}
+
 
 export interface TechStackContextType {
   // Data Registries
@@ -82,6 +114,16 @@ export interface TechStackContextType {
   exportBlueprint: (format: "json" | "markdown") => string;
   downloadBlueprint: (format: "json" | "markdown", filename?: string) => void;
   copyBlueprint: (format: "json" | "markdown") => Promise<boolean>;
+
+  // Programmatic persistence only; no visible project-management UI in this phase.
+  currentProjectId: string | null;
+  currentProjectRevision: number | null;
+  persistenceStatus: PersistenceStatus;
+  persistenceError: ProviderPersistenceErrorInfo | null;
+  saveProject: () => Promise<void>;
+  loadProject: (projectId: string) => Promise<void>;
+  listProjects: () => Promise<SavedProjectSummary[]>;
+  deleteProject: (projectId: string) => Promise<void>;
 }
 
 const TechStackContext = createContext<TechStackContextType | null>(null);
@@ -116,6 +158,11 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
     });
   }, [domains, components, recipes]);
 
+  const persistenceClient = useMemo(
+    () => createProjectPersistenceClient(),
+    []
+  );
+
   // UI & Filter States
   const [activeDomain, setActiveDomain] = useState<string>("all");
   const [projectDefinition, setProjectDefinition] = useState<ProjectDefinition>({
@@ -135,6 +182,20 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
   const [blueprint, setBlueprint] = useState<Blueprint | null>(null);
   const [activeTab, setActiveTab] = useState<string>("studio");
   const [isInspectorOpen, setIsInspectorOpen] = useState<boolean>(false);
+  const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
+  const [currentProjectRevision, setCurrentProjectRevision] = useState<number | null>(null);
+  const [persistenceStatus, setPersistenceStatus] = useState<PersistenceStatus>("idle");
+  const [persistenceError, setPersistenceError] = useState<ProviderPersistenceErrorInfo | null>(null);
+
+  const getCanonicalSnapshot = useCallback(
+    () => ({
+      schemaVersion: 1 as const,
+      projectDefinition,
+      selectedComponentIds,
+      activeRecipeId,
+    }),
+    [projectDefinition, selectedComponentIds, activeRecipeId]
+  );
 
   // All distinct categories across components
   const categories = useMemo(() => {
@@ -497,6 +558,61 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
     [exportBlueprint]
   );
 
+  const applyLoadedProject = useCallback(
+    ({ record, snapshot }: { record: { id: string; revision: number }; snapshot: ProjectSnapshotV1 }) => {
+      setProjectDefinition(snapshot.projectDefinition);
+      setSelectedComponentIds(snapshot.selectedComponentIds);
+      setActiveRecipeId(snapshot.activeRecipeId);
+      setActiveDomain(snapshot.projectDefinition.domain);
+      setRequirementAnalysis(
+        architect.analyzeRequirements(snapshot.projectDefinition)
+      );
+      setIgnoredRecommendationIds([]);
+      setBlueprint(null);
+      setCurrentProjectId(record.id);
+      setCurrentProjectRevision(record.revision);
+    },
+    [architect]
+  );
+
+  const persistenceActions = useMemo(
+    () =>
+      createProviderPersistenceController({
+        client: persistenceClient,
+        registries: { domains, components, recipes },
+        getCanonicalSnapshot,
+        getCurrentProjectIdentity: () => ({
+          id: currentProjectId,
+          revision: currentProjectRevision,
+        }),
+        setPersistenceStatus,
+        setPersistenceError,
+        applyLoadedProject,
+        applySavedIdentity: (record: { id: string; revision: number }) => {
+          setCurrentProjectId(record.id);
+          setCurrentProjectRevision(record.revision);
+        },
+        clearDeletedIdentity: (projectId: string) => {
+          if (currentProjectId === projectId) {
+            setCurrentProjectId(null);
+            setCurrentProjectRevision(null);
+          }
+        },
+      }),
+    [
+      persistenceClient,
+      domains,
+      components,
+      recipes,
+      getCanonicalSnapshot,
+      currentProjectId,
+      currentProjectRevision,
+      applyLoadedProject,
+    ]
+  );
+
+  const { saveProject, loadProject, listProjects, deleteProject } = persistenceActions;
+
   return (
     <TechStackContext.Provider
       value={{
@@ -542,6 +658,14 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
         exportBlueprint,
         downloadBlueprint,
         copyBlueprint,
+        currentProjectId,
+        currentProjectRevision,
+        persistenceStatus,
+        persistenceError,
+        saveProject,
+        loadProject,
+        listProjects,
+        deleteProject,
       }}
     >
       {children}
