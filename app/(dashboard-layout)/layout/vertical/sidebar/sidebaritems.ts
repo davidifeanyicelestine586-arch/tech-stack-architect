@@ -8,6 +8,7 @@ import {
   Cpu,
   Download,
   BookMarked,
+  ClipboardList,
   House,
   LucideIcon,
   Workflow,
@@ -60,6 +61,18 @@ const SidebarContent: MenuItem[] = [
         name: "Workspace",
         icon: House,
         url: "/",
+      },
+      {
+        id: uniqueId("nav_"),
+        name: "Project Definition",
+        icon: ClipboardList,
+        url: "/#define",
+      },
+      {
+        id: uniqueId("nav_"),
+        name: "Recommended Stack",
+        icon: Sparkles,
+        url: "/#recommendations",
       },
       {
         id: uniqueId("nav_"),

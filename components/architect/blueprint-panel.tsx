@@ -10,8 +10,9 @@ import { cn } from "@/lib/utils";
 
 export function BlueprintPanel() {
   const { 
-    blueprint, 
-    generateCustomBlueprint, 
+    blueprint,
+    projectDefinition,
+    generateCustomBlueprint,
     selectedComponents, 
     copyBlueprint, 
     downloadBlueprint 
@@ -48,6 +49,8 @@ export function BlueprintPanel() {
       }
     }
   };
+
+  const project = blueprint?.project || (projectDefinition.name || projectDefinition.description ? projectDefinition : null);
 
   if (!blueprint) {
     return (
@@ -95,6 +98,38 @@ export function BlueprintPanel() {
               <CardDescription>{blueprint.description}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-6">
+              {project && (
+                <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
+                  <h4 className="text-[10px] font-bold uppercase tracking-widest text-primary">Project Definition</h4>
+                  <p className="mt-1 text-xs font-semibold text-foreground">{project.name || "Unnamed project"}</p>
+                  {project.description && <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{project.description}</p>}
+                  {project.requirements && (
+                    <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">
+                      <span className="font-semibold text-foreground">Goals:</span> {project.requirements}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {blueprint.validation && (
+                <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border/60 bg-muted/20 p-3 text-[10px]">
+                  <span className="font-bold uppercase tracking-widest text-muted-foreground">Validation</span>
+                  <Badge variant={blueprint.validation.valid ? "default" : "destructive"} className="text-[9px]">
+                    {blueprint.validation.status}
+                  </Badge>
+                  <span className="font-semibold text-foreground">{blueprint.validation.score}%</span>
+                  {blueprint.validation.missingDependencies.length > 0 && (
+                    <span className="text-amber-700 dark:text-amber-400">
+                      Missing: {blueprint.validation.missingDependencies.join(", ")}
+                    </span>
+                  )}
+                  {blueprint.validation.conflicts.length > 0 && (
+                    <span className="text-rose-700 dark:text-rose-400">
+                      Conflicts: {blueprint.validation.conflicts.length}
+                    </span>
+                  )}
+                </div>
+              )}
               {/* Learning Goals */}
               <div className="flex flex-col gap-2.5">
                 <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">

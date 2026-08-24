@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import {
-  ArrowRight,
   BookOpen,
   CheckCircle2,
   FileCode2,
@@ -16,6 +15,8 @@ import { SelectedStack } from "@/components/architect/selected-stack";
 import { ValidationPanel } from "@/components/architect/validation-panel";
 import { RecipeRecommendations } from "@/components/architect/recipe-recommendations";
 import { BlueprintPanel } from "@/components/architect/blueprint-panel";
+import { ProjectDefinitionForm } from "@/components/architect/project-definition-form";
+import { RecommendationPanel } from "@/components/architect/recommendation-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -56,19 +57,22 @@ export default function WorkspacePage() {
             <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
               Ediccrew Tech Stack Architect
             </h1>
-            <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
-              Explore technology nodes by engineering track, filter the catalog, and assemble the first layer of your architecture.
+              <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
+              Define what you are building, analyze registered technologies, review explainable recommendations, and assemble a validated architecture.
+            </p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+              Define <span className="text-muted-foreground">→</span> Analyze <span className="text-muted-foreground">→</span> Recommend <span className="text-muted-foreground">→</span> Validate <span className="text-muted-foreground">→</span> Blueprint
             </p>
           </div>
 
           <div className="flex shrink-0 items-center gap-3">
-            <Button className="gap-2 shadow-xs" render={<Link href="#components" />}>
-              <Layers className="size-4" />
-              Explore Components
+            <Button className="gap-2 shadow-xs" render={<Link href="#define" />}>
+              <Sparkles className="size-4" />
+              Define Project
             </Button>
-            <Button variant="outline" className="gap-2" render={<Link href="#recipes" />}>
-              <BookOpen className="size-4" />
-              View Recipes
+            <Button variant="outline" className="gap-2" render={<Link href="#components" />}>
+              <Layers className="size-4" />
+              Manual Catalog
             </Button>
           </div>
         </div>
@@ -86,7 +90,11 @@ export default function WorkspacePage() {
         </div>
       </section>
 
-      {/* 2. Main Workspace Grid */}
+      {/* 2. Define and Analyze */}
+      <ProjectDefinitionForm />
+      <RecommendationPanel />
+
+      {/* 3. Main Workspace Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Domain Selector & Browser */}
         <div className="lg:col-span-8 flex flex-col gap-8">
@@ -128,7 +136,7 @@ export default function WorkspacePage() {
         </div>
       </div>
 
-      {/* 3. Feature Highlights */}
+      {/* 4. Feature Highlights */}
       <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <FeatureCard
           icon={<ShieldCheck className="size-4" />}
