@@ -24,7 +24,7 @@ export default function ProfileSheet() {
         <Avatar className="h-8 w-8">
           <AvatarImage src={"/images/profile/avtar.webp"} alt="profile" />
           <AvatarFallback className="bg-primary text-primary-foreground">
-            "U"
+            U
           </AvatarFallback>
         </Avatar>
       </SheetTrigger>
@@ -49,7 +49,7 @@ export default function ProfileSheet() {
                 height={30}
               />
               <AvatarFallback className="bg-primary text-primary-foreground">
-                "U"
+                U
               </AvatarFallback>
             </Avatar>
 

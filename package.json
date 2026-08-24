@@ -3,11 +3,15 @@
   "description": "Ediccrew Tech Stack Architect - Interactive technology stack validation and blueprint generation platform.",
   "version": "2.0.0",
   "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.21.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "check": "tsc --noEmit",
+    "test": "node --test",
     "legacy:dev": "node node_modules/http-server/bin/http-server ./ -p 5000 -c-1"
   },
   "dependencies": {
@@ -57,7 +61,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/react-syntax-highlighter": "^15.5.13",
-    "eslint": "^10",
+    "eslint": "^9.39.5",
     "eslint-config-next": "16.2.4",
     "http-server": "^14.1.1",
     "tailwindcss": "^4",
