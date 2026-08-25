@@ -68,9 +68,14 @@ export type PersistenceErrorCode =
   | "INVALID_RECORD"
   | "UNSUPPORTED_SCHEMA_VERSION"
   | "UNKNOWN_REFERENCE"
+  | "VALIDATION_FAILURE"
+  | "UNAUTHORIZED"
+  | "DATABASE_FAILURE"
+  | "MALFORMED_RECORD"
   | "PERSISTENCE_UNAVAILABLE"
   | "PERSISTENCE_CONFLICT"
-  | "PERSISTENCE_NOT_FOUND";
+  | "PERSISTENCE_NOT_FOUND"
+  | "CONFIGURATION";
 
 export interface PersistenceErrorDetails {
   field?: string;
@@ -97,4 +102,19 @@ export interface ProjectPersistenceRecord {
   revision: number;
   created_at: string;
   updated_at: string;
+  owner_id?: string | null;
+  anonymous_session_id?: string | null;
+}
+
+export interface ProjectRepositoryRow extends ProjectPersistenceRecord {
+  owner_id: string | null;
+  anonymous_session_id: string | null;
+}
+
+export interface ProjectRepositoryClient {
+  insertProject(row: Omit<ProjectRepositoryRow, "id" | "revision" | "created_at" | "updated_at">): Promise<ProjectRepositoryRow>;
+  listProjects(filters: Record<string, string>): Promise<ProjectRepositoryRow[]>;
+  getProject(filters: Record<string, string>): Promise<ProjectRepositoryRow | null>;
+  updateProject(filters: Record<string, string>, patch: Partial<ProjectRepositoryRow>): Promise<ProjectRepositoryRow | null>;
+  deleteProject(filters: Record<string, string>): Promise<boolean>;
 }
