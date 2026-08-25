@@ -75,6 +75,11 @@ export interface TechStackContextType {
 
   // Project Definition & Analysis
   projectDefinition: ProjectDefinition;
+  updateProjectDefinition: <Key extends keyof ProjectDefinition>(
+    key: Key,
+    value: ProjectDefinition[Key]
+  ) => void;
+  persistenceDirty: boolean;
   analyzeProject: (project: ProjectDefinition) => RequirementAnalysis;
   requirementAnalysis: RequirementAnalysis | null;
   ignoredRecommendationIds: string[];
@@ -124,9 +129,16 @@ export interface TechStackContextType {
   loadProject: (projectId: string) => Promise<void>;
   listProjects: () => Promise<SavedProjectSummary[]>;
   deleteProject: (projectId: string) => Promise<void>;
+  resetProject: () => void;
 }
 
 const TechStackContext = createContext<TechStackContextType | null>(null);
+
+const canonicalSnapshotSignature = (snapshot: ProjectSnapshotV1) =>
+  JSON.stringify({
+    ...snapshot,
+    selectedComponentIds: [...snapshot.selectedComponentIds].sort(),
+  });
 
 const toValidationSummary = (report: ValidationReport) => ({
   valid: report.valid,
@@ -172,6 +184,7 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
     difficulty: "Intermediate",
     requirements: "",
   });
+  const [lastPersistedSnapshotSignature, setLastPersistedSnapshotSignature] = useState<string | null>(null);
   const [requirementAnalysis, setRequirementAnalysis] = useState<RequirementAnalysis | null>(null);
   const [ignoredRecommendationIds, setIgnoredRecommendationIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -188,14 +201,37 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
   const [persistenceError, setPersistenceError] = useState<ProviderPersistenceErrorInfo | null>(null);
 
   const getCanonicalSnapshot = useCallback(
-    () => ({
-      schemaVersion: 1 as const,
+    (): ProjectSnapshotV1 => ({
+      schemaVersion: 1,
       projectDefinition,
       selectedComponentIds,
       activeRecipeId,
     }),
     [projectDefinition, selectedComponentIds, activeRecipeId]
   );
+  const canonicalSnapshot = getCanonicalSnapshot();
+  const updateProjectDefinition = useCallback(
+    <Key extends keyof ProjectDefinition>(
+      key: Key,
+      value: ProjectDefinition[Key]
+    ) => {
+      setProjectDefinition((previous) => ({ ...previous, [key]: value }));
+      setPersistenceError(null);
+      setPersistenceStatus((status) => (status === "error" ? "idle" : status));
+    },
+    []
+  );
+
+  const hasCanonicalProjectContent = Boolean(
+    canonicalSnapshot.projectDefinition.name.trim() ||
+      canonicalSnapshot.projectDefinition.description.trim() ||
+      canonicalSnapshot.projectDefinition.requirements.trim() ||
+      canonicalSnapshot.selectedComponentIds.length ||
+      canonicalSnapshot.activeRecipeId
+  );
+  const persistenceDirty = lastPersistedSnapshotSignature
+    ? canonicalSnapshotSignature(canonicalSnapshot) !== lastPersistedSnapshotSignature
+    : hasCanonicalProjectContent;
 
   // All distinct categories across components
   const categories = useMemo(() => {
@@ -558,9 +594,36 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
     [exportBlueprint]
   );
 
+  const resetProject = useCallback(() => {
+    const nextProjectDefinition: ProjectDefinition = {
+      name: "",
+      description: "",
+      domain: domains[0]?.id || "web-saas",
+      difficulty: "Intermediate",
+      requirements: "",
+    };
+
+    setProjectDefinition(nextProjectDefinition);
+    setLastPersistedSnapshotSignature(null);
+    setActiveDomain(nextProjectDefinition.domain);
+    setRequirementAnalysis(null);
+    setIgnoredRecommendationIds([]);
+    setSelectedComponentIds([]);
+    setActiveRecipeId(null);
+    setBlueprint(null);
+    setSearchQuery("");
+    setSelectedCategory("all");
+    setDifficultyFilter("all");
+    setCurrentProjectId(null);
+    setCurrentProjectRevision(null);
+    setPersistenceStatus("idle");
+    setPersistenceError(null);
+  }, [domains]);
+
   const applyLoadedProject = useCallback(
     ({ record, snapshot }: { record: { id: string; revision: number }; snapshot: ProjectSnapshotV1 }) => {
       setProjectDefinition(snapshot.projectDefinition);
+      setLastPersistedSnapshotSignature(canonicalSnapshotSignature(snapshot));
       setSelectedComponentIds(snapshot.selectedComponentIds);
       setActiveRecipeId(snapshot.activeRecipeId);
       setActiveDomain(snapshot.projectDefinition.domain);
@@ -592,10 +655,14 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
           setCurrentProjectId(record.id);
           setCurrentProjectRevision(record.revision);
         },
+        markPersistenceSaved: (snapshot: ProjectSnapshotV1) => {
+          setLastPersistedSnapshotSignature(canonicalSnapshotSignature(snapshot));
+        },
         clearDeletedIdentity: (projectId: string) => {
           if (currentProjectId === projectId) {
             setCurrentProjectId(null);
             setCurrentProjectRevision(null);
+            setLastPersistedSnapshotSignature(null);
           }
         },
       }),
@@ -621,6 +688,8 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
         recipes,
         categories,
         projectDefinition,
+        updateProjectDefinition,
+        persistenceDirty,
         analyzeProject,
         requirementAnalysis,
         ignoredRecommendationIds,
@@ -666,6 +735,7 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
         loadProject,
         listProjects,
         deleteProject,
+        resetProject,
       }}
     >
       {children}

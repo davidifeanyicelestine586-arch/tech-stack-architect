@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import LightDark from "../../shared/header/light-dark";
 import { Separator } from "@/components/ui/separator";
+import { ProjectPersistenceToolbar } from "@/components/architect/project-persistence-toolbar";
 
 const Header = () => {
   const { toggleSidebar } = useSidebar();
@@ -42,7 +43,9 @@ const Header = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="flex min-w-0 flex-wrap items-center justify-end gap-1">
+            <ProjectPersistenceToolbar />
+            <Separator orientation="vertical" className="mx-1 hidden h-5 md:block" />
             <Button
               variant="outline"
               size="sm"

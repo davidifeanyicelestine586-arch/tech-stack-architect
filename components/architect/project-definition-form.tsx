@@ -10,39 +10,32 @@ import { Input } from "@/components/ui/input";
 import type { ProjectDefinition } from "@/lib/types";
 import { validateProjectDefinition } from "@/engine/requirementAnalyzer.js";
 
-const initialProject: ProjectDefinition = {
-  name: "",
-  description: "",
-  domain: "web-saas",
-  difficulty: "Intermediate",
-  requirements: "",
-};
-
 export function ProjectDefinitionForm() {
-  const { domains, projectDefinition, analyzeProject } = useTechStack();
-  const [draft, setDraft] = useState<ProjectDefinition>({
-    ...initialProject,
-    ...projectDefinition,
-  });
+  const {
+    domains,
+    projectDefinition,
+    updateProjectDefinition,
+    analyzeProject,
+  } = useTechStack();
   const [error, setError] = useState("");
 
   const updateDraft = <Key extends keyof ProjectDefinition>(
     key: Key,
     value: ProjectDefinition[Key]
   ) => {
-    setDraft((previous) => ({ ...previous, [key]: value }));
+    updateProjectDefinition(key, value);
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const name = draft.name.trim();
-    const description = draft.description.trim();
+    const name = projectDefinition.name.trim();
+    const description = projectDefinition.description.trim();
 
     const project = {
-      ...draft,
+      ...projectDefinition,
       name,
       description,
-      requirements: draft.requirements.trim(),
+      requirements: projectDefinition.requirements.trim(),
     };
     const validation = validateProjectDefinition(project);
 
@@ -85,7 +78,7 @@ export function ProjectDefinitionForm() {
             <label className="grid gap-1.5 text-xs font-semibold text-foreground">
               Project name
               <Input
-                value={draft.name}
+                value={projectDefinition.name}
                 onChange={(event) => updateDraft("name", event.target.value)}
                 placeholder="AI Document Q&A Platform"
                 aria-describedby="project-definition-error"
@@ -94,7 +87,7 @@ export function ProjectDefinitionForm() {
             <label className="grid gap-1.5 text-xs font-semibold text-foreground">
               Project type / domain
               <select
-                value={draft.domain}
+                value={projectDefinition.domain}
                 onChange={(event) => updateDraft("domain", event.target.value)}
                 className="h-9 rounded-md border border-input bg-background px-2.5 text-xs font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
               >
@@ -110,7 +103,7 @@ export function ProjectDefinitionForm() {
           <label className="grid gap-1.5 text-xs font-semibold text-foreground">
             Project description
             <textarea
-              value={draft.description}
+                value={projectDefinition.description}
               onChange={(event) => updateDraft("description", event.target.value)}
               placeholder="A SaaS application where users upload PDF documents and ask questions about their contents."
               className="min-h-20 rounded-md border border-input bg-background px-3 py-2 text-xs leading-relaxed text-foreground outline-none placeholder:text-muted-foreground focus:ring-1 focus:ring-primary"
@@ -121,7 +114,7 @@ export function ProjectDefinitionForm() {
             <label className="grid gap-1.5 text-xs font-semibold text-foreground">
               Goals and requirements
               <textarea
-                value={draft.requirements}
+                value={projectDefinition.requirements}
                 onChange={(event) => updateDraft("requirements", event.target.value)}
                 placeholder="web application, document upload, PDF processing, data storage, deployment"
                 className="min-h-20 rounded-md border border-input bg-background px-3 py-2 text-xs leading-relaxed text-foreground outline-none placeholder:text-muted-foreground focus:ring-1 focus:ring-primary"
@@ -130,7 +123,7 @@ export function ProjectDefinitionForm() {
             <label className="grid gap-1.5 text-xs font-semibold text-foreground md:min-w-44">
               Difficulty preference
               <select
-                value={draft.difficulty}
+                value={projectDefinition.difficulty}
                 onChange={(event) => updateDraft("difficulty", event.target.value as ProjectDefinition["difficulty"])}
                 className="h-9 rounded-md border border-input bg-background px-2.5 text-xs font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
               >
