@@ -2,7 +2,7 @@
 
 EdicCrew Tech Stack Architect is a client-side Next.js workspace for assembling, validating, and exporting technology-stack blueprints. The current product uses static JSON registries and a deterministic in-memory engine for component dependencies, conflicts, recipes, and blueprint exports.
 
-live direct: architect.ediccrew.com 
+live direct: https://architect.ediccrew.com 
 ## Requirements
 
 Use Node.js 20.9 or newer and **pnpm**. The repository uses `pnpm-lock.yaml` as its canonical lockfile; do not use `npm install` for this project.
