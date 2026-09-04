@@ -31,6 +31,12 @@ export function BlueprintPanel() {
     [blueprint]
   );
 
+  const hasProjectContent = Boolean(
+    projectDefinition.name.trim() ||
+      projectDefinition.description.trim() ||
+      projectDefinition.requirements.trim()
+  );
+
   const currentProjectSignature = JSON.stringify({
     name: projectDefinition.name.trim(),
     description: projectDefinition.description.trim(),
@@ -40,13 +46,25 @@ export function BlueprintPanel() {
   });
 
   const blueprintProject = blueprint?.project;
-  const blueprintProjectSignature = JSON.stringify({
-    name: blueprintProject?.name?.trim() ?? "",
-    description: blueprintProject?.description?.trim() ?? "",
-    domain: blueprintProject?.domain ?? blueprint?.domain ?? "",
-    difficulty: blueprintProject?.difficulty ?? "",
-    requirements: blueprintProject?.requirements?.trim() ?? "",
-  });
+  const blueprintProjectSignature = JSON.stringify(
+    blueprintProject
+      ? {
+          name: blueprintProject.name?.trim() ?? "",
+          description: blueprintProject.description?.trim() ?? "",
+          domain: blueprintProject.domain ?? blueprint?.domain ?? "",
+          difficulty: blueprintProject.difficulty ?? projectDefinition.difficulty,
+          requirements: blueprintProject.requirements?.trim() ?? "",
+        }
+      : hasProjectContent
+        ? { missingProject: true }
+        : {
+            name: "",
+            description: "",
+            domain: projectDefinition.domain,
+            difficulty: projectDefinition.difficulty,
+            requirements: "",
+          }
+  );
 
   const blueprintIsStale = Boolean(
     blueprint &&
