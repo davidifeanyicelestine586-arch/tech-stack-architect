@@ -17,11 +17,11 @@ const Header = () => {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 border-b border-border bg-background/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/80"
+        "fixed inset-x-0 top-0 z-50 border-b border-border bg-background/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:sticky lg:top-0"
       )}
     >
       <nav aria-label="Workspace navigation">
-        <div className="mx-auto flex flex-wrap items-center justify-between p-2">
+        <div className="mx-auto flex min-h-12 flex-wrap items-center justify-between p-2">
           <div className="flex items-center gap-2">
             <div className="block lg:hidden">
               <FullLogo />
