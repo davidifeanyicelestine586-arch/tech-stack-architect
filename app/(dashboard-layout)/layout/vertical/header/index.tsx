@@ -15,8 +15,12 @@ const Header = () => {
   const { toggleSidebar } = useSidebar();
 
   return (
-    <header className={cn("sticky top-0 z-20 border-b border-border bg-background")}>
-      <nav>
+    <header
+      className={cn(
+        "sticky top-0 z-40 border-b border-border bg-background/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/80"
+      )}
+    >
+      <nav aria-label="Workspace navigation">
         <div className="mx-auto flex flex-wrap items-center justify-between p-2">
           <div className="flex items-center gap-2">
             <div className="block lg:hidden">
