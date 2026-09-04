@@ -20,7 +20,7 @@ export default function DashboardLayout({
         style={{ "--sidebar-width-icon": "52px" } as React.CSSProperties}
       >
         <AppSidebar />
-        <SidebarInset className="m-2 rounded-none! outline outline-border">
+        <SidebarInset className="m-2 h-[calc(100svh-1rem)] min-h-0 overflow-x-hidden overflow-y-auto rounded-none! outline outline-border">
           <Header />
           <div className="flex flex-1 flex-col gap-4 p-4">
             <div className={cn("mx-auto w-full", "container")}>
