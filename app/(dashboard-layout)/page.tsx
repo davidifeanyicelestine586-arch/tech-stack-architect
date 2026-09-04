@@ -30,6 +30,8 @@ import componentsData from "@/data/components.json";
 import domainsData from "@/data/domain.json";
 import recipesData from "@/data/recipes.json";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Workspace | Ediccrew Tech Stack Architect",
   description:
