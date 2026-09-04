@@ -8,12 +8,12 @@ import { Button } from "@/components/ui/button";
 import { X, Layers, Trash2, Zap } from "lucide-react";
 
 export function SelectedStack() {
-  const { 
-    selectedComponents, 
-    removeComponent, 
-    clearSelection, 
+  const {
+    selectedComponents,
+    removeComponent,
+    clearSelection,
     resolveMissingDependencies,
-    validationReport 
+    validationReport,
   } = useTechStack();
 
   const missingCount = validationReport?.dependencyReport?.missing?.length || 0;
@@ -44,9 +44,9 @@ export function SelectedStack() {
               {selectedComponents.length} Nodes
             </Badge>
           </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={clearSelection}
             className="h-7 text-[10px] text-muted-foreground hover:text-destructive"
           >
@@ -59,15 +59,17 @@ export function SelectedStack() {
         <div className="divide-y divide-border/50 max-h-[400px] overflow-y-auto">
           {selectedComponents.map((comp) => (
             <div key={comp.id} className="p-3 flex items-center justify-between group hover:bg-muted/30 transition-colors">
-              <div className="flex flex-col gap-0.5">
-                <span className="text-xs font-bold text-foreground">{comp.name}</span>
+              <div className="flex flex-col gap-0.5 min-w-0">
+                <span className="text-xs font-bold text-foreground truncate">{comp.name}</span>
                 <span className="text-[10px] text-muted-foreground uppercase tracking-wider">{comp.category}</span>
               </div>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="icon-xs"
+                aria-label={`Remove ${comp.name}`}
+                title={`Remove ${comp.name}`}
                 onClick={() => removeComponent(comp.id)}
-                className="opacity-0 group-hover:opacity-100 transition-opacity hover:text-destructive"
+                className="shrink-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity hover:text-destructive"
               >
                 <X className="w-3.5 h-3.5" />
               </Button>
@@ -88,7 +90,7 @@ export function SelectedStack() {
                 </p>
               </div>
             </div>
-            <Button 
+            <Button
               className="w-full h-7 text-[10px] bg-amber-600 hover:bg-amber-700 text-white"
               onClick={resolveMissingDependencies}
             >
