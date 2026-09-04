@@ -14,8 +14,6 @@ export function BlueprintPanel() {
     projectDefinition,
     generateCustomBlueprint,
     selectedComponents,
-    activeDomain,
-    activeRecipeId,
     copyBlueprint,
     downloadBlueprint,
   } = useTechStack();
@@ -39,8 +37,6 @@ export function BlueprintPanel() {
     domain: projectDefinition.domain,
     difficulty: projectDefinition.difficulty,
     requirements: projectDefinition.requirements.trim(),
-    activeDomain,
-    activeRecipeId,
   });
 
   const blueprintProject = blueprint?.project;
@@ -50,8 +46,6 @@ export function BlueprintPanel() {
     domain: blueprintProject?.domain ?? blueprint?.domain ?? "",
     difficulty: blueprintProject?.difficulty ?? "",
     requirements: blueprintProject?.requirements?.trim() ?? "",
-    activeDomain: blueprint?.domain ?? "",
-    activeRecipeId: blueprint?.id ?? null,
   });
 
   const blueprintIsStale = Boolean(
@@ -103,10 +97,7 @@ export function BlueprintPanel() {
             <p className="mt-1 max-w-sm text-xs text-muted-foreground">
               Once you&apos;ve selected your technology nodes, generate a full architecture blueprint with starter scripts.
             </p>
-            <Button
-              className="mt-6 gap-2 text-xs"
-              onClick={generateCustomBlueprint}
-            >
+            <Button className="mt-6 gap-2 text-xs" onClick={generateCustomBlueprint}>
               <Terminal className="h-3.5 w-3.5" />
               Generate Custom Blueprint
             </Button>
@@ -157,7 +148,6 @@ export function BlueprintPanel() {
       )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Main Details */}
         <div className="flex flex-col gap-6 lg:col-span-2">
           <Card>
             <CardHeader>
@@ -198,7 +188,6 @@ export function BlueprintPanel() {
                 </div>
               )}
 
-              {/* Learning Goals */}
               <div className="flex flex-col gap-2.5">
                 <h4 className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                   <BookOpen className="h-3 w-3" /> Learning & Development Goals
@@ -213,7 +202,6 @@ export function BlueprintPanel() {
                 </ul>
               </div>
 
-              {/* Starter Commands */}
               <div className="flex flex-col gap-2.5">
                 <h4 className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                   <Terminal className="h-3 w-3" /> Starter Commands
@@ -227,7 +215,6 @@ export function BlueprintPanel() {
                 </div>
               </div>
 
-              {/* Warnings */}
               {blueprint.warnings && blueprint.warnings.length > 0 && (
                 <div className="flex flex-col gap-2.5">
                   <h4 className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
@@ -246,7 +233,6 @@ export function BlueprintPanel() {
           </Card>
         </div>
 
-        {/* Sidebar Actions / Export */}
         <div id="exports" className="flex flex-col gap-4">
           <Card className="h-fit">
             <CardHeader className="pb-3">
@@ -255,21 +241,11 @@ export function BlueprintPanel() {
             </CardHeader>
             <CardContent className="flex flex-col gap-2.5">
               <div className="grid grid-cols-1 gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-9 justify-start gap-2 text-xs font-medium"
-                  onClick={() => handleCopy("markdown")}
-                >
+                <Button variant="outline" size="sm" className="h-9 justify-start gap-2 text-xs font-medium" onClick={() => handleCopy("markdown")}>
                   {copiedMd ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
                   {copiedMd ? "Copied Markdown" : "Copy as Markdown"}
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-9 justify-start gap-2 text-xs font-medium"
-                  onClick={() => handleCopy("json")}
-                >
+                <Button variant="outline" size="sm" className="h-9 justify-start gap-2 text-xs font-medium" onClick={() => handleCopy("json")}>
                   {copiedJson ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
                   {copiedJson ? "Copied JSON" : "Copy as JSON"}
                 </Button>
@@ -278,18 +254,11 @@ export function BlueprintPanel() {
               <div className="my-1 h-px bg-border" />
 
               <div className="grid grid-cols-1 gap-2">
-                <Button
-                  className="h-9 justify-start gap-2 text-xs"
-                  onClick={() => downloadBlueprint("markdown")}
-                >
+                <Button className="h-9 justify-start gap-2 text-xs" onClick={() => downloadBlueprint("markdown")}>
                   <Download className="h-4 w-4" />
                   Download .md Blueprint
                 </Button>
-                <Button
-                  variant="secondary"
-                  className="h-9 justify-start gap-2 text-xs"
-                  onClick={() => downloadBlueprint("json")}
-                >
+                <Button variant="secondary" className="h-9 justify-start gap-2 text-xs" onClick={() => downloadBlueprint("json")}>
                   <Download className="h-4 w-4" />
                   Download .json Schema
                 </Button>
