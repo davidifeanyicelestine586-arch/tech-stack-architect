@@ -22,7 +22,7 @@ export default function DashboardLayout({
         <AppSidebar />
         <SidebarInset className="m-2 min-h-[calc(100svh-1rem)] min-w-0 overflow-x-hidden rounded-none! outline outline-border">
           <Header />
-          <div className="flex flex-1 flex-col gap-4 p-4">
+          <div className="flex flex-1 flex-col gap-4 p-4 max-lg:pt-16">
             <div className={cn("mx-auto w-full", "container")}>
               <div className="min-h-[calc(100vh-140px)]">{children}</div>
               <div className="pt-6">
