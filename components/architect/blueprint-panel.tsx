@@ -20,6 +20,8 @@ export function BlueprintPanel() {
 
   const [copiedJson, setCopiedJson] = React.useState(false);
   const [copiedMd, setCopiedMd] = React.useState(false);
+  const [isGenerating, setIsGenerating] = React.useState(false);
+  const [copyError, setCopyError] = React.useState("");
 
   const selectedComponentSignature = React.useMemo(
     () => JSON.stringify(selectedComponents.map((component) => component.id).sort()),
@@ -72,6 +74,17 @@ export function BlueprintPanel() {
         currentProjectSignature !== blueprintProjectSignature)
   );
 
+  const handleGenerate = async () => {
+    if (isGenerating || selectedComponents.length === 0) return;
+    setIsGenerating(true);
+    setCopyError("");
+    try {
+      await Promise.resolve(generateCustomBlueprint());
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   if (selectedComponents.length === 0) {
     return (
       <div id="blueprint" className="flex flex-col gap-4">
@@ -89,6 +102,7 @@ export function BlueprintPanel() {
   }
 
   const handleCopy = async (format: "json" | "markdown") => {
+    setCopyError("");
     const success = await copyBlueprint(format);
     if (success) {
       if (format === "json") {
@@ -98,6 +112,8 @@ export function BlueprintPanel() {
         setCopiedMd(true);
         setTimeout(() => setCopiedMd(false), 2000);
       }
+    } else {
+      setCopyError("Copy was blocked by the browser. Use the download action instead.");
     }
   };
 
@@ -115,9 +131,9 @@ export function BlueprintPanel() {
             <p className="mt-1 max-w-sm text-xs text-muted-foreground">
               Once you&apos;ve selected your technology nodes, generate a full architecture blueprint with starter scripts.
             </p>
-            <Button className="mt-6 gap-2 text-xs" onClick={generateCustomBlueprint}>
+            <Button className="mt-6 gap-2 text-xs" onClick={handleGenerate} disabled={isGenerating}>
               <Terminal className="h-3.5 w-3.5" />
-              Generate Custom Blueprint
+              {isGenerating ? "Generating Blueprint…" : "Generate Custom Blueprint"}
             </Button>
           </CardContent>
         </Card>
@@ -148,10 +164,11 @@ export function BlueprintPanel() {
             variant={blueprintIsStale ? "default" : "outline"}
             size="sm"
             className="h-8 gap-1.5 text-xs"
-            onClick={generateCustomBlueprint}
+            onClick={handleGenerate}
+            disabled={isGenerating}
           >
-            <RefreshCw className="h-3.5 w-3.5" />
-            Regenerate Blueprint
+            <RefreshCw className={cn("h-3.5 w-3.5", isGenerating && "animate-spin")} />
+            {isGenerating ? "Generating…" : "Regenerate Blueprint"}
           </Button>
         </div>
       </div>
@@ -268,6 +285,7 @@ export function BlueprintPanel() {
                   {copiedJson ? "Copied JSON" : "Copy as JSON"}
                 </Button>
               </div>
+              {copyError && <p className="text-[10px] text-amber-700 dark:text-amber-400" role="status">{copyError}</p>}
 
               <div className="my-1 h-px bg-border" />
 
@@ -290,8 +308,8 @@ export function BlueprintPanel() {
               <p className="text-[10px] leading-tight text-muted-foreground">
                 Our Cloud Integration plugin can auto-generate Terraform scripts for this specific stack.
               </p>
-              <Button variant="link" size="sm" className="h-auto p-0 text-[10px] font-bold text-primary underline">
-                View Enterprise Plugins
+              <Button variant="link" size="sm" className="h-auto p-0 text-[10px] font-bold text-primary underline" disabled>
+                Enterprise Plugins — coming soon
               </Button>
             </CardContent>
           </Card>
