@@ -57,7 +57,7 @@ export default function WorkspacePage() {
             <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
               Ediccrew Tech Stack Architect
             </h1>
-              <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
+            <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
               Define what you are building, analyze registered technologies, review explainable recommendations, and assemble a validated architecture.
             </p>
             <p className="text-[11px] font-semibold uppercase tracking-wider text-primary">
@@ -95,9 +95,9 @@ export default function WorkspacePage() {
       <RecommendationPanel />
 
       {/* 3. Main Workspace Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Domain Selector & Browser */}
-        <div className="lg:col-span-8 flex flex-col gap-8">
+      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
+        {/* Left Column: Domain Selector, Browser & Recipes */}
+        <div className="flex flex-col gap-8 lg:col-span-8">
           <section className="flex flex-col gap-5" id="components">
             <div>
               <h2 className="text-lg font-bold tracking-tight text-foreground">Component Workspace</h2>
@@ -110,25 +110,24 @@ export default function WorkspacePage() {
           </section>
 
           <RecipeRecommendations />
-          <BlueprintPanel />
         </div>
 
         {/* Right Column: Stack & Validation */}
-        <div className="lg:col-span-4 flex flex-col gap-6 sticky top-24">
+        <div className="flex flex-col gap-6 lg:sticky lg:top-24 lg:col-span-4">
           <SelectedStack />
           <ValidationPanel />
-          
-          <Card id="docs" className="bg-primary/5 border-primary/20">
+
+          <Card id="docs" className="border-primary/20 bg-primary/5">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-bold text-primary flex items-center gap-1.5">
+              <CardTitle className="flex items-center gap-1.5 text-xs font-bold text-primary">
                 <BookOpen className="size-3.5" /> Documentation Registry
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-[10px] text-muted-foreground leading-relaxed">
+              <p className="text-[10px] leading-relaxed text-muted-foreground">
                 Every component in our registry includes a full hardware specification and integration guide.
               </p>
-              <Button variant="link" className="h-auto p-0 text-[10px] font-bold text-primary underline mt-2" render={<Link href="/content-detail" />}>
+              <Button variant="link" className="mt-2 h-auto p-0 text-[10px] font-bold text-primary underline" render={<Link href="/content-detail" />}>
                 Browse Detailed Documentation
               </Button>
             </CardContent>
@@ -136,7 +135,10 @@ export default function WorkspacePage() {
         </div>
       </div>
 
-      {/* 4. Feature Highlights */}
+      {/* 4. Blueprint comes after the current stack and validation on every viewport */}
+      <BlueprintPanel />
+
+      {/* 5. Feature Highlights */}
       <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <FeatureCard
           icon={<ShieldCheck className="size-4" />}

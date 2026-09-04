@@ -5,21 +5,72 @@ import { useTechStack } from "@/hooks/use-tech-stack";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FileCode2, Download, Copy, Terminal, CheckCircle2, BookOpen, AlertCircle } from "lucide-react";
+import { FileCode2, Download, Copy, Terminal, CheckCircle2, BookOpen, AlertCircle, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function BlueprintPanel() {
-  const { 
+  const {
     blueprint,
     projectDefinition,
     generateCustomBlueprint,
-    selectedComponents, 
-    copyBlueprint, 
-    downloadBlueprint 
+    selectedComponents,
+    copyBlueprint,
+    downloadBlueprint,
   } = useTechStack();
 
   const [copiedJson, setCopiedJson] = React.useState(false);
   const [copiedMd, setCopiedMd] = React.useState(false);
+
+  const selectedComponentSignature = React.useMemo(
+    () => JSON.stringify(selectedComponents.map((component) => component.id).sort()),
+    [selectedComponents]
+  );
+
+  const blueprintComponentSignature = React.useMemo(
+    () => JSON.stringify((blueprint?.components ?? []).map((component) => component.id).sort()),
+    [blueprint]
+  );
+
+  const hasProjectContent = Boolean(
+    projectDefinition.name.trim() ||
+      projectDefinition.description.trim() ||
+      projectDefinition.requirements.trim()
+  );
+
+  const currentProjectSignature = JSON.stringify({
+    name: projectDefinition.name.trim(),
+    description: projectDefinition.description.trim(),
+    domain: projectDefinition.domain,
+    difficulty: projectDefinition.difficulty,
+    requirements: projectDefinition.requirements.trim(),
+  });
+
+  const blueprintProject = blueprint?.project;
+  const blueprintProjectSignature = JSON.stringify(
+    blueprintProject
+      ? {
+          name: blueprintProject.name?.trim() ?? "",
+          description: blueprintProject.description?.trim() ?? "",
+          domain: blueprintProject.domain ?? blueprint?.domain ?? "",
+          difficulty: blueprintProject.difficulty ?? projectDefinition.difficulty,
+          requirements: blueprintProject.requirements?.trim() ?? "",
+        }
+      : hasProjectContent
+        ? { missingProject: true }
+        : {
+            name: "",
+            description: "",
+            domain: projectDefinition.domain,
+            difficulty: projectDefinition.difficulty,
+            requirements: "",
+          }
+  );
+
+  const blueprintIsStale = Boolean(
+    blueprint &&
+      (selectedComponentSignature !== blueprintComponentSignature ||
+        currentProjectSignature !== blueprintProjectSignature)
+  );
 
   if (selectedComponents.length === 0) {
     return (
@@ -57,19 +108,16 @@ export function BlueprintPanel() {
       <div id="blueprint" className="flex flex-col gap-4">
         <Card id="exports" className="border-dashed bg-muted/20">
           <CardContent className="flex flex-col items-center justify-center p-12 text-center">
-          <div className="p-3 rounded-full bg-muted/60 mb-3">
-            <FileCode2 className="w-6 h-6 text-muted-foreground" />
-          </div>
-          <h3 className="text-sm font-semibold text-foreground">Synthesize Your Blueprint</h3>
-          <p className="text-xs text-muted-foreground mt-1 max-w-sm">
-            Once you&apos;ve selected your technology nodes, generate a full architecture blueprint with starter scripts.
-          </p>
-          <Button 
-            className="mt-6 text-xs gap-2" 
-            onClick={generateCustomBlueprint}
-          >
-            <Terminal className="w-3.5 h-3.5" />
-            Generate Custom Blueprint
+            <div className="mb-3 rounded-full bg-muted/60 p-3">
+              <FileCode2 className="h-6 w-6 text-muted-foreground" />
+            </div>
+            <h3 className="text-sm font-semibold text-foreground">Synthesize Your Blueprint</h3>
+            <p className="mt-1 max-w-sm text-xs text-muted-foreground">
+              Once you&apos;ve selected your technology nodes, generate a full architecture blueprint with starter scripts.
+            </p>
+            <Button className="mt-6 gap-2 text-xs" onClick={generateCustomBlueprint}>
+              <Terminal className="h-3.5 w-3.5" />
+              Generate Custom Blueprint
             </Button>
           </CardContent>
         </Card>
@@ -79,19 +127,46 @@ export function BlueprintPanel() {
 
   return (
     <div id="blueprint" className="flex flex-col gap-6">
-      <div className="flex items-center justify-between px-1">
-        <h3 className="text-sm font-bold flex items-center gap-2">
-          <FileCode2 className="w-4 h-4 text-primary" />
+      <div className="flex flex-wrap items-center justify-between gap-3 px-1">
+        <h3 className="flex items-center gap-2 text-sm font-bold">
+          <FileCode2 className="h-4 w-4 text-primary" />
           Architecture Blueprint
         </h3>
-        <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px]">
-          Synthesized Successfully
-        </Badge>
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <Badge
+            variant={blueprintIsStale ? "outline" : "default"}
+            className={cn(
+              "text-[10px]",
+              blueprintIsStale
+                ? "border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                : "border-emerald-500/20 bg-emerald-500/10 text-emerald-600"
+            )}
+          >
+            {blueprintIsStale ? "Needs regeneration" : "Up to date"}
+          </Badge>
+          <Button
+            variant={blueprintIsStale ? "default" : "outline"}
+            size="sm"
+            className="h-8 gap-1.5 text-xs"
+            onClick={generateCustomBlueprint}
+          >
+            <RefreshCw className="h-3.5 w-3.5" />
+            Regenerate Blueprint
+          </Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Details */}
-        <div className="lg:col-span-2 flex flex-col gap-6">
+      {blueprintIsStale && (
+        <div className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-amber-700 dark:text-amber-400">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+          <p>
+            The selected stack or project definition changed after this blueprint was generated. Regenerate it to keep the blueprint synchronized with the current workspace.
+          </p>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="flex flex-col gap-6 lg:col-span-2">
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">{blueprint.title}</CardTitle>
@@ -130,44 +205,42 @@ export function BlueprintPanel() {
                   )}
                 </div>
               )}
-              {/* Learning Goals */}
+
               <div className="flex flex-col gap-2.5">
-                <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
-                  <BookOpen className="w-3 h-3" /> Learning & Development Goals
+                <h4 className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  <BookOpen className="h-3 w-3" /> Learning & Development Goals
                 </h4>
-                <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <ul className="grid grid-cols-1 gap-2 md:grid-cols-2">
                   {blueprint.learningGoals.map((goal, idx) => (
-                    <li key={idx} className="text-[11px] flex items-start gap-2 text-muted-foreground leading-tight p-2 rounded-md bg-muted/30 border border-border/50">
-                      <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0 mt-0.5" />
+                    <li key={idx} className="flex items-start gap-2 rounded-md border border-border/50 bg-muted/30 p-2 text-[11px] leading-tight text-muted-foreground">
+                      <CheckCircle2 className="mt-0.5 h-3 w-3 shrink-0 text-emerald-500" />
                       {goal}
                     </li>
                   ))}
                 </ul>
               </div>
 
-              {/* Starter Commands */}
               <div className="flex flex-col gap-2.5">
-                <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
-                  <Terminal className="w-3 h-3" /> Starter Commands
+                <h4 className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  <Terminal className="h-3 w-3" /> Starter Commands
                 </h4>
-                <div className="bg-zinc-950 rounded-lg p-3 font-mono text-[11px] text-zinc-300 overflow-x-auto border border-zinc-800">
+                <div className="overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-950 p-3 font-mono text-[11px] text-zinc-300">
                   {blueprint.starterCommands.map((cmd, idx) => (
-                    <div key={idx} className={cn(cmd.startsWith("#") ? "text-zinc-500 italic" : "text-emerald-400")}>
+                    <div key={idx} className={cn(cmd.startsWith("#") ? "italic text-zinc-500" : "text-emerald-400")}>
                       {cmd}
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Warnings */}
               {blueprint.warnings && blueprint.warnings.length > 0 && (
                 <div className="flex flex-col gap-2.5">
-                  <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
-                    <AlertCircle className="w-3 h-3" /> Integration Considerations
+                  <h4 className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    <AlertCircle className="h-3 w-3" /> Integration Considerations
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {blueprint.warnings.map((warn, idx) => (
-                      <Badge key={idx} variant="outline" className="text-[10px] border-amber-500/20 bg-amber-500/5 text-amber-600 font-normal">
+                      <Badge key={idx} variant="outline" className="border-amber-500/20 bg-amber-500/5 text-[10px] font-normal text-amber-600">
                         {warn}
                       </Badge>
                     ))}
@@ -178,7 +251,6 @@ export function BlueprintPanel() {
           </Card>
         </div>
 
-        {/* Sidebar Actions / Export */}
         <div id="exports" className="flex flex-col gap-4">
           <Card className="h-fit">
             <CardHeader className="pb-3">
@@ -187,52 +259,35 @@ export function BlueprintPanel() {
             </CardHeader>
             <CardContent className="flex flex-col gap-2.5">
               <div className="grid grid-cols-1 gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="h-9 justify-start text-xs gap-2 font-medium"
-                  onClick={() => handleCopy("markdown")}
-                >
-                  {copiedMd ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                <Button variant="outline" size="sm" className="h-9 justify-start gap-2 text-xs font-medium" onClick={() => handleCopy("markdown")}>
+                  {copiedMd ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
                   {copiedMd ? "Copied Markdown" : "Copy as Markdown"}
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="h-9 justify-start text-xs gap-2 font-medium"
-                  onClick={() => handleCopy("json")}
-                >
-                  {copiedJson ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                <Button variant="outline" size="sm" className="h-9 justify-start gap-2 text-xs font-medium" onClick={() => handleCopy("json")}>
+                  {copiedJson ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
                   {copiedJson ? "Copied JSON" : "Copy as JSON"}
                 </Button>
               </div>
 
-              <div className="h-px bg-border my-1" />
+              <div className="my-1 h-px bg-border" />
 
               <div className="grid grid-cols-1 gap-2">
-                <Button 
-                  className="h-9 justify-start text-xs gap-2"
-                  onClick={() => downloadBlueprint("markdown")}
-                >
-                  <Download className="w-4 h-4" />
+                <Button className="h-9 justify-start gap-2 text-xs" onClick={() => downloadBlueprint("markdown")}>
+                  <Download className="h-4 w-4" />
                   Download .md Blueprint
                 </Button>
-                <Button 
-                  variant="secondary" 
-                  className="h-9 justify-start text-xs gap-2"
-                  onClick={() => downloadBlueprint("json")}
-                >
-                  <Download className="w-4 h-4" />
+                <Button variant="secondary" className="h-9 justify-start gap-2 text-xs" onClick={() => downloadBlueprint("json")}>
+                  <Download className="h-4 w-4" />
                   Download .json Schema
                 </Button>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-primary/5 border-primary/20">
-            <CardContent className="p-4 flex flex-col gap-2 text-center">
+          <Card className="border-primary/20 bg-primary/5">
+            <CardContent className="flex flex-col gap-2 p-4 text-center">
               <h4 className="text-xs font-bold text-primary">Need dynamic scaling?</h4>
-              <p className="text-[10px] text-muted-foreground leading-tight">
+              <p className="text-[10px] leading-tight text-muted-foreground">
                 Our Cloud Integration plugin can auto-generate Terraform scripts for this specific stack.
               </p>
               <Button variant="link" size="sm" className="h-auto p-0 text-[10px] font-bold text-primary underline">
