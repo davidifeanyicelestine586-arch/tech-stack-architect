@@ -6,7 +6,7 @@ import { ComponentCard } from "./component-card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, X, Filter, RotateCcw, CheckCircle2 } from "lucide-react";
+import { Search, X, Filter, RotateCcw, CheckCircle2, SlidersHorizontal, ChevronDown } from "lucide-react";
 
 export function ComponentBrowser() {
   const {
@@ -21,7 +21,6 @@ export function ComponentBrowser() {
     activeDomain,
     domains,
     selectedComponentIds,
-    clearSelection,
   } = useTechStack();
 
   const activeDomainObj = domains.find((d) => d.id === activeDomain);
@@ -31,41 +30,60 @@ export function ComponentBrowser() {
     setSearchQuery("");
   };
   const hasActiveFilters = selectedCategory !== "all" || difficultyFilter !== "all" || searchQuery.trim().length > 0;
+  const activeFilterCount = Number(selectedCategory !== "all") + Number(difficultyFilter !== "all");
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col justify-between gap-3 rounded-xl border border-border bg-card/50 p-3.5 md:flex-row md:items-center">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={`Search ${filteredComponents.length} technologies...`}
-            aria-label="Search technologies"
-            className="h-11 bg-background pl-9 pr-10 text-sm"
-          />
-          {searchQuery && (
-            <button type="button" onClick={() => setSearchQuery("")} aria-label="Clear technology search" className="absolute right-1.5 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground">
-              <X className="size-3.5" />
-            </button>
-          )}
+      <div className="rounded-xl border border-border bg-card/50 p-3.5">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={`Search ${filteredComponents.length} technologies...`}
+              aria-label="Search technologies"
+              className="h-11 bg-background pl-9 pr-10 text-sm"
+            />
+            {searchQuery && (
+              <button type="button" onClick={() => setSearchQuery("")} aria-label="Clear technology search" className="absolute right-1.5 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground">
+                <X className="size-3.5" />
+              </button>
+            )}
+          </div>
+
+          <details className="group md:min-w-44">
+            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground [&::-webkit-details-marker]:hidden">
+              <span className="flex items-center gap-2">
+                <SlidersHorizontal className="size-4 text-muted-foreground" />
+                Filters
+                {activeFilterCount > 0 && (
+                  <Badge variant="secondary" className="text-[10px] font-mono">{activeFilterCount}</Badge>
+                )}
+              </span>
+              <ChevronDown className="size-4 text-muted-foreground transition-transform group-open:rotate-180" />
+            </summary>
+            <div className="mt-2 flex flex-col gap-2 rounded-lg border border-border bg-background/80 p-2.5 sm:flex-row sm:flex-wrap sm:items-center">
+              <label className="sr-only" htmlFor="technology-category">Category</label>
+              <select id="technology-category" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="h-11 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary">
+                <option value="all">All Categories</option>
+                {categories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
+              </select>
+              <label className="sr-only" htmlFor="technology-difficulty">Experience level</label>
+              <select id="technology-difficulty" value={difficultyFilter} onChange={(e) => setDifficultyFilter(e.target.value)} className="h-11 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary">
+                <option value="all">All Experience Levels</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+              </select>
+              {hasActiveFilters && <Button variant="ghost" size="sm" onClick={resetFilters} className="h-11 gap-1 text-xs text-muted-foreground hover:text-foreground"><RotateCcw className="size-3.5" /> Reset</Button>}
+            </div>
+          </details>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <label className="sr-only" htmlFor="technology-category">Category</label>
-          <select id="technology-category" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="h-11 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary">
-            <option value="all">All Categories</option>
-            {categories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
-          </select>
-          <label className="sr-only" htmlFor="technology-difficulty">Experience level</label>
-          <select id="technology-difficulty" value={difficultyFilter} onChange={(e) => setDifficultyFilter(e.target.value)} className="h-11 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary">
-            <option value="all">All Experience Levels</option>
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advanced">Advanced</option>
-          </select>
-          {hasActiveFilters && <Button variant="ghost" size="sm" onClick={resetFilters} className="h-11 gap-1 text-xs text-muted-foreground hover:text-foreground"><RotateCcw className="size-3.5" /> Reset</Button>}
-        </div>
+        <p className="mt-2 px-1 text-[11px] text-muted-foreground">
+          Browse technologies for your project. Use filters when you need a more specific match.
+        </p>
       </div>
 
       <div className="flex items-center justify-between px-1">
@@ -74,10 +92,9 @@ export function ComponentBrowser() {
           <Badge variant="secondary" className="text-[10px] font-mono">{filteredComponents.length} available</Badge>
         </div>
         {selectedComponentIds.length > 0 && (
-          <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1 text-xs font-medium text-primary"><CheckCircle2 className="size-3.5" /> {selectedComponentIds.length} in stack</span>
-            <Button variant="ghost" size="sm" onClick={clearSelection} className="h-11 px-3 text-xs text-muted-foreground hover:text-destructive">Clear</Button>
-          </div>
+          <span className="flex items-center gap-1 text-xs font-medium text-primary" aria-label={`${selectedComponentIds.length} technologies in your stack`}>
+            <CheckCircle2 className="size-3.5" /> {selectedComponentIds.length} in your stack
+          </span>
         )}
       </div>
 
