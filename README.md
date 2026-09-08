@@ -116,7 +116,7 @@ Dependency versions are maintained in [`package.json`](package.json) and the loc
 - pnpm 11.23.0
 - Git
 
-The repository's quality workflow installs pnpm 11.23.0 and runs on Node.js 22. citeturn11file0
+The repository quality workflow uses pnpm 11.23.0 and Node.js 22.
 
 ## Installation
 
@@ -179,7 +179,7 @@ pnpm test
 pnpm build
 ```
 
-The same four checks run in GitHub Actions for pushes to `main` and pull requests. citeturn11file0
+The same four checks run in GitHub Actions for pushes to `main` and pull requests.
 
 ## Project persistence
 
