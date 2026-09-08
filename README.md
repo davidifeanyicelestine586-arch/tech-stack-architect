@@ -1,213 +1,176 @@
-# EdicCrew Tech Stack Architect
+# Tech Stack Architect
 
-EdicCrew Tech Stack Architect is a Next.js workspace for turning project requirements into a structured, explainable technology stack. It helps a developer define a project, analyze it against a registered technology catalog, review recommendations, build a candidate stack, check compatibility, match optional stack templates, and generate an exportable architecture blueprint.
+Tech Stack Architect is a Next.js application that turns project requirements into a structured, explainable technology stack. It helps users define a project, analyze technical requirements, review scored technology recommendations, validate compatibility, and generate an architecture blueprint.
 
 **Live application:** https://architect.ediccrew.com  
-**Repository:** https://github.com/davidifeanyicelestine586-arch/tech-stack-architect
+**Source repository:** https://github.com/davidifeanyicelestine586-arch/tech-stack-architect
 
-## Product workflow
+## Contents
+
+- [Overview](#overview)
+- [Core workflow](#core-workflow)
+- [Key capabilities](#key-capabilities)
+- [Technology stack](#technology-stack)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Validation and testing](#validation-and-testing)
+- [Project persistence](#project-persistence)
+- [Production deployment](#production-deployment)
+- [Documentation](#documentation)
+- [Current product boundary](#current-product-boundary)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
+- [Support and contact](#support-and-contact)
+
+## Overview
+
+The application is designed around a requirements-to-architecture workflow rather than a static technology list. A project moves through definition, analysis, recommendation review, validation, and blueprint generation.
+
+The repository also contains a server-side persistence layer for saved project records. Browser code does not connect directly to Supabase; persistence is handled through server-side application boundaries.
+
+## Core workflow
 
 ```text
-Define → Analyze → Review Recommendations → Build → Validate → Blueprint
+Define project
+      ↓
+Analyze requirements
+      ↓
+Review recommendations
+      ↓
+Validate compatibility
+      ↓
+Generate architecture blueprint
+      ↓
+Save / load project records
 ```
 
-The workspace also supports a separate persistence workflow:
+### Typical use case
+
+1. Open the [live application](https://architect.ediccrew.com).
+2. Define the project type, requirements, constraints, and expected scale.
+3. Review the recommended technologies and their scoring factors.
+4. Inspect compatibility validation and the resulting architecture blueprint.
+5. Save the project when persistence is configured, then reopen it from the project records flow.
+
+## Key capabilities
+
+### Requirements analysis
+
+Project requirements are converted into structured technical criteria that drive technology recommendations.
+
+### Explainable recommendations
+
+Recommendations expose scoring factors so users can understand why a technology is a fit instead of receiving an unexplained stack list.
+
+### Technology catalog
+
+The catalog provides structured technology metadata used by the recommendation and validation layers.
+
+### Compatibility validation
+
+Selected technologies are checked for known compatibility constraints before the architecture blueprint is produced.
+
+### Architecture blueprint
+
+The final output presents the selected stack and supporting architecture in a structured format suitable for implementation planning.
+
+### Project persistence
+
+Saved projects follow a server-side flow:
 
 ```text
-New → Define → Save → Open/Load → Update/Delete
-```
-
-## What the application does
-
-### 1. Define a project
-
-The guided project form captures the context needed for analysis:
-
-- Project name and description
-- Project type
-- Goals and requirements
-- Complexity preference
-
-The primary action is **Analyze My Project**. Required fields are validated before analysis.
-
-### 2. Analyze requirements
-
-The analyzer normalizes project text and matches it against registered component and recipe metadata. Matching considers names, descriptions, categories, domains, tags, supported project types, outputs, dependencies, and recipe metadata.
-
-The recommendation engine is **deterministic and registry-based**. It does not call an external AI/LLM recommendation service or invent technologies that are absent from the registry.
-
-### 3. Review recommendations
-
-Recommendations are ranked and explainable. Each recommendation can expose its fit, matching signals, dependencies, conflicts, difficulty, recipe relevance, and the reason it was recommended.
-
-Users can:
-
-- Add one technology to the stack
-- Inspect details
-- Dismiss a recommendation
-- Add compatible recommendations in bulk
-- Review why a technology was recommended
-
-The current stack is never silently replaced by recommendations.
-
-### Recommendation scoring
-
-| Signal | Weight |
-|---|---:|
-| Selected domain match | 25 |
-| Matching normalized metadata terms | Up to 40 |
-| Difficulty preference match | 15 |
-| Related recipe relevance | Up to 10 |
-| Registry dependency compatibility | 5, or -10 when a dependency is unregistered |
-
-Scores are clamped to 0–100. Registry conflicts can prevent conservative bulk addition, while the validation engine remains the final source of truth after selection.
-
-## Technology catalog
-
-The application uses structured registries for components, domains, and stack templates. A component can describe relationships and constraints such as:
-
-- Domain and category
-- Description and tags
-- Required dependencies
-- Optional technologies
-- Declared conflicts and warnings
-- Difficulty and estimated learning effort
-- Supported project types
-- Outputs
-- Hardware pins where relevant
-
-This lets the same architecture model represent software/web, AI/automation, and mechatronics-oriented components.
-
-## Compatibility validation
-
-The **Compatibility Check** evaluates the technologies actually selected by the user. It is intentionally separate from recommendation fit.
-
-The validation engine can report:
-
-- Missing dependencies
-- Component conflicts
-- Hardware pin conflicts where represented in the registry
-- Rule violations
-- Warnings and other registered compatibility conditions
-
-A successful result communicates that the selected technologies work together and points the user toward blueprint generation.
-
-## Stack templates
-
-Stack templates are an **optional shortcut**, not a required step. They represent curated combinations that can help users start from a proven pattern and then adjust the stack to their project.
-
-## Architecture blueprint
-
-After the stack is validated, the application can generate a structured architecture blueprint containing the project definition, selected technologies, and validation summary.
-
-Supported exports include:
-
-- Markdown blueprint
-- JSON representation/schema
-- Copy-to-clipboard actions
-- Downloadable `.md` and `.json` artifacts
-
-## Project persistence
-
-Project persistence is implemented behind a server-side boundary:
-
-```text
-Browser UI
-  ↓
-TechStackProvider
-  ↓
+UI
+ ↓
 Next.js API routes
-  ↓
-ProjectPersistenceService
-  ↓
-ProjectRepository
-  ↓
-Server-side Supabase
+ ↓
+Persistence service
+ ↓
+Supabase
 ```
 
-The persistence API supports:
+The persistence feature supports creating, opening/loading, updating, and deleting project records.
 
-- Save/Create project
-- List projects
-- Open/Load project
-- Update project
-- Delete project
-- New/reset local work
-- Revision-based conflict protection
+## Technology stack
 
-Saved records contain canonical project information and selected component IDs. Derived recommendations, validation results, blueprints, and other UI state are recomputed after loading rather than treated as authoritative persisted state.
+| Layer | Technology |
+| --- | --- |
+| Framework | Next.js 16 |
+| UI | React 19, TypeScript |
+| Styling | Tailwind CSS, shadcn/ui |
+| Backend/data | Next.js server routes, Supabase |
+| Package manager | pnpm 11.23.0 |
+| Motion | Motion / Framer Motion |
+| Icons | Lucide React / Iconify |
+| Tables | TanStack React Table |
+| Rich text | TipTap |
+| Charts | Recharts |
 
-### Security boundary
-
-- React components do not connect directly to Supabase.
-- The Supabase service-role key remains server-side.
-- Anonymous project scope is controlled by a server-managed HTTP-only session.
-- Clients cannot choose their persistence scope.
-- Revision conflicts are handled explicitly.
-- Invalid project IDs and snapshots are rejected before persistence operations.
-- Raw database errors and stack traces are mapped to safe client-facing errors.
-
-Authentication/accounts, teams, collaboration, billing, realtime collaboration, and anonymous-to-user account claiming are outside the current product boundary.
-
-## UX redesign and human-factors work
-
-A dedicated UX audit was used to reduce cognitive load without removing the application's underlying architecture capabilities.
-
-The redesign addressed:
-
-- **Hick's Law:** moved the workspace toward a guided six-step journey instead of exposing every decision at once.
-- **Miller's Law:** reduced simultaneous visible concepts and used progressive disclosure for secondary details.
-- **Tesler's Law:** translated technical labels such as Nodes and Engineering Tracks into clearer user-facing language such as Technologies and Project Type where appropriate.
-- **Fitts's Law:** increased important controls and action targets toward touch-friendly 44–48px sizing.
-- **Doherty Threshold:** added clearer action/state feedback where workflow state is important.
-- **Peak-End Rule:** made successful validation and blueprint generation explicit end-state moments.
-- **Jakob's Law:** retained familiar search, cards, selectors, disclosures, and action patterns while reducing unexplained jargon.
-
-The result keeps the underlying technical depth available while making the primary journey easier to understand and operate.
-
-## Responsive and mobile behavior
-
-The production workflow was checked on mobile, including a 390×844 viewport. The guided journey, project form, recommendations, selected stack, validation, and blueprint areas remain usable without visible project-control overflow. Important actions use touch-friendly targets and the selected stack is presented as part of the mobile flow rather than competing with the main workspace.
-
-## Production deployment
-
-The application is deployed as a Next.js application on Hostinger and is published at `architect.ediccrew.com`.
-
-The custom subdomain uses an A record pointing to the Hostinger website IP. The deployment uses the `main` branch with Node.js 22.x in the Hostinger environment.
-
-The production deployment was manually verified through the live application after the DNS configuration was corrected. The live workflow was exercised from project definition through recommendation, stack selection, compatibility checking, stack-template/blueprint areas, and project persistence controls.
-
-## Verification status
-
-The current production state has been functionally verified by interactive browser/mobile QA. Confirmed flows include:
-
-- Landing page and guided workflow navigation
-- Required project-field validation
-- Project definition submission
-- Deterministic recommendation rendering
-- Adding a recommended technology to the stack
-- Selected-stack updates
-- Compatibility feedback and missing dependency handling
-- Stack template area
-- Blueprint generation/export flow
-- New/Open/Save project controls
-- Mobile interaction and readable responsive layout
-- Final UX hierarchy and touch-target improvements
-
-The latest UX clarity correction is recorded in commit `afff2666dd93d83bbd3d7c1266e5f8de8f509ab6`, which changed the initial hero compatibility metric from a misleading **Ready** state to **Not checked yet** until validation has actually occurred.
-
-Automated repository verification also includes linting, type checking, tests, production builds, dependency/security guards, and regression checks. Individual historical results should be interpreted according to their recorded date and commit.
+Dependency versions are maintained in [`package.json`](package.json) and the lockfile.
 
 ## Requirements
 
-Use Node.js 20.9 or newer and **pnpm**. The repository uses `pnpm-lock.yaml` as its canonical lockfile; do not use `npm install` for this project.
+- Node.js 22.x for the supported development/CI environment
+- pnpm 11.23.0
+- Git
+
+The repository's quality workflow installs pnpm 11.23.0 and runs on Node.js 22. citeturn11file0
+
+## Installation
+
+Clone the repository and install the exact dependency versions from the lockfile:
 
 ```bash
+git clone https://github.com/davidifeanyicelestine586-arch/tech-stack-architect.git
+cd tech-stack-architect
 pnpm install --frozen-lockfile
+```
+
+**Source download:** https://github.com/davidifeanyicelestine586-arch/tech-stack-architect/archive/refs/heads/main.zip
+
+## Configuration
+
+The application uses server-side environment variables for Supabase persistence. The required variables are:
+
+| Variable | Required for | Description |
+| --- | --- | --- |
+| `SUPABASE_URL` | Persistence | Supabase project URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | Persistence | Server-only Supabase service-role key |
+| `PORT` | Optional | Port used by the production Node.js server; defaults to `3000` |
+
+Create a local environment file when persistence is enabled. Never commit real credentials.
+
+```env
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-server-only-key
+```
+
+`SUPABASE_SERVICE_ROLE_KEY` must remain server-side and must never be exposed through a `NEXT_PUBLIC_*` variable or committed to the repository.
+
+## Usage
+
+Start the development server:
+
+```bash
 pnpm dev
 ```
 
-## Verification commands
+Then open `http://localhost:3000`.
+
+For a production-style local run:
+
+```bash
+pnpm build
+pnpm start
+```
+
+The default server port is `3000`. Set `PORT` when a different port is required.
+
+## Validation and testing
+
+Run the complete local quality gate:
 
 ```bash
 pnpm lint
@@ -216,51 +179,101 @@ pnpm test
 pnpm build
 ```
 
-The test suite covers dependency, conflict, validation, recipe, export, project-definition, and persistence behavior.
+The same four checks run in GitHub Actions for pushes to `main` and pull requests. citeturn11file0
 
-## Production server
+## Project persistence
 
-```bash
-pnpm install --frozen-lockfile
-pnpm build
-pnpm start
-```
+Persistence is intentionally separated from browser-side data access. The application uses Next.js API routes and a server-side persistence service before reaching Supabase.
 
-The application listens on port 3000 by default. Set `PORT` when another port is required.
+The repository documents the persistence implementation in:
+
+- [`phase-3a2-supabase-repository.md`](docs/phase-3a2-supabase-repository.md)
+- [`phase-3a3-persistence-api.md`](docs/phase-3a3-persistence-api.md)
+- [`phase-3a4-provider-persistence.md`](docs/phase-3a4-provider-persistence.md)
+- [`phase-3a5-project-persistence-ui.md`](docs/phase-3a5-project-persistence-ui.md)
+
+## Production deployment
+
+The current production application is hosted at:
+
+https://architect.ediccrew.com
+
+The deployment documentation covers the Hostinger setup, Node.js runtime, domain configuration, and deployment entrypoint:
+
+- [`nextjs-hostinger-deployment.md`](docs/nextjs-hostinger-deployment.md)
+- [`nextjs-deployment-entrypoint-report.md`](docs/nextjs-deployment-entrypoint-report.md)
+
+Keep deployment documentation aligned with the actual hosting configuration when infrastructure changes.
+
+## Documentation
+
+Detailed project records and verification notes are maintained in [`docs/`](docs/):
+
+- Deployment and hosting
+- Supabase repository integration
+- Persistence API and provider layers
+- Project persistence UI
+- UX audit and remediation
+- Visual verification
+- Migration and QA reports
+
+Implementation changes that affect architecture, configuration, deployment, persistence, or user-facing behavior should update the relevant documentation.
 
 ## Current product boundary
 
-The current application intentionally does **not** include:
+The current application does **not** include:
 
-- User authentication and accounts
-- Login/signup
-- Team accounts
-- Collaboration/comments/sharing
-- Billing
-- Realtime collaboration
-- AI/LLM-powered recommendations
+- User authentication or accounts
+- Login/signup flows
+- Teams or collaboration features
+- Billing or subscriptions
+- Real-time collaboration
+- AI/LLM-generated recommendations
 - Automatic save/autosave
 - Direct browser-to-Supabase access
 
-These are product boundaries, not undocumented gaps.
+These boundaries describe the current implementation and should be updated when the product scope changes.
 
-## Technology stack
+## Contributing
 
-- Next.js
-- React
+Contribution guidelines are available in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+At minimum, contributors should run:
+
+```bash
+pnpm lint
+pnpm check
+pnpm test
+pnpm build
+```
+
+before opening a pull request.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+## Acknowledgments
+
+Tech Stack Architect is built with and benefits from the open-source ecosystem, including:
+
+- Next.js and React
 - TypeScript
 - Tailwind CSS
-- shadcn/ui foundations
+- shadcn/ui
 - Supabase
-- pnpm
 - Motion / Framer Motion
-- Lucide React / Iconify
+- Lucide React and Iconify
 - TanStack React Table
 - TipTap
 - Recharts
 
-## Documentation
+See [`package.json`](package.json) for the dependency declarations and versions used by the project.
 
-Project documentation is maintained in `docs/`, including deployment notes, persistence implementation records, migration reports, and visual/UX verification records.
+## Support and contact
 
-When implementation changes materially, update the README and relevant project documentation so that implemented features, verified production behavior, planned work, and limitations remain clearly separated.
+- **Issues and feature requests:** https://github.com/davidifeanyicelestine586-arch/tech-stack-architect/issues
+- **Project repository:** https://github.com/davidifeanyicelestine586-arch/tech-stack-architect
+- **Live application:** https://architect.ediccrew.com
+
+Please use the issue tracker for reproducible bugs, feature requests, and documentation problems. Do not post passwords, API keys, service-role keys, or other sensitive information in public issues.
