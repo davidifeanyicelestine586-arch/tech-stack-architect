@@ -26,9 +26,10 @@ export function RecommendationPanel() {
   }
 
   const recommendations = requirementAnalysis.recommendations.filter((recommendation) => !ignoredRecommendationIds.includes(recommendation.component.id));
-  const visibleRecommendations = recommendations.slice(0, 8);
+  const visibleRecommendations = recommendations.slice(0, 6);
   const compatibleCount = recommendations.filter((recommendation) => recommendation.compatible).length;
   const relatedRecipes = requirementAnalysis.recipeMatches.filter(({ score }) => score > 0).slice(0, 3);
+  const matchedSignals = requirementAnalysis.matchedTerms.slice(0, 8);
 
   return (
     <section className="flex flex-col gap-4">
@@ -43,10 +44,28 @@ export function RecommendationPanel() {
         <Button variant="outline" className="h-11 gap-1.5 text-xs" onClick={addAllCompatibleRecommendations} disabled={compatibleCount === 0}><Plus className="size-3.5" /> Add All Compatible ({compatibleCount})</Button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 px-1">
-        {requirementAnalysis.matchedTerms.length > 0 && <><span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Matched signals</span>{requirementAnalysis.matchedTerms.slice(0, 8).map((term) => <Badge key={term} variant="outline" className="text-[10px]">{term}</Badge>)}</>}
-        {relatedRecipes.length > 0 && <><span className="ml-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Useful templates</span>{relatedRecipes.map(({ recipe, score }) => <Badge key={recipe.id} variant="secondary" className="text-[10px]">{recipe.title} · {score}%</Badge>)}</>}
-      </div>
+      {(matchedSignals.length > 0 || relatedRecipes.length > 0) && (
+        <details className="group rounded-lg border border-border/60 bg-muted/20">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 px-3 text-[11px] font-semibold text-foreground [&::-webkit-details-marker]:hidden">
+            <span>Why these recommendations?</span>
+            <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+          </summary>
+          <div className="flex flex-col gap-3 border-t border-border/60 px-3 pb-3 pt-2.5">
+            {matchedSignals.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Matched signals</span>
+                {matchedSignals.map((term) => <Badge key={term} variant="outline" className="text-[10px]">{term}</Badge>)}
+              </div>
+            )}
+            {relatedRecipes.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Useful templates</span>
+                {relatedRecipes.map(({ recipe, score }) => <Badge key={recipe.id} variant="secondary" className="text-[10px]">{recipe.title} · {score}%</Badge>)}
+              </div>
+            )}
+          </div>
+        </details>
+      )}
 
       {visibleRecommendations.length > 0 ? (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -79,7 +98,7 @@ export function RecommendationPanel() {
                     </div>
                   </details>
 
-                  <div className="flex flex-wrap items-center gap-2 border-t border-border/50 pt-3 mt-3">
+                  <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border/50 pt-3">
                     <Button variant={isSelected ? "secondary" : "default"} size="sm" className="min-h-11 gap-1.5 text-[10px]" onClick={() => addRecommendation(component.id)} disabled={isSelected}>
                       {isSelected ? <Check className="size-3.5" /> : <Plus className="size-3.5" />}{isSelected ? "Added to Stack" : "Add to Stack"}
                     </Button>
