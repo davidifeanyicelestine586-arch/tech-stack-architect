@@ -4,6 +4,10 @@ EdicCrew Tech Stack Architect is a Next.js workspace for assembling, validating,
 
 live direct: https://www.architect.ediccrew.com
 
+or
+
+https://architect.ediccrew.com 
+
 ## Requirements
 
 Use Node.js 20.9 or newer and **pnpm**. The repository uses `pnpm-lock.yaml` as its canonical lockfile; do not use `npm install` for this project.
