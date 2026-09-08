@@ -10,6 +10,7 @@ import { RecipeRecommendations } from "@/components/architect/recipe-recommendat
 import { BlueprintPanel } from "@/components/architect/blueprint-panel";
 import { ProjectDefinitionForm } from "@/components/architect/project-definition-form";
 import { RecommendationPanel } from "@/components/architect/recommendation-panel";
+import { WorkflowProgress } from "@/components/architect/workflow-progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,15 +23,6 @@ export const metadata: Metadata = {
   title: "Workspace | Ediccrew Tech Stack Architect",
   description: "Design, validate, understand, and generate production-ready technology stacks.",
 };
-
-const workflowSteps = [
-  { number: "01", label: "Define", href: "#define" },
-  { number: "02", label: "Analyze", href: "#recommendations" },
-  { number: "03", label: "Review", href: "#recommendations" },
-  { number: "04", label: "Build", href: "#components" },
-  { number: "05", label: "Validate", href: "#validation" },
-  { number: "06", label: "Blueprint", href: "#blueprint" },
-];
 
 export default function WorkspacePage() {
   const domains = domainsData;
@@ -64,16 +56,8 @@ export default function WorkspacePage() {
           </div>
         </div>
 
-        <div className="mt-6 border-t border-border/60 pt-5" aria-label="Architecture workflow">
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-            {workflowSteps.map((step, index) => (
-              <Link key={step.number} href={step.href} className={`group flex min-h-12 items-center gap-2 rounded-lg px-3 py-2 text-left transition-colors ${index === 0 ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`} aria-current={index === 0 ? "step" : undefined}>
-                <span className="text-[10px] font-bold tabular-nums">{step.number}</span>
-                <span className="text-xs font-semibold">{step.label}</span>
-                {index < workflowSteps.length - 1 && <span className="ml-auto hidden text-muted-foreground/50 lg:block">→</span>}
-              </Link>
-            ))}
-          </div>
+        <div className="mt-6 border-t border-border/60 pt-5">
+          <WorkflowProgress />
           <p className="mt-3 text-xs text-muted-foreground">Start with your project. Architect handles the technical complexity as you move through each step.</p>
         </div>
 
