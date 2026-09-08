@@ -21,7 +21,7 @@ export function SelectedStack({ variant = "default" }: SelectedStackProps) {
   } = useTechStack();
 
   const missingCount = validationReport?.dependencyReport?.missing?.length || 0;
-  const isValidated = Boolean(validationReport && validationReport.issues.length === 0 && validationReport.score >= 90);
+  const isValidated = Boolean(validationReport?.valid && validationReport.score >= 90);
   const isMobile = variant === "mobile";
 
   if (selectedComponents.length === 0) {
