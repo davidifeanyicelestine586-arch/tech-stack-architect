@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { BookOpen, CheckCircle2, FileCode2, Layers, ShieldCheck, Sparkles } from "lucide-react";
+import { BookOpen, FileCode2, Layers, ShieldCheck, Sparkles } from "lucide-react";
 import { ComponentBrowser } from "@/components/architect/component-browser";
 import { DomainSelector } from "@/components/architect/domain-selector";
 import { SelectedStack } from "@/components/architect/selected-stack";
@@ -13,7 +13,7 @@ import { RecommendationPanel } from "@/components/architect/recommendation-panel
 import { WorkflowProgress } from "@/components/architect/workflow-progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import componentsData from "@/data/components.json";
 import domainsData from "@/data/domain.json";
 import recipesData from "@/data/recipes.json";
@@ -67,7 +67,7 @@ export default function WorkspacePage() {
           <Metric label="Stack Templates" value={recipes.length} />
           <div className="flex flex-col">
             <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Compatibility Check</span>
-            <span className="flex items-center gap-1 text-xl font-bold text-emerald-600 dark:text-emerald-400"><CheckCircle2 className="size-4" /> Ready</span>
+            <span className="text-base font-bold text-muted-foreground">Not checked yet</span>
           </div>
         </div>
       </section>
