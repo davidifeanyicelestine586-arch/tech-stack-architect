@@ -7,7 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { X, Layers, Trash2, Zap } from "lucide-react";
 
-export function SelectedStack() {
+type SelectedStackProps = {
+  variant?: "default" | "mobile";
+};
+
+export function SelectedStack({ variant = "default" }: SelectedStackProps) {
   const {
     selectedComponents,
     removeComponent,
@@ -18,11 +22,12 @@ export function SelectedStack() {
 
   const missingCount = validationReport?.dependencyReport?.missing?.length || 0;
   const isValidated = Boolean(validationReport && validationReport.issues.length === 0 && validationReport.score >= 90);
+  const isMobile = variant === "mobile";
 
   if (selectedComponents.length === 0) {
     return (
       <Card className="border-dashed bg-muted/20">
-        <CardContent className="flex flex-col items-center justify-center p-10 text-center sm:p-12">
+        <CardContent className={`flex flex-col items-center justify-center text-center ${isMobile ? "p-7" : "p-10 sm:p-12"}`}>
           <div className="mb-3 rounded-full bg-muted/60 p-3">
             <Layers className="size-6 text-muted-foreground" />
           </div>
@@ -36,7 +41,7 @@ export function SelectedStack() {
   }
 
   return (
-    <Card id="stack" className="overflow-hidden">
+    <Card id={isMobile ? undefined : "stack"} className="overflow-hidden">
       <CardHeader className="border-b border-border/50 bg-muted/10 pb-3">
         <div className="flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2">
@@ -62,7 +67,7 @@ export function SelectedStack() {
       </CardHeader>
 
       <CardContent className="p-0">
-        <div className="max-h-[360px] divide-y divide-border/50 overflow-y-auto">
+        <div className={`${isMobile ? "max-h-[240px]" : "max-h-[360px]"} divide-y divide-border/50 overflow-y-auto`}>
           {selectedComponents.map((comp) => (
             <div key={comp.id} className="group flex min-h-14 items-center justify-between gap-3 p-3 transition-colors hover:bg-muted/30">
               <div className="flex min-w-0 flex-col gap-0.5">
