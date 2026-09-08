@@ -2,7 +2,7 @@
 
 EdicCrew Tech Stack Architect is a Next.js workspace for assembling, validating, persisting, and exporting technology-stack blueprints. The product uses structured JSON registries and a deterministic in-memory engine for component dependencies, conflicts, recipes, recommendations, and blueprint exports. Project persistence is implemented behind a server-side API and Supabase repository boundary.
 
-live direct: https://architect.ediccrew.com
+live direct: https://www.architect.ediccrew.com
 
 ## Requirements
 
