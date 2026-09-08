@@ -11,3 +11,6 @@ overrides:
   'brace-expansion@5': 5.0.9
   postcss: 8.5.18
   sharp: 0.35.0
+  qs: 6.16.0
+  '@tiptap/core': 3.30.4
+  hono: 4.12.34
