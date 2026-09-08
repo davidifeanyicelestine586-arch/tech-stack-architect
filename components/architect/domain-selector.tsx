@@ -27,43 +27,42 @@ export function DomainSelector() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Engineering Tracks
+            Project Type
           </span>
-          <Badge variant="outline" className="text-[10px] font-mono px-2 py-0">
-            {domains.length} Tracks
+          <Badge variant="outline" className="px-2 py-0 text-[10px] font-mono">
+            {domains.length} Types
           </Badge>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-        {/* All Domains Tab */}
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+        {/* All project types */}
         <button
           type="button"
           onClick={() => setActiveDomain("all")}
           className={cn(
-            "flex flex-col items-start gap-2 rounded-xl border p-3 text-left transition-all duration-200 cursor-pointer",
+            "flex min-h-11 cursor-pointer flex-col items-start gap-2 rounded-xl border p-3 text-left transition-all duration-200",
             activeDomain === "all"
               ? "border-primary bg-primary/10 shadow-xs ring-1 ring-primary/30"
-              : "border-border bg-card/60 hover:bg-card hover:border-border/80"
+              : "border-border bg-card/60 hover:border-border/80 hover:bg-card"
           )}
         >
-          <div className="flex items-center justify-between w-full">
-            <div className="p-1.5 rounded-lg bg-background border border-border/60">
-              <Sparkles className="w-4 h-4 text-primary" />
+          <div className="flex w-full items-center justify-between">
+            <div className="rounded-lg border border-border/60 bg-background p-1.5">
+              <Sparkles className="h-4 w-4 text-primary" />
             </div>
             <Badge variant="secondary" className="text-[10px] font-semibold">
               {components.length}
             </Badge>
           </div>
           <div>
-            <div className="text-xs font-bold text-foreground">All Domains</div>
-            <p className="text-[11px] text-muted-foreground line-clamp-1">
-              Full cross-domain stack catalog
+            <div className="text-xs font-bold text-foreground">All Project Types</div>
+            <p className="line-clamp-2 text-[11px] text-muted-foreground">
+              Browse the full technology catalog
             </p>
           </div>
         </button>
 
-        {/* Individual Domain Tabs */}
         {domains.map((dom) => {
           const count = components.filter((c) => c.domain === dom.id).length;
           const isActive = activeDomain === dom.id;
@@ -75,28 +74,28 @@ export function DomainSelector() {
               type="button"
               onClick={() => setActiveDomain(dom.id)}
               className={cn(
-                "group relative flex flex-col items-start gap-2 rounded-xl border p-3 text-left transition-all duration-200 cursor-pointer",
+                "group relative flex min-h-11 cursor-pointer flex-col items-start gap-2 rounded-xl border p-3 text-left transition-all duration-200",
                 isActive
                   ? "border-primary bg-primary/10 shadow-xs ring-1 ring-primary/30"
-                  : "border-border bg-card/60 hover:bg-card hover:border-border/80"
+                  : "border-border bg-card/60 hover:border-border/80 hover:bg-card"
               )}
             >
-              <div className="flex items-center justify-between w-full">
-                <div className="p-1.5 rounded-lg bg-background border border-border/60 flex items-center justify-center">
+              <div className="flex w-full items-center justify-between">
+                <div className="flex items-center justify-center rounded-lg border border-border/60 bg-background p-1.5">
                   {getDomainIcon(dom.id)}
                 </div>
                 <Badge
                   variant={isActive ? "default" : "secondary"}
                   className="text-[10px] font-semibold"
                 >
-                  {count} Nodes
+                  {count} Technologies
                 </Badge>
               </div>
               <div className="w-full">
-                <div className="text-xs font-bold text-foreground group-hover:text-primary transition-colors flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-foreground transition-colors group-hover:text-primary">
                   <span>{dom.title}</span>
                 </div>
-                <p className="text-[11px] text-muted-foreground line-clamp-1">
+                <p className="line-clamp-2 text-[11px] text-muted-foreground">
                   {dom.description}
                 </p>
               </div>
