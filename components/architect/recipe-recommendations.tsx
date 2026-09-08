@@ -14,10 +14,15 @@ export function RecipeRecommendations() {
     return (
       <div id="recipes" className="flex flex-col gap-4">
         <div className="flex items-center justify-between px-1">
-          <h3 className="flex items-center gap-2 text-sm font-bold">
-            <Sparkles className="size-4 text-primary" />
-            Stack Templates
-          </h3>
+          <div className="flex items-center gap-2">
+            <h3 className="flex items-center gap-2 text-sm font-bold">
+              <Sparkles className="size-4 text-primary" />
+              Stack Templates
+            </h3>
+            <Badge variant="outline" className="text-[10px] font-mono">
+              Optional
+            </Badge>
+          </div>
           <Badge variant="outline" className="text-[10px] font-mono">
             Select a stack first
           </Badge>
@@ -37,12 +42,17 @@ export function RecipeRecommendations() {
     <div id="recipes" className="flex flex-col gap-4">
       <div className="flex flex-col gap-1 px-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="flex items-center gap-2 text-sm font-bold">
-            <Sparkles className="size-4 text-primary" />
-            Recommended Stack Templates
-          </h3>
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="flex items-center gap-2 text-sm font-bold">
+              <Sparkles className="size-4 text-primary" />
+              Stack Templates
+            </h3>
+            <Badge variant="outline" className="text-[10px] font-mono">
+              Optional
+            </Badge>
+          </div>
           <p className="text-[11px] text-muted-foreground">
-            Start with a proven combination, then adjust it to your project.
+            Optional shortcut — start with a proven combination, then adjust it to your project.
           </p>
         </div>
         <Badge variant="outline" className="w-fit text-[10px] font-mono">
