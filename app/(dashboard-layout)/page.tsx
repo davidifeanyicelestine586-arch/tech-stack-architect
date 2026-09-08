@@ -104,17 +104,20 @@ export default function WorkspacePage() {
             <SelectedStack />
           </div>
           <div id="validation" className="scroll-mt-24"><ValidationPanel /></div>
-          <Card id="docs" className="border-primary/20 bg-primary/5">
-            <CardHeader className="pb-2"><CardTitle className="flex items-center gap-1.5 text-xs font-bold text-primary"><BookOpen className="size-3.5" /> Documentation</CardTitle></CardHeader>
-            <CardContent>
-              <p className="text-[10px] leading-relaxed text-muted-foreground">Every technology in the registry includes a full specification and integration guide.</p>
-              <Button variant="link" className="mt-2 h-10 p-0 text-xs font-bold text-primary underline" render={<Link href="/content-detail" />}>Browse detailed documentation</Button>
-            </CardContent>
-          </Card>
         </div>
       </div>
 
       <div id="blueprint" className="scroll-mt-24"><BlueprintPanel /></div>
+
+      <Card id="docs" className="border-primary/20 bg-primary/5">
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-1.5 text-xs font-bold text-primary"><BookOpen className="size-3.5" /> Need deeper technical detail?</CardTitle>
+          <CardDescription className="text-[10px]">Explore full specifications and integration guides after you have your architecture blueprint.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button variant="link" className="h-10 p-0 text-xs font-bold text-primary underline" render={<Link href="/content-detail" />}>Browse detailed documentation</Button>
+        </CardContent>
+      </Card>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <FeatureCard icon={<ShieldCheck className="size-4" />} iconClassName="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" title="Deterministic Validation" description="Checks dependencies, hardware conflicts, and architectural rules before you treat a stack as ready." />
