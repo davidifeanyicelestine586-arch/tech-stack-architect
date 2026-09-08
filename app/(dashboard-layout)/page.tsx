@@ -75,6 +75,17 @@ export default function WorkspacePage() {
       <ProjectDefinitionForm />
       <div id="recommendations" className="scroll-mt-24"><RecommendationPanel /></div>
 
+      <div className="lg:hidden">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-primary">Step 4 · Build</p>
+            <h2 className="text-base font-bold tracking-tight text-foreground">Keep your stack in view</h2>
+          </div>
+          <Badge variant="outline" className="text-[10px]">Mobile workspace</Badge>
+        </div>
+        <SelectedStack variant="mobile" />
+      </div>
+
       <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
         <div className="flex flex-col gap-8 lg:col-span-8">
           <section className="flex flex-col gap-5" id="components">
@@ -89,7 +100,9 @@ export default function WorkspacePage() {
         </div>
 
         <div className="flex flex-col gap-6 lg:sticky lg:top-24 lg:col-span-4">
-          <SelectedStack />
+          <div className="hidden lg:block">
+            <SelectedStack />
+          </div>
           <div id="validation" className="scroll-mt-24"><ValidationPanel /></div>
           <Card id="docs" className="border-primary/20 bg-primary/5">
             <CardHeader className="pb-2"><CardTitle className="flex items-center gap-1.5 text-xs font-bold text-primary"><BookOpen className="size-3.5" /> Documentation</CardTitle></CardHeader>
