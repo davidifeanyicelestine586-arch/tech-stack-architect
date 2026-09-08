@@ -12,20 +12,21 @@ export function ValidationPanel() {
 
   if (selectedComponents.length === 0) {
     return (
-      <Card id="validation" className="overflow-hidden">
-        <CardHeader className="pb-3 border-b border-border/50">
+      <Card id="validation" className="overflow-hidden border-dashed bg-muted/20">
+        <CardHeader className="border-b border-border/50 pb-3">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-primary" />
-            <CardTitle className="text-sm font-bold">Validation Report</CardTitle>
+            <ShieldCheck className="size-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-bold">Compatibility Check</CardTitle>
           </div>
-          <CardDescription className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground pt-1">
-            Status: <span className="text-muted-foreground">No Stack</span>
+          <CardDescription className="pt-1 text-[11px] leading-relaxed">
+            Your stack will be checked for dependencies, conflicts, and architecture rules.
           </CardDescription>
         </CardHeader>
         <CardContent className="p-4">
-          <p className="text-[11px] leading-relaxed text-muted-foreground">
-            Select technology nodes to generate dependency, conflict, and readiness results.
-          </p>
+          <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-background/60 p-3 text-[11px] text-muted-foreground">
+            <Info className="size-3.5 shrink-0" />
+            Add technologies to unlock the compatibility result.
+          </div>
         </CardContent>
       </Card>
     );
@@ -33,107 +34,73 @@ export function ValidationPanel() {
 
   const { score, status, warnings, suggestions, dependencyReport, conflictReport } = validationReport;
   const issues = [
-    ...(dependencyReport?.missing || []).map((dependency) => ({
-      component: "Dependency",
-      severity: "error",
-      message: `Missing required dependency: ${dependency}`,
-    })),
-    ...(conflictReport?.componentConflicts || []).map((conflict) => ({
-      component: "Component Conflict",
-      severity: "error",
-      message: `${conflict.source} conflicts with ${conflict.target}: ${conflict.reason}`,
-    })),
-    ...(conflictReport?.pinConflicts || []).map((conflict) => ({
-      component: "Hardware Pin Conflict",
-      severity: conflict.severity,
-      message: `Pin ${conflict.pin} is shared by ${conflict.components.join(", ")}. ${conflict.recommendation}`,
-    })),
-    ...(conflictReport?.ruleViolations || []).map((violation) => ({
-      component: violation.rule,
-      severity: violation.severity,
-      message: violation.message,
-    })),
+    ...(dependencyReport?.missing || []).map((dependency) => ({ component: "Dependency", severity: "error", message: `Missing required dependency: ${dependency}` })),
+    ...(conflictReport?.componentConflicts || []).map((conflict) => ({ component: "Compatibility", severity: "error", message: `${conflict.source} conflicts with ${conflict.target}: ${conflict.reason}` })),
+    ...(conflictReport?.pinConflicts || []).map((conflict) => ({ component: "Hardware compatibility", severity: conflict.severity, message: `Pin ${conflict.pin} is shared by ${conflict.components.join(", ")}. ${conflict.recommendation}` })),
+    ...(conflictReport?.ruleViolations || []).map((violation) => ({ component: violation.rule, severity: violation.severity, message: violation.message })),
     ...(warnings || []),
   ];
-
-  const getScoreColor = (s: number) => {
-    if (s >= 90) return "text-emerald-600 dark:text-emerald-400";
-    if (s >= 70) return "text-amber-600 dark:text-amber-400";
-    return "text-rose-600 dark:text-rose-400";
-  };
-
-  const getScoreBg = (s: number) => {
-    if (s >= 90) return "bg-emerald-500/10";
-    if (s >= 70) return "bg-amber-500/10";
-    return "bg-rose-500/10";
-  };
+  const isReady = issues.length === 0 && score >= 90;
+  const getScoreColor = (s: number) => s >= 90 ? "text-emerald-600 dark:text-emerald-400" : s >= 70 ? "text-amber-600 dark:text-amber-400" : "text-rose-600 dark:text-rose-400";
+  const getScoreBg = (s: number) => s >= 90 ? "bg-emerald-500/10" : s >= 70 ? "bg-amber-500/10" : "bg-rose-500/10";
 
   return (
-    <Card id="validation" className="overflow-hidden">
-      <CardHeader className="pb-3 border-b border-border/50">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-primary" />
-            <CardTitle className="text-sm font-bold">Validation Report</CardTitle>
-          </div>
-          <div className={cn("flex items-center gap-1.5 px-2.5 py-1 rounded-full font-bold text-xs", getScoreBg(score), getScoreColor(score))}>
-            {score}% Match
-          </div>
-        </div>
-        <CardDescription className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground pt-1">
-          Status: <span className={getScoreColor(score)}>{status}</span>
-        </CardDescription>
-      </CardHeader>
-      
-      <CardContent className="p-4 flex flex-col gap-5">
-        {/* Warnings Section */}
-        <div className="flex flex-col gap-2.5">
-          <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
-            <AlertTriangle className="w-3 h-3" /> Issues & Warnings ({issues.length})
-          </h4>
-          {issues.length > 0 ? (
-            <div className="flex flex-col gap-2">
-              {issues.map((warn, idx) => (
-                <div key={idx} className="p-2.5 rounded-lg border border-rose-500/20 bg-rose-500/5 flex flex-col gap-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-rose-700 dark:text-rose-400 uppercase">{warn.component}</span>
-                    <Badge variant="outline" className="text-[8px] h-4 px-1 border-rose-500/30 text-rose-600">
-                      {warn.severity}
-                    </Badge>
-                  </div>
-                  <p className="text-[11px] text-rose-600/90 dark:text-rose-400/90 leading-tight">
-                    {warn.message}
-                  </p>
-                </div>
-              ))}
+    <Card id="validation" className={cn("overflow-hidden", isReady && "border-emerald-500/30") }>
+      <CardHeader className="border-b border-border/50 pb-3">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2">
+              {isReady ? <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" /> : <ShieldCheck className="size-4 text-primary" />}
+              <CardTitle className="text-sm font-bold">Compatibility Check</CardTitle>
             </div>
-          ) : (
-            <div className="p-3 rounded-lg border border-emerald-500/20 bg-emerald-500/5 flex items-center gap-2">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-medium">No missing dependencies or conflicts detected.</span>
+            <CardDescription className="pt-1 text-[11px]">{isReady ? "Your selected technologies work together." : "Review these items before generating your blueprint."}</CardDescription>
+          </div>
+          <div className={cn("shrink-0 rounded-full px-2.5 py-1 text-xs font-bold", getScoreBg(score), getScoreColor(score))}>{score}% match</div>
+        </div>
+      </CardHeader>
+
+      {isReady ? (
+        <CardContent className="flex flex-col gap-4 p-4">
+          <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+            <div className="flex items-start gap-3">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/10">
+                <CheckCircle2 className="size-5 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-foreground">Architecture validated</p>
+                <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">No missing dependencies or conflicts were detected. Your stack is ready for the next step.</p>
+              </div>
+            </div>
+          </div>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Next step</p>
+          <div className="flex items-center gap-2 text-xs font-semibold text-foreground"><ArrowUpRight className="size-3.5 text-primary" /> Generate your Architecture Blueprint below.</div>
+        </CardContent>
+      ) : (
+        <CardContent className="flex flex-col gap-5 p-4">
+          <div className="flex flex-col gap-2.5">
+            <h4 className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground"><AlertTriangle className="size-3" /> Issues & Warnings ({issues.length})</h4>
+            {issues.length > 0 ? (
+              <div className="flex flex-col gap-2">
+                {issues.map((warn, idx) => (
+                  <div key={idx} className="flex flex-col gap-1 rounded-lg border border-rose-500/20 bg-rose-500/5 p-2.5">
+                    <div className="flex items-center justify-between gap-2"><span className="text-[10px] font-bold uppercase text-rose-700 dark:text-rose-400">{warn.component}</span><Badge variant="outline" className="h-4 border-rose-500/30 px-1 text-[8px] text-rose-600">{warn.severity}</Badge></div>
+                    <p className="text-[11px] leading-tight text-rose-600/90 dark:text-rose-400/90">{warn.message}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3"><CheckCircle2 className="size-3.5 text-emerald-600" /><span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400">No blocking compatibility issues detected.</span></div>
+            )}
+          </div>
+
+          {suggestions && suggestions.length > 0 && (
+            <div className="flex flex-col gap-2.5">
+              <h4 className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground"><Info className="size-3" /> Suggested improvements</h4>
+              <div className="flex flex-col gap-2">{suggestions.map((sug, idx) => <div key={idx} className="flex items-start gap-2 rounded-lg border border-blue-500/20 bg-blue-500/5 p-2.5"><ArrowUpRight className="mt-0.5 size-3.5 shrink-0 text-blue-600" /><p className="text-[11px] leading-tight text-blue-700 dark:text-blue-400">{sug}</p></div>)}</div>
             </div>
           )}
-        </div>
-
-        {/* Suggestions Section */}
-        {suggestions && suggestions.length > 0 && (
-          <div className="flex flex-col gap-2.5">
-            <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
-              <Info className="w-3 h-3" /> Recommended Enhancements
-            </h4>
-            <div className="flex flex-col gap-2">
-              {suggestions.map((sug, idx) => (
-                <div key={idx} className="p-2.5 rounded-lg border border-blue-500/20 bg-blue-500/5 flex items-start gap-2">
-                  <ArrowUpRight className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
-                  <p className="text-[11px] text-blue-700 dark:text-blue-400 leading-tight">
-                    {sug}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </CardContent>
+        </CardContent>
+      )}
     </Card>
   );
 }
