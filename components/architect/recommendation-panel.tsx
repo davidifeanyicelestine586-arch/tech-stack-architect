@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Eye, Plus, Sparkles, X } from "lucide-react";
+import { Check, Eye, Plus, Sparkles, X, ChevronDown } from "lucide-react";
 import { useTechStack } from "@/hooks/use-tech-stack";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -44,7 +44,7 @@ export function RecommendationPanel() {
       </div>
 
       <div className="flex flex-wrap items-center gap-2 px-1">
-        {requirementAnalysis.matchedTerms.length > 0 && <><span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Matched signals</span>{requirementAnalysis.matchedTerms.slice(0, 12).map((term) => <Badge key={term} variant="outline" className="text-[10px]">{term}</Badge>)}</>}
+        {requirementAnalysis.matchedTerms.length > 0 && <><span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Matched signals</span>{requirementAnalysis.matchedTerms.slice(0, 8).map((term) => <Badge key={term} variant="outline" className="text-[10px]">{term}</Badge>)}</>}
         {relatedRecipes.length > 0 && <><span className="ml-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Useful templates</span>{relatedRecipes.map(({ recipe, score }) => <Badge key={recipe.id} variant="secondary" className="text-[10px]">{recipe.title} · {score}%</Badge>)}</>}
       </div>
 
@@ -57,7 +57,7 @@ export function RecommendationPanel() {
               <Card key={component.id} className="overflow-hidden transition-colors hover:border-primary/40">
                 <CardHeader className="gap-2 pb-3">
                   <div className="flex items-start justify-between gap-3">
-                    <div>
+                    <div className="min-w-0">
                       <div className="mb-1.5 flex flex-wrap items-center gap-1.5"><Badge variant="outline" className="text-[9px]">{component.category}</Badge><Badge variant="secondary" className="text-[9px]">{component.difficulty}</Badge></div>
                       <CardTitle className="text-sm">{component.name}</CardTitle>
                     </div>
@@ -65,14 +65,21 @@ export function RecommendationPanel() {
                   </div>
                   <CardDescription className="text-[11px] leading-relaxed">{recommendation.reasons[0]}</CardDescription>
                 </CardHeader>
-                <CardContent className="flex flex-col gap-3 pt-0">
-                  <div className="grid gap-1.5 text-[10px] text-muted-foreground">
-                    <div><span className="font-semibold text-foreground">Why this fits:</span>{" "}{recommendation.reasons.slice(1, 3).join(" ") || "Registered for evaluation."}</div>
-                    <div><span className="font-semibold text-foreground">Signals:</span>{" "}{recommendation.matchedTerms.length > 0 ? recommendation.matchedTerms.join(", ") : "Domain or preference match"}</div>
-                    <div><span className="font-semibold text-foreground">Dependencies:</span>{" "}{recommendation.dependencies.length > 0 ? recommendation.dependencies.join(", ") : "None"}</div>
-                  </div>
-                  {recommendation.declaredConflicts.length > 0 && <div className="rounded-md border border-rose-500/20 bg-rose-500/5 p-2 text-[10px] text-rose-700 dark:text-rose-400">Compatibility issue: {recommendation.declaredConflicts.join(", ")}</div>}
-                  <div className="flex flex-wrap items-center gap-2 border-t border-border/50 pt-3">
+                <CardContent className="pt-0">
+                  <details className="group rounded-lg border border-border/60 bg-muted/20">
+                    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 px-3 text-[11px] font-semibold text-foreground [&::-webkit-details-marker]:hidden">
+                      <span>Why this recommendation</span>
+                      <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+                    </summary>
+                    <div className="grid gap-2 border-t border-border/60 px-3 pb-3 pt-2.5 text-[10px] text-muted-foreground">
+                      <div><span className="font-semibold text-foreground">Why it fits:</span>{" "}{recommendation.reasons.slice(1, 3).join(" ") || "Registered for evaluation."}</div>
+                      <div><span className="font-semibold text-foreground">Matched signals:</span>{" "}{recommendation.matchedTerms.length > 0 ? recommendation.matchedTerms.join(", ") : "Domain or preference match"}</div>
+                      <div><span className="font-semibold text-foreground">Dependencies:</span>{" "}{recommendation.dependencies.length > 0 ? recommendation.dependencies.join(", ") : "None"}</div>
+                      {recommendation.declaredConflicts.length > 0 && <div className="rounded-md border border-rose-500/20 bg-rose-500/5 p-2 text-rose-700 dark:text-rose-400">Compatibility issue: {recommendation.declaredConflicts.join(", ")}</div>}
+                    </div>
+                  </details>
+
+                  <div className="flex flex-wrap items-center gap-2 border-t border-border/50 pt-3 mt-3">
                     <Button variant={isSelected ? "secondary" : "default"} size="sm" className="min-h-11 gap-1.5 text-[10px]" onClick={() => addRecommendation(component.id)} disabled={isSelected}>
                       {isSelected ? <Check className="size-3.5" /> : <Plus className="size-3.5" />}{isSelected ? "Added to Stack" : "Add to Stack"}
                     </Button>
