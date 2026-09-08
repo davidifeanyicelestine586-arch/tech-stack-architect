@@ -16,6 +16,7 @@ export function ValidationPanel() {
         <CardHeader className="border-b border-border/50 pb-3">
           <div className="flex items-center gap-2">
             <ShieldCheck className="size-4 text-muted-foreground" />
+            <Badge variant="outline" className="text-[10px] font-bold">Step 5</Badge>
             <CardTitle className="text-sm font-bold">Compatibility Check</CardTitle>
           </div>
           <CardDescription className="pt-1 text-[11px] leading-relaxed">
@@ -51,6 +52,7 @@ export function ValidationPanel() {
           <div>
             <div className="flex items-center gap-2">
               {isReady ? <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" /> : <ShieldCheck className="size-4 text-primary" />}
+              <Badge variant="outline" className="text-[10px] font-bold">Step 5</Badge>
               <CardTitle className="text-sm font-bold">Compatibility Check</CardTitle>
             </div>
             <CardDescription className="pt-1 text-[11px]">{isReady ? "Your selected technologies work together." : "Review these items before generating your blueprint."}</CardDescription>
