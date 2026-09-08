@@ -17,17 +17,18 @@ export function SelectedStack() {
   } = useTechStack();
 
   const missingCount = validationReport?.dependencyReport?.missing?.length || 0;
+  const isValidated = Boolean(validationReport && validationReport.issues.length === 0 && validationReport.score >= 90);
 
   if (selectedComponents.length === 0) {
     return (
       <Card className="border-dashed bg-muted/20">
-        <CardContent className="flex flex-col items-center justify-center p-12 text-center">
-          <div className="p-3 rounded-full bg-muted/60 mb-3">
-            <Layers className="w-6 h-6 text-muted-foreground" />
+        <CardContent className="flex flex-col items-center justify-center p-10 text-center sm:p-12">
+          <div className="mb-3 rounded-full bg-muted/60 p-3">
+            <Layers className="size-6 text-muted-foreground" />
           </div>
           <h3 className="text-sm font-semibold text-foreground">Your stack is empty</h3>
-          <p className="text-xs text-muted-foreground mt-1 max-w-[200px]">
-            Add technology nodes from the browser to start building your architecture.
+          <p className="mt-1 max-w-[220px] text-xs leading-relaxed text-muted-foreground">
+            Add technologies from the browser to start building your architecture.
           </p>
         </CardContent>
       </Card>
@@ -36,65 +37,70 @@ export function SelectedStack() {
 
   return (
     <Card id="stack" className="overflow-hidden">
-      <CardHeader className="pb-3 border-b border-border/50 bg-muted/10">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <CardTitle className="text-sm font-bold">Selected Stack</CardTitle>
-            <Badge variant="secondary" className="text-[10px] font-mono">
-              {selectedComponents.length} Nodes
+      <CardHeader className="border-b border-border/50 bg-muted/10 pb-3">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-2">
+            <CardTitle className="text-sm font-bold">Your Stack</CardTitle>
+            <Badge variant="secondary" className="shrink-0 text-[10px] font-semibold">
+              {selectedComponents.length} {selectedComponents.length === 1 ? "technology" : "technologies"}
             </Badge>
           </div>
           <Button
             variant="ghost"
-            size="sm"
             onClick={clearSelection}
-            className="h-7 text-[10px] text-muted-foreground hover:text-destructive"
+            className="min-h-11 shrink-0 px-2.5 text-[10px] text-muted-foreground hover:text-destructive"
           >
-            <Trash2 className="w-3 h-3 mr-1" />
-            Clear All
+            <Trash2 className="mr-1 size-3.5" />
+            Clear all
           </Button>
         </div>
+        <div className="mt-2 flex items-center gap-2 text-[10px] text-muted-foreground">
+          <span className={isValidated ? "font-semibold text-emerald-600 dark:text-emerald-400" : ""}>
+            {isValidated ? "✓ Compatibility checked" : "Ready for a compatibility check"}
+          </span>
+        </div>
       </CardHeader>
+
       <CardContent className="p-0">
-        <div className="divide-y divide-border/50 max-h-[400px] overflow-y-auto">
+        <div className="max-h-[360px] divide-y divide-border/50 overflow-y-auto">
           {selectedComponents.map((comp) => (
-            <div key={comp.id} className="p-3 flex items-center justify-between group hover:bg-muted/30 transition-colors">
-              <div className="flex flex-col gap-0.5 min-w-0">
-                <span className="text-xs font-bold text-foreground truncate">{comp.name}</span>
-                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">{comp.category}</span>
+            <div key={comp.id} className="group flex min-h-14 items-center justify-between gap-3 p-3 transition-colors hover:bg-muted/30">
+              <div className="flex min-w-0 flex-col gap-0.5">
+                <span className="truncate text-xs font-bold text-foreground">{comp.name}</span>
+                <span className="truncate text-[10px] uppercase tracking-wider text-muted-foreground">{comp.category}</span>
               </div>
               <Button
                 variant="ghost"
-                size="icon-xs"
+                size="icon"
                 aria-label={`Remove ${comp.name}`}
                 title={`Remove ${comp.name}`}
                 onClick={() => removeComponent(comp.id)}
-                className="shrink-0 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity hover:text-destructive"
+                className="size-11 shrink-0 text-muted-foreground opacity-100 transition-opacity hover:text-destructive lg:opacity-0 lg:group-hover:opacity-100"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="size-4" />
               </Button>
             </div>
           ))}
         </div>
 
         {missingCount > 0 && (
-          <div className="p-3 bg-amber-500/10 border-t border-amber-500/20">
-            <div className="flex items-start gap-2 mb-2">
-              <Zap className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+          <div className="border-t border-amber-500/20 bg-amber-500/10 p-3">
+            <div className="mb-2 flex items-start gap-2">
+              <Zap className="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-400" />
               <div className="flex flex-col gap-0.5">
                 <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400">
-                  Missing Required Dependencies
+                  Missing compatibility requirements
                 </span>
-                <p className="text-[10px] text-amber-600/80 dark:text-amber-400/80 leading-tight">
-                  This stack is missing {missingCount} required dependency nodes.
+                <p className="text-[10px] leading-tight text-amber-600/80 dark:text-amber-400/80">
+                  {missingCount} required technology {missingCount === 1 ? "is" : "are"} missing from this stack.
                 </p>
               </div>
             </div>
             <Button
-              className="w-full h-7 text-[10px] bg-amber-600 hover:bg-amber-700 text-white"
+              className="min-h-11 w-full text-xs font-semibold bg-amber-600 text-white hover:bg-amber-700"
               onClick={resolveMissingDependencies}
             >
-              Add Missing Dependencies
+              Add missing technologies
             </Button>
           </div>
         )}
