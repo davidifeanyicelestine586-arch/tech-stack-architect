@@ -9,6 +9,10 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+const isAuthConfigured = Boolean(
+  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
+
 export function AuthPanel() {
   const [user, setUser] = useState<User | null>(null);
   const [email, setEmail] = useState("");
@@ -17,20 +21,16 @@ export function AuthPanel() {
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [available, setAvailable] = useState(true);
 
   useEffect(() => {
-    try {
-      const client = getSupabaseBrowserClient();
-      void client.auth.getUser().then(({ data }) => setUser(data.user ?? null));
-      const { data } = client.auth.onAuthStateChange((_event, session) => {
-        setUser(session?.user ?? null);
-      });
-      return () => data.subscription.unsubscribe();
-    } catch {
-      setAvailable(false);
-      return undefined;
-    }
+    if (!isAuthConfigured) return undefined;
+
+    const client = getSupabaseBrowserClient();
+    void client.auth.getUser().then(({ data }) => setUser(data.user ?? null));
+    const { data } = client.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => data.subscription.unsubscribe();
   }, []);
 
   const submit = async () => {
@@ -56,7 +56,7 @@ export function AuthPanel() {
     }
   };
 
-  if (!available) return null;
+  if (!isAuthConfigured) return null;
 
   if (user) {
     return (
