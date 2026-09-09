@@ -3,6 +3,7 @@ import {
   createFailureResponse,
   createProjectApi,
 } from "@/lib/persistence/api/project-api.js";
+import { getAuthenticatedUserId } from "@/lib/auth/supabase-server";
 import {
   createServerProjectPersistenceService,
   serverProjectRegistries,
@@ -15,6 +16,7 @@ const getApi = () =>
     service: createServerProjectPersistenceService(),
     registries: serverProjectRegistries,
     getCookieStore: cookies,
+    getAuthenticatedUserId,
     isProduction,
     logger: (error) => console.error("Project persistence request failed", error),
   });
@@ -23,9 +25,9 @@ type ProjectRouteContext = {
   params: Promise<{ id: string }>;
 };
 
-export async function GET(_request: Request, context: ProjectRouteContext) {
+export async function GET(request: Request, context: ProjectRouteContext) {
   try {
-    return await getApi().get(context);
+    return await getApi().get(request, context);
   } catch (error) {
     return createFailureResponse(error, isProduction);
   }
@@ -39,9 +41,9 @@ export async function PATCH(request: Request, context: ProjectRouteContext) {
   }
 }
 
-export async function DELETE(_request: Request, context: ProjectRouteContext) {
+export async function DELETE(request: Request, context: ProjectRouteContext) {
   try {
-    return await getApi().remove(context);
+    return await getApi().remove(request, context);
   } catch (error) {
     return createFailureResponse(error, isProduction);
   }
