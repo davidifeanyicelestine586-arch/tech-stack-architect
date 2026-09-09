@@ -139,22 +139,32 @@ test("a request cannot supply its own anonymous session ID", async () => {
   const service = new ApiService();
   const api = createApi(service, sessionA);
   const result = await readResponse(
-    await api.create(request("POST", { snapshot: baseSnapshot }))
+    await api.create(request("POST", { sessionId: sessionB, snapshot: baseSnapshot }))
   );
 
-  assert.equal(result.status, 200);
-  assert.equal(service.calls[0].scope.sessionId, sessionA);
+  assert.equal(result.status, 400);
+  assert.equal(result.body.ok, false);
+  assert.equal(service.calls.length, 0);
 });
 
 test("a query-string session ID is ignored and never becomes the persistence scope", async () => {
   const service = new ApiService();
-  const api = createApi(service, sessionA);
+  const api = createApi(service, null);
   const result = await readResponse(
-    await api.list(request("GET", undefined, `http://localhost/api/projects?sessionId=${sessionB}`))
+    await api.create(
+      request(
+        "POST",
+        { snapshot: baseSnapshot },
+        `http://localhost/api/projects?sessionId=${sessionB}`
+      )
+    )
   );
 
   assert.equal(result.status, 200);
-  assert.equal(service.calls[0].scope.sessionId, sessionA);
+  assert.equal(service.calls[0].scope.kind, "anonymous");
+  assert.notEqual(service.calls[0].scope.sessionId, sessionB);
+  assert.match(result.cookie, /HttpOnly/);
+  assert.match(result.cookie, /Secure/);
 });
 
 test("a new anonymous request receives a secure, HTTP-only, path-scoped cookie", async () => {
@@ -228,5 +238,92 @@ test("invalid project IDs are rejected before reaching the service", async () =>
   const result = await readResponse(await api.get(request("GET"), context("not-a-uuid")));
 
   assert.equal(result.status, 400);
+  assert.equal(result.body.error.code, "VALIDATION_FAILURE");
   assert.equal(service.calls.length, 0);
+});
+
+test("invalid snapshots are rejected before reaching the service", async () => {
+  const service = new ApiService();
+  const api = createApi(service, sessionA);
+  const result = await readResponse(
+    await api.create(
+      request("POST", {
+        snapshot: {
+          ...baseSnapshot,
+          projectDefinition: { ...baseSnapshot.projectDefinition, name: "" },
+        },
+      })
+    )
+  );
+
+  assert.equal(result.status, 400);
+  assert.equal(result.body.error.code, "VALIDATION_FAILURE");
+  assert.equal(service.calls.length, 0);
+});
+
+test("stale revisions return a stable conflict response", async () => {
+  const service = new ApiService();
+  const api = createApi(service, sessionA);
+  const created = await readResponse(
+    await api.create(request("POST", { snapshot: baseSnapshot }))
+  );
+  const result = await readResponse(
+    await api.update(
+      request("PATCH", { snapshot: baseSnapshot, expectedRevision: 0 }),
+      context(created.body.data.id)
+    )
+  );
+
+  assert.equal(result.status, 400);
+  assert.equal(result.body.error.code, "VALIDATION_FAILURE");
+
+  const conflict = await readResponse(
+    await api.update(
+      request("PATCH", { snapshot: baseSnapshot, expectedRevision: 2 }),
+      context(created.body.data.id)
+    )
+  );
+  assert.equal(conflict.status, 409);
+  assert.equal(conflict.body.error.code, "PERSISTENCE_CONFLICT");
+  assert.match(conflict.body.error.message, /changed elsewhere|Reload/);
+});
+
+test("raw database errors are mapped to safe client responses", async () => {
+  const service = new ApiService();
+  service.failWith = new Error("postgres password and stack trace must not escape");
+  const logs = [];
+  const api = createApi(service, sessionA, { logger: (error) => logs.push(error) });
+  const result = await readResponse(await api.list());
+
+  assert.equal(result.status, 503);
+  assert.equal(result.body.error.code, "DATABASE_FAILURE");
+  assert.equal(result.body.error.message.includes("postgres"), false);
+  assert.equal(JSON.stringify(result.body).includes("stack trace"), false);
+  assert.equal(logs.length, 1);
+});
+
+test("service-role credentials are not exposed in API responses", async () => {
+  const service = new ApiService();
+  service.failWith = new Error("SUPABASE_SERVICE_ROLE_KEY=secret-value");
+  const api = createApi(service, sessionA);
+  const response = await api.list();
+  const text = await response.text();
+
+  assert.equal(response.status, 503);
+  assert.equal(text.includes("secret-value"), false);
+  assert.equal(text.includes("SUPABASE_SERVICE_ROLE_KEY"), false);
+});
+
+test("authentication is not required for anonymous project creation", async () => {
+  const service = new ApiService();
+  const api = createApi(service, null, { isProduction: false });
+  const result = await readResponse(
+    await api.create(request("POST", { snapshot: baseSnapshot }))
+  );
+
+  assert.equal(result.status, 200);
+  assert.equal(result.body.ok, true);
+  assert.match(result.cookie, /HttpOnly/);
+  assert.equal(result.cookie.includes("Secure"), false);
+  assert.equal(service.calls[0].scope.kind, "anonymous");
 });
