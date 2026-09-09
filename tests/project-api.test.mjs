@@ -190,7 +190,9 @@ test("one anonymous session cannot access another session's project", async () =
   );
   const projectId = created.body.data.id;
   const otherApi = createApi(service, sessionB);
-  const result = await readResponse(await otherApi.get(context(projectId)));
+  const result = await readResponse(
+    await otherApi.get(request("GET"), context(projectId))
+  );
 
   assert.equal(result.status, 404);
   assert.equal(result.body.error.code, "PERSISTENCE_NOT_FOUND");
@@ -221,7 +223,9 @@ test("one anonymous session cannot delete another session's project", async () =
     await ownerApi.create(request("POST", { snapshot: baseSnapshot }))
   );
   const otherApi = createApi(service, sessionB);
-  const result = await readResponse(await otherApi.remove(context(created.body.data.id)));
+  const result = await readResponse(
+    await otherApi.remove(request("DELETE"), context(created.body.data.id))
+  );
 
   assert.equal(result.status, 404);
   assert.equal(result.body.error.code, "PERSISTENCE_NOT_FOUND");
@@ -231,7 +235,7 @@ test("one anonymous session cannot delete another session's project", async () =
 test("invalid project IDs are rejected before reaching the service", async () => {
   const service = new ApiService();
   const api = createApi(service, sessionA);
-  const result = await readResponse(await api.get(context("not-a-uuid")));
+  const result = await readResponse(await api.get(request("GET"), context("not-a-uuid")));
 
   assert.equal(result.status, 400);
   assert.equal(result.body.error.code, "VALIDATION_FAILURE");
