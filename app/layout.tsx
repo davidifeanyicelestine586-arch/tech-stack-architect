@@ -4,6 +4,7 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
 import { ThemeProvider } from "@/components/Themeprovider";
+import { AuthPanel } from "@/components/auth/auth-panel";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -48,6 +49,11 @@ export default function RootLayout({
           defaultTheme="light"
           enableSystem={false}
         >
+          <div className="pointer-events-none fixed right-3 top-3 z-50">
+            <div className="pointer-events-auto rounded-lg border border-border/70 bg-background/95 p-1 shadow-lg backdrop-blur">
+              <AuthPanel />
+            </div>
+          </div>
           {children}
         </ThemeProvider>
       </body>
