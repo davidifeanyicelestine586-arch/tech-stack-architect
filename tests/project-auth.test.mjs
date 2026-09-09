@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { PersistenceError } from "../lib/persistence/project-serialization.js";
-import { getBearerToken } from "../lib/auth/supabase-server.ts";
+import { getBearerToken } from "../lib/auth/supabase-server.js";
 import { resolveScope } from "../lib/persistence/api/project-api.js";
 
 const sessionId = "11111111-1111-4111-8111-111111111111";
