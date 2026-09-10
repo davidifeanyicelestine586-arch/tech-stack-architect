@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { PersistenceError } from "../project-serialization.js";
+import { getServerConfig } from "../../config/server-config.js";
 
 export interface SupabaseServerConfig {
   url?: string;
@@ -14,15 +15,17 @@ export interface SupabaseServerConfig {
 export function createSupabaseServerClient(
   config: SupabaseServerConfig = {}
 ): SupabaseClient {
-  const url = config.url ?? process.env.SUPABASE_URL;
-  const serviceRoleKey =
-    config.serviceRoleKey ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
+  let url = config.url;
+  let serviceRoleKey = config.serviceRoleKey;
 
   if (!url || !serviceRoleKey) {
-    throw new PersistenceError(
-      "CONFIGURATION",
-      "Supabase persistence is not configured. Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY on the server."
-    );
+    const serverConfig = getServerConfig();
+    url = url ?? serverConfig.supabaseUrl;
+    serviceRoleKey = serviceRoleKey ?? serverConfig.supabaseServiceRoleKey;
+  }
+
+  if (!url || !serviceRoleKey) {
+    throw new PersistenceError("CONFIGURATION", "Supabase persistence is not configured.");
   }
 
   return createClient(url, serviceRoleKey, {
