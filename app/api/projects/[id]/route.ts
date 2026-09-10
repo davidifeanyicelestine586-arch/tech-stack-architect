@@ -4,6 +4,7 @@ import {
   createProjectApi,
 } from "@/lib/persistence/api/project-api.js";
 import { getAuthenticatedUserId } from "@/lib/auth/supabase-server";
+import { logSecurityEvent } from "@/lib/security/logger";
 import {
   createServerProjectPersistenceService,
   serverProjectRegistries,
@@ -18,7 +19,10 @@ const getApi = () =>
     getCookieStore: cookies,
     getAuthenticatedUserId,
     isProduction,
-    logger: (error) => console.error("Project persistence request failed", error),
+    logger: (error) => logSecurityEvent("project_api_guard_failure", {
+      code: error?.code || "DATABASE_FAILURE",
+      message: error?.message || "unknown error",
+    }),
   });
 
 type ProjectRouteContext = {
