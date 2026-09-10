@@ -13,6 +13,7 @@ import {
   LucideIcon,
 } from "lucide-react";
 import { uniqueId } from "lodash";
+import { NAVIGATION_ROUTE_BY_ID } from "@/lib/navigation/routes";
 
 export interface ChildItem {
   id?: number | string;
@@ -30,6 +31,8 @@ export interface ChildItem {
   isActive?: boolean;
   external?: boolean;
   isPro?: boolean;
+  mobilePrimary?: boolean;
+  routeId?: string;
 }
 
 export interface MenuItem {
@@ -50,92 +53,34 @@ export interface MenuItem {
   isPro?: boolean;
 }
 
+const route = (id: string) => NAVIGATION_ROUTE_BY_ID[id];
+
 const SidebarContent: MenuItem[] = [
   {
     heading: "TECH STACK ARCHITECT",
     items: [
-      {
-        id: uniqueId("nav_"),
-        name: "Workspace",
-        icon: House,
-        url: "/",
-      },
-      {
-        id: uniqueId("nav_"),
-        name: "Project Definition",
-        icon: ClipboardList,
-        url: "/#define",
-      },
-      {
-        id: uniqueId("nav_"),
-        name: "Recommended Stack",
-        icon: Sparkles,
-        url: "/#recommendations",
-      },
-      {
-        id: uniqueId("nav_"),
-        name: "Component Library",
-        icon: Layers,
-        url: "/#components",
-      },
-      {
-        id: uniqueId("nav_"),
-        name: "Validation Engine",
-        icon: ShieldCheck,
-        url: "/#validation",
-      },
-      {
-        id: uniqueId("nav_"),
-        name: "Recipe Catalog",
-        icon: BookOpen,
-        url: "/#recipes",
-      },
-      {
-        id: uniqueId("nav_"),
-        name: "Architecture Blueprint",
-        icon: Sparkles,
-        url: "/#blueprint",
-      },
+      { id: uniqueId("nav_"), name: route("workspace").label, icon: House, url: route("workspace").href, routeId: "workspace", mobilePrimary: true },
+      { id: uniqueId("nav_"), name: route("define").label, icon: ClipboardList, url: route("define").href, routeId: "define", mobilePrimary: true },
+      { id: uniqueId("nav_"), name: route("recommendations").label, icon: Sparkles, url: route("recommendations").href, routeId: "recommendations", mobilePrimary: true },
+      { id: uniqueId("nav_"), name: route("components").label, icon: Layers, url: route("components").href, routeId: "components" },
+      { id: uniqueId("nav_"), name: route("validation").label, icon: ShieldCheck, url: route("validation").href, routeId: "validation", mobilePrimary: true },
+      { id: uniqueId("nav_"), name: route("recipes").label, icon: BookOpen, url: route("recipes").href, routeId: "recipes" },
+      { id: uniqueId("nav_"), name: route("blueprint").label, icon: Sparkles, url: route("blueprint").href, routeId: "blueprint", mobilePrimary: true },
     ],
   },
   {
     heading: "ENGINEERING DOMAINS",
     items: [
-      {
-        id: uniqueId("nav_"),
-        name: "Web Development & SaaS",
-        icon: Globe,
-        url: "/#domain-web-saas",
-      },
-      {
-        id: uniqueId("nav_"),
-        name: "AI & Automation",
-        icon: Bot,
-        url: "/#domain-ai-automation",
-      },
-      {
-        id: uniqueId("nav_"),
-        name: "Hardware & Mechatronics",
-        icon: Cpu,
-        url: "/#domain-mechatronics",
-      },
+      { id: uniqueId("nav_"), name: route("domain-web-saas").label, icon: Globe, url: route("domain-web-saas").href, routeId: "domain-web-saas" },
+      { id: uniqueId("nav_"), name: route("domain-ai-automation").label, icon: Bot, url: route("domain-ai-automation").href, routeId: "domain-ai-automation" },
+      { id: uniqueId("nav_"), name: route("domain-mechatronics").label, icon: Cpu, url: route("domain-mechatronics").href, routeId: "domain-mechatronics" },
     ],
   },
   {
     heading: "TOOLS & EXPORTS",
     items: [
-      {
-        id: uniqueId("nav_"),
-        name: "Export Center",
-        icon: Download,
-        url: "/#exports",
-      },
-      {
-        id: uniqueId("nav_"),
-        name: "Specification Docs",
-        icon: BookMarked,
-        url: "/#docs",
-      },
+      { id: uniqueId("nav_"), name: route("exports").label, icon: Download, url: route("exports").href, routeId: "exports" },
+      { id: uniqueId("nav_"), name: route("docs").label, icon: BookMarked, url: route("docs").href, routeId: "docs" },
     ],
   },
 ];
