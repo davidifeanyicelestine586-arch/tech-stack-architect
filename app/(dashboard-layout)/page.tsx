@@ -72,7 +72,9 @@ export default function WorkspacePage() {
         </div>
       </section>
 
-      <ProjectDefinitionForm />
+      <div id="define" className="scroll-mt-24">
+        <ProjectDefinitionForm />
+      </div>
       <div id="recommendations" className="scroll-mt-24"><RecommendationPanel /></div>
 
       <div className="lg:hidden">

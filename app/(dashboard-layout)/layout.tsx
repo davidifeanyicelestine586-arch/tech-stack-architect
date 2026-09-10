@@ -3,7 +3,7 @@
 import React from "react";
 import Header from "./layout/vertical/header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import Footer from "./layout/footer/page";
+import Footer from "@/components/layout/footer";
 import { AppSidebar } from "./layout/vertical/sidebar/app-sidebar";
 import { TechStackProvider } from "@/context/tech-stack-context";
 import { cn } from "@/lib/utils";
