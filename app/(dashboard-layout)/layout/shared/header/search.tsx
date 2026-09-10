@@ -14,9 +14,7 @@ function Search() {
     let results: any[] = [];
 
     items.forEach((item) => {
-      const currentPath = parentPath
-        ? `${parentPath} → ${item.name}`
-        : item.name;
+      const currentPath = parentPath ? `${parentPath} → ${item.name}` : item.name;
 
       if (
         item.name &&
@@ -31,9 +29,7 @@ function Search() {
         });
       }
 
-      if (item.items) {
-        results = [...results, ...searchItems(item.items, q, currentPath)];
-      }
+      if (item.items) results = [...results, ...searchItems(item.items, q, currentPath)];
     });
 
     return results;
@@ -46,44 +42,52 @@ function Search() {
 
   return (
     <div className="relative w-full">
-      <div className="flex items-center relative w-full">
+      <div className="relative flex w-full items-center">
         <SearchIcon
+          aria-hidden="true"
           size={15}
           className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
         />
         <Input
+          type="search"
+          aria-label="Search workspace navigation"
+          aria-controls="workspace-search-results"
           placeholder="Search architecture, domains..."
-          className="rounded-lg pl-9 text-xs h-8.5 bg-muted/40 border-border focus-visible:bg-background"
+          className="h-8.5 rounded-lg border-border bg-muted/40 pl-9 text-xs focus-visible:bg-background focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
       </div>
+
       {Boolean(query) && (
-        <div className="absolute w-full bg-card rounded-lg top-10 z-30 start-0 shadow-lg border border-border overflow-hidden">
-          <SimpleBar className="max-h-72 p-2 custom-scroll">
+        <div
+          id="workspace-search-results"
+          role="listbox"
+          aria-label="Workspace search results"
+          className="absolute start-0 top-10 z-30 w-full overflow-hidden rounded-lg border border-border bg-card shadow-lg"
+        >
+          <SimpleBar className="custom-scroll max-h-72 p-2">
             {results.length > 0 ? (
               results.map((item, i) => (
                 <Link
                   key={i}
                   href={item.url}
+                  role="option"
+                  aria-label={`Open ${item.name}`}
                   onClick={() => setQuery("")}
-                  className="p-2 mb-1 last:mb-0 flex items-center gap-2.5 text-xs font-medium rounded-md hover:bg-primary/10 hover:text-primary transition-colors w-full"
+                  className="mb-1 flex w-full items-center gap-2.5 rounded-md p-2 text-xs font-medium transition-colors hover:bg-primary/10 hover:text-primary focus-visible:bg-primary/10 focus-visible:text-primary focus-visible:outline-2 focus-visible:outline-primary last:mb-0"
                 >
-                  <div className="p-1 rounded bg-muted text-muted-foreground">
+                  <div className="rounded bg-muted p-1 text-muted-foreground" aria-hidden="true">
                     <Layers width={14} height={14} />
                   </div>
                   <div className="flex flex-col text-left">
-                    <span className="font-semibold text-foreground">
-                      {item.name}
-                    </span>
-                    <span className="text-[10px] text-muted-foreground">
-                      {item.path}
-                    </span>
+                    <span className="font-semibold text-foreground">{item.name}</span>
+                    <span className="text-[10px] text-muted-foreground">{item.path}</span>
                   </div>
                 </Link>
               ))
             ) : (
-              <div className="p-4 text-center text-xs text-muted-foreground">
+              <div className="p-4 text-center text-xs text-muted-foreground" role="status">
                 No matching architectural nodes found.
               </div>
             )}
