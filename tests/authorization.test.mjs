@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { ADMIN_ROLE, getUserRole, isAdminUser } from "../lib/auth/authorization.js";
+import { ADMIN_ROLE, getUserRole, isAdminUser } from "../lib/auth/authorization-policy.js";
 
 test("admin authorization accepts only the explicit admin app_metadata role", () => {
   assert.equal(getUserRole({ app_metadata: { role: ADMIN_ROLE } }), ADMIN_ROLE);
