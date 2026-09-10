@@ -61,14 +61,14 @@ test("security events include stable level and category fields", () => {
 
   const entry = JSON.parse(output);
   assert.equal(entry.level, SECURITY_EVENT_LEVELS.WARN);
-  assert.equal(entry.category, SECURITY_EVENT_CATEGORIES.PERSISTENCE);
+  assert.equal(entry.category, SECURITY_EVENT_CATEGORIES.REQUEST);
   assert.equal(entry.requestId, "req-123");
 });
 
 test("event classification maps common security domains deterministically", () => {
   assert.equal(categoryForEvent("auth_session_refresh"), SECURITY_EVENT_CATEGORIES.AUTHENTICATION);
   assert.equal(categoryForEvent("admin_forbidden"), SECURITY_EVENT_CATEGORIES.AUTHORIZATION);
-  assert.equal(categoryForEvent("project_api_guard_failure"), SECURITY_EVENT_CATEGORIES.PERSISTENCE);
+  assert.equal(categoryForEvent("project_persistence_failure"), SECURITY_EVENT_CATEGORIES.PERSISTENCE);
   assert.equal(categoryForEvent("rate_limit_exceeded"), SECURITY_EVENT_CATEGORIES.REQUEST);
   assert.equal(categoryForEvent("supabase_config_failure"), SECURITY_EVENT_CATEGORIES.CONFIGURATION);
 });
