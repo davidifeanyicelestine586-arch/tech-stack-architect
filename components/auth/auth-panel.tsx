@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { LogIn, LogOut, UserRound } from "lucide-react";
 import { getSupabaseBrowserClient } from "@/lib/auth/supabase-browser";
+import { getSafeAuthErrorMessage, authStateFromEvent } from "@/lib/auth/auth-lifecycle.js";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -27,9 +28,18 @@ export function AuthPanel() {
 
     const client = getSupabaseBrowserClient();
     void client.auth.getUser().then(({ data }) => setUser(data.user ?? null));
-    const { data } = client.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+
+    const { data } = client.auth.onAuthStateChange((event, session) => {
+      const nextState = authStateFromEvent(event, session);
+      if (!nextState) return;
+
+      setUser(nextState.user);
+      if (event === "SIGNED_OUT") {
+        setPassword("");
+        setBusy(false);
+      }
     });
+
     return () => data.subscription.unsubscribe();
   }, []);
 
@@ -47,11 +57,27 @@ export function AuthPanel() {
         const { data, error } = await client.auth.signUp({ email: email.trim(), password });
         if (error) throw error;
         setPassword("");
-        setMessage(data.session ? "Account created and signed in." : "Account created. Check your email if confirmation is required.");
+        setMessage(
+          data.session
+            ? "Account created and signed in."
+            : "Account created. Check your email if confirmation is required."
+        );
       }
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Authentication failed. Try again.");
+      setMessage(getSafeAuthErrorMessage(error));
     } finally {
+      setBusy(false);
+    }
+  };
+
+  const signOut = async () => {
+    setBusy(true);
+    setMessage(null);
+    try {
+      const { error } = await getSupabaseBrowserClient().auth.signOut();
+      if (error) throw error;
+    } catch (error) {
+      setMessage(getSafeAuthErrorMessage(error));
       setBusy(false);
     }
   };
@@ -68,11 +94,12 @@ export function AuthPanel() {
           variant="ghost"
           size="sm"
           className="h-8 gap-1.5 px-2 text-xs"
-          onClick={() => void getSupabaseBrowserClient().auth.signOut()}
+          onClick={() => void signOut()}
+          disabled={busy}
           aria-label="Sign out"
         >
           <LogOut className="size-3.5" aria-hidden="true" />
-          <span className="hidden sm:inline">Sign out</span>
+          <span className="hidden sm:inline">{busy ? "Signing out…" : "Sign out"}</span>
         </Button>
       </div>
     );
@@ -113,7 +140,10 @@ export function AuthPanel() {
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => { setMode((current) => current === "sign-in" ? "sign-up" : "sign-in"); setMessage(null); }}
+            onClick={() => {
+              setMode((current) => (current === "sign-in" ? "sign-up" : "sign-in"));
+              setMessage(null);
+            }}
             disabled={busy}
           >
             {mode === "sign-in" ? "Create account" : "Already have an account? Sign in"}
