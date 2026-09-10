@@ -12,6 +12,21 @@ import {
 
 const isProduction = process.env.NODE_ENV === "production";
 
+const getGuardErrorDetails = (error: unknown) => {
+  if (!error || typeof error !== "object") {
+    return { code: "DATABASE_FAILURE", message: "unknown error" };
+  }
+
+  const code = "code" in error && typeof error.code === "string"
+    ? error.code
+    : "DATABASE_FAILURE";
+  const message = "message" in error && typeof error.message === "string"
+    ? error.message
+    : "unknown error";
+
+  return { code, message };
+};
+
 const getApi = () =>
   createProjectApi({
     service: createServerProjectPersistenceService(),
@@ -19,10 +34,8 @@ const getApi = () =>
     getCookieStore: cookies,
     getAuthenticatedUserId,
     isProduction,
-    logger: (error) => logSecurityEvent("project_api_guard_failure", {
-      code: error?.code || "DATABASE_FAILURE",
-      message: error?.message || "unknown error",
-    }),
+    logger: (error: unknown) =>
+      logSecurityEvent("project_api_guard_failure", getGuardErrorDetails(error)),
   });
 
 type ProjectRouteContext = {
