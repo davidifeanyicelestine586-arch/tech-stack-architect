@@ -3,8 +3,7 @@
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import { ChildItem } from "../sidebaritems";
-import { motion, AnimatePresence } from "motion/react";
-import { useState } from "react";
+import { motion } from "motion/react";
 import { Badge } from "@/components/ui/badge";
 
 interface NavItemProps {
@@ -20,62 +19,48 @@ export default function NavItem({
   className,
   isActive,
 }: NavItemProps) {
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
-
-     <motion.div className={cn("flex items-center gap-3 w-full group relative group-data-[state=collapsed]:px-2.5 px-3 py-2 my-0.5 transition-all duration-200 rounded-md",
-      isActive && "bg-primary text-background font-medium", className)}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+    <motion.div
+      className={cn(
+        "group relative flex min-h-11 w-full items-center gap-3 rounded-md px-3 py-2.5 transition-colors duration-200",
+        "hover:bg-primary/5 hover:text-primary",
+        "focus-within:bg-primary/5 focus-within:text-primary",
+        "active:bg-primary/10",
+        isActive && "bg-primary text-background font-medium hover:bg-primary hover:text-background",
+        className,
+      )}
+      whileTap={{ scale: 0.985 }}
     >
-      <AnimatePresence>
+      <span className="relative flex w-full items-center gap-2 rounded-md">
+        {item.icon && <item.icon aria-hidden="true" className={`h-4 w-4 shrink-0 ${item.color ?? ""}`} />}
 
-        {isHovered && (
-          <motion.div
-            layoutId="nav-hover-bg"
-            className="absolute inset-0 bg-primary/5  rounded-lg"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ type: "spring", stiffness: 400, damping: 35 }}
-          />
-        )}
-      </AnimatePresence>
+        <span className="hide-menu font-medium">{item.name}</span>
 
-      <span className={"relative flex items-center gap-2 w-full  rounded-md "}>
-        {/* Icon */}
-        {item.icon && (
-          <item.icon className={`h-4 w-4 ${item.color ?? ""}`} />
-        )}
-
-        {/* Name */}
-        <span className="font-medium hide-menu">{item.name}</span>
-
-        {/* Badge */}
         {item.badge && (
           <span
-            className={`ms-auto  hide-menu text-xs rounded-full px-2 py-0.5 ${item.badgeType === "filled"
-              ? "bg-primary text-white dark:text-black"
-              : "border border-primary text-primary"
-              }`}
+            className={`ms-auto hide-menu rounded-full px-2 py-0.5 text-xs ${
+              item.badgeType === "filled"
+                ? "bg-primary text-white dark:text-black"
+                : "border border-primary text-primary"
+            }`}
           >
             {item.badgeContent}
           </span>
         )}
 
-        {/* Pro Badge */}
         {item.isPro && (
-          <Badge className="ms-auto hide-menu text-[10px]! px-1.5 py-0.5 h-auto! bg-primary! text-background! rounded-md">
+          <Badge className="ms-auto hide-menu h-auto! rounded-md bg-primary! px-1.5 py-0.5 text-[10px]! text-background!">
             Pro
           </Badge>
         )}
 
-        {/* Chevron only if it has children */}
         {hasChildren && (
-          <ChevronRight className="ms-auto h-4 w-4 transition-transform duration-200 group-open/nav:rotate-90 hide-menu" />
+          <ChevronRight
+            aria-hidden="true"
+            className="ms-auto h-4 w-4 transition-transform duration-200 group-open/nav:rotate-90 hide-menu"
+          />
         )}
       </span>
-    </motion.div >
+    </motion.div>
   );
 }
