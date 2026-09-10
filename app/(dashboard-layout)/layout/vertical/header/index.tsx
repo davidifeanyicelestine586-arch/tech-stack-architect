@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import LightDark from "../../shared/header/light-dark";
 import { Separator } from "@/components/ui/separator";
 import { ProjectPersistenceToolbar } from "@/components/architect/project-persistence-toolbar";
+import { AuthPanel } from "@/components/auth/auth-panel";
 
 const Header = () => {
   const { toggleSidebar } = useSidebar();
@@ -49,6 +50,7 @@ const Header = () => {
 
           <div className="flex min-w-0 flex-wrap items-center justify-end gap-1">
             <ProjectPersistenceToolbar />
+            <AuthPanel />
             <Separator orientation="vertical" className="mx-1 hidden h-5 md:block" />
             <Button
               variant="outline"
