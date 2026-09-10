@@ -33,6 +33,8 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
     return itemHash ? hash === `#${itemHash}` : !hash;
   };
 
+  const currentValue = (item: ChildItem) => (isActiveRoute(item) ? "location" : undefined);
+
   return (
     <>
       {menu.map((section, index) => (
@@ -63,7 +65,7 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
                   key={itemIndex}
                   href={item.url || "#"}
                   target={item.external ? "_blank" : undefined}
-                  aria-current={active ? "page" : undefined}
+                  aria-current={currentValue(item)}
                   className={cn(
                     "block rounded-md outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                     className,
@@ -75,15 +77,9 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
             }
 
             return (
-              <details
-                key={itemIndex}
-                className="group/nav"
-                open={active || item.isActive}
-              >
+              <details key={itemIndex} className="group/nav" open={active || item.isActive}>
                 <summary
-                  className={cn(
-                    "cursor-pointer list-none rounded-md outline-none transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden",
-                  )}
+                  className="cursor-pointer list-none rounded-md outline-none transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden"
                   aria-label={`${item.name} menu`}
                 >
                   <NavItem item={item} hasChildren={true} className={className} isActive={active} />
@@ -98,7 +94,7 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
                         key={subIndex}
                         href={sub.url || "#"}
                         target={sub.external ? "_blank" : undefined}
-                        aria-current={isActiveRoute(sub) ? "page" : undefined}
+                        aria-current={currentValue(sub)}
                         className="block rounded-md outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                       >
                         <NavItem
