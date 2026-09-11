@@ -25,7 +25,7 @@ export function ValidationPanel() {
         <CardHeader className="border-b border-border/50 pb-3">
           <div className="flex items-center gap-2">
             <ShieldCheck aria-hidden="true" className="size-4 text-muted-foreground" />
-            <Badge variant="outline" className="text-[10px] font-bold">Step 5</Badge>
+            <Badge variant="outline" className="text-xs font-bold">Step 5</Badge>
             <CardTitle className="text-sm font-bold">Compatibility Check</CardTitle>
           </div>
           <CardDescription className="pt-1 text-xs leading-relaxed">
@@ -55,13 +55,13 @@ export function ValidationPanel() {
   const getScoreBg = (s: number) => s >= 90 ? "bg-emerald-500/10" : s >= 70 ? "bg-amber-500/10" : "bg-rose-500/10";
 
   return (
-    <Card id="validation" className={cn("overflow-hidden", isReady && "border-emerald-500/30") }>
+    <Card id="validation" className={cn("overflow-hidden", isReady && "border-emerald-500/30")}>
       <CardHeader className="border-b border-border/50 pb-3">
         <div className="flex items-start justify-between gap-3">
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-2">
               {isReady ? <CheckCircle2 aria-hidden="true" className="size-4 text-emerald-600 dark:text-emerald-400" /> : <ShieldCheck aria-hidden="true" className="size-4 text-primary" />}
-              <Badge variant="outline" className="text-[10px] font-bold">Step 5</Badge>
+              <Badge variant="outline" className="shrink-0 text-xs font-bold">Step 5</Badge>
               <CardTitle className="text-sm font-bold">Compatibility Check</CardTitle>
             </div>
             <CardDescription className="pt-1 text-xs">{isReady ? "Your selected technologies work together." : `${status}. Review these items before generating your blueprint.`}</CardDescription>
@@ -83,13 +83,13 @@ export function ValidationPanel() {
               </div>
             </div>
           </div>
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Next step</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Next step</p>
           <div className="flex items-center gap-2 text-xs font-semibold text-foreground"><ArrowUpRight aria-hidden="true" className="size-3.5 text-primary" /> Generate your Architecture Blueprint below.</div>
         </CardContent>
       ) : (
         <CardContent className="flex flex-col gap-5 p-4">
           <section aria-labelledby="validation-issues-heading" className="flex flex-col gap-2.5">
-            <h4 id="validation-issues-heading" className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-muted-foreground"><AlertTriangle aria-hidden="true" className="size-3" /> Issues &amp; Warnings ({issues.length})</h4>
+            <h4 id="validation-issues-heading" className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-muted-foreground"><AlertTriangle aria-hidden="true" className="size-3" /> Issues &amp; Warnings ({issues.length})</h4>
             {issues.length > 0 ? (
               <div className="flex flex-col gap-2" role="list">
                 {issues.map((item, idx) => {
@@ -99,7 +99,7 @@ export function ValidationPanel() {
                     <div key={`${item.component}-${idx}`} role="listitem" className={cn("flex flex-col gap-1 rounded-lg border p-3", meta.className)}>
                       <div className="flex items-center justify-between gap-2">
                         <span className="text-xs font-bold uppercase">{item.component}</span>
-                        <Badge variant="outline" className="h-5 px-1.5 text-[9px]">{meta.label}</Badge>
+                        <Badge variant="outline" className="h-6 shrink-0 px-1.5 text-xs">{meta.label}</Badge>
                       </div>
                       <div className="flex items-start gap-2">
                         <Icon aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
@@ -116,7 +116,7 @@ export function ValidationPanel() {
 
           {suggestions && suggestions.length > 0 && (
             <section aria-labelledby="validation-suggestions-heading" className="flex flex-col gap-2.5">
-              <h4 id="validation-suggestions-heading" className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-muted-foreground"><Info aria-hidden="true" className="size-3" /> Suggested improvements</h4>
+              <h4 id="validation-suggestions-heading" className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-muted-foreground"><Info aria-hidden="true" className="size-3" /> Suggested improvements</h4>
               <div className="flex flex-col gap-2">{suggestions.map((suggestion, idx) => <div key={idx} className="flex items-start gap-2 rounded-lg border border-blue-500/20 bg-blue-500/5 p-3 text-xs text-blue-700 dark:text-blue-400"><ArrowUpRight aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" /><p className="leading-relaxed">{suggestion}</p></div>)}</div>
             </section>
           )}
