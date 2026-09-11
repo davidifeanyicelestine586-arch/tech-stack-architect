@@ -43,7 +43,7 @@ const Header = () => {
               className="ml-2 mr-4 h-4 max-lg:hidden data-[orientation=vertical]:self-center"
             />
 
-            <div className="hidden w-64 shrink-0 sm:block lg:w-72">
+            <div className="hidden w-48 shrink-0 sm:block lg:w-72">
               <Search />
             </div>
           </div>
