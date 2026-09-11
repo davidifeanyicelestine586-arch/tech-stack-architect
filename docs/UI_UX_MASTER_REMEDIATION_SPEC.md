@@ -818,3 +818,29 @@ The highest-value work is:
 6. Living design-system documentation.
 
 Once these are implemented, the existing product direction can remain intact while its reliability, accessibility, scalability, and professional quality increase substantially.
+
+
+---
+
+# Reconciliation Addendum — 2026-09-11
+
+## Branch baseline
+
+This specification is carried by PR #38 (`ui: establish UX remediation foundation`) from `docs/ui-ux-master-remediation-spec` into `main`. The reconciliation baseline was verified directly against GitHub:
+
+- `main`: `a1b6075908f97f9127abf3f4172f2bd7251acbfd`
+- PR #38 pre-reconciliation head: `7618b6d90d011b269f45388296f3aa46ad7c8c69`
+- Divergence: 20 commits ahead and 14 commits behind `main`
+- PR shape before reconciliation: 15 changed files, 1,374 additions, and 247 deletions
+
+## Current-main integration
+
+The remediation branch now incorporates current `main` through reconciliation merge commit `d6dc68206ebdce6e50f4c68fbbcd68316a982157`. This brings the PR branch up to date with the CSRF and same-origin request hardening delivered by PR #37, including the shared security helper, project API enforcement, tests, and security documentation. No merge into `main` was performed.
+
+The integration deliberately preserves the remediation scope: the UX work remains limited to the documented workspace, component, accessibility, responsive, and interaction-state surfaces, while the security changes remain governed by their existing API and test contracts.
+
+## Release gate after reconciliation
+
+The branch-level static quality gate remains green for lint with warnings and no errors. A fresh local run on the reconciled worktree completed frozen-lockfile install, lint, typecheck, all 123 tests, and production build successfully. The pull request must still receive a fresh GitHub workflow result against the final remote head after push. Manual responsive, keyboard, screen-reader, contrast, reduced-motion, touch-target, and deployment smoke evidence also remains required; this document does not claim those checks have passed.
+
+The remediation verdict therefore remains **NEEDS REVISION** until the outstanding evidence-backed validation gates are completed. Reconciliation removes the stale-main integration risk; it does not waive the manual UX/accessibility or fresh-CI gates.

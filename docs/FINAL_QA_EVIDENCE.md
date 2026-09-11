@@ -5,6 +5,12 @@
 **Pull request:** #38 — `ui: establish UX remediation foundation`  
 **Evidence date:** 2026-09-11
 
+### Reconciliation baseline
+
+Before this update, PR #38 head was `7618b6d90d011b269f45388296f3aa46ad7c8c69` and current `main` was `a1b6075908f97f9127abf3f4172f2bd7251acbfd`. The branch was 20 commits ahead and 14 commits behind `main`. Current `main` includes the CSRF/origin hardening from PR #37; that change was merged into the remediation branch without modifying `main`.
+
+The reconciliation merge commit is `d6dc68206ebdce6e50f4c68fbbcd68316a982157`. The PR branch must receive the subsequent documentation commit from this update before the final remote head is recorded.
+
 ## 1. Automated quality gate
 
 The repository's Quality Gate workflow runs the following checks on pull requests:
@@ -15,13 +21,13 @@ The repository's Quality Gate workflow runs the following checks on pull request
 4. `pnpm test`
 5. `pnpm build`
 
-The latest completed PR workflow for this remediation branch ran against head commit `5721c276ad6e154074fdef5bb4953ebff1cbf61d` and completed with **success**.
+The latest completed PR workflow for the pre-reconciliation remediation branch ran against head commit `5721c276ad6e154074fdef5bb4953ebff1cbf61d` and completed with **success**.
 
 **Workflow run:** `34585228161`  
 **Result:** `success`  
 **Event:** `pull_request`
 
-A subsequent documentation-only commit was added after that run, so a fresh CI result for the current documentation head must be recorded before merge.
+A subsequent documentation-only commit and the current-main reconciliation were added after that run. A fresh CI result for the final remote head must be recorded before merge.
 
 ## 2. Remediation scope verified in PR
 
@@ -76,11 +82,11 @@ No manual browser or screen-reader pass is claimed by this document.
 
 ## 5. Merge-readiness decision
 
-**Automated quality:** PASS (latest completed run)  
+**Automated quality:** PASS for the last completed pre-reconciliation run; **fresh run required on the reconciled head**  
 **Static responsive/accessibility review:** PASS FOR SOURCE-LEVEL CONTRACTS  
 **Remediation implementation:** SUBSTANTIALLY COMPLETE FOR CURRENT SCOPE  
 **Manual UX/accessibility evidence:** REQUIRED  
-**PR state:** DRAFT
+**PR state:** DRAFT; do not merge until the fresh reconciled-head run and manual UX/accessibility evidence are complete.
 
 The branch is therefore **not declared fully release-ready solely from CI or source inspection**. The remaining gate is evidence-backed visual/accessibility review across the responsive contract, followed by a final review of the PR diff before marking it ready for review.
 
