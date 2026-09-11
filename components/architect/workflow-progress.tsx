@@ -32,15 +32,15 @@ export function WorkflowProgress() {
   const activeIndex = hasBlueprint ? 5 : hasStack ? 4 : hasRecommendations ? 2 : hasProject ? 1 : 0;
 
   return (
-    <section aria-label="Architecture progress" className="rounded-xl border border-border bg-card p-3 shadow-xs md:p-4">
+    <section aria-label="Architecture progress" className="rounded-xl border border-border bg-card p-3 shadow-xs sm:p-4">
       <div className="mb-3 flex items-center justify-between gap-3">
-        <div>
+        <div className="min-w-0">
           <p className="text-xs font-bold text-foreground">Your architecture journey</p>
-          <p className="text-[11px] text-muted-foreground">Complete one step at a time. You can always go back and adjust.</p>
+          <p className="text-xs leading-relaxed text-muted-foreground">Complete one step at a time. You can always go back and adjust.</p>
         </div>
-        <Badge variant="outline" className="hidden text-[10px] sm:inline-flex">Step {activeIndex + 1} of 6</Badge>
+        <Badge variant="outline" className="hidden shrink-0 text-xs sm:inline-flex">Step {activeIndex + 1} of 6</Badge>
       </div>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6">
         {steps.map((step, index) => {
           const isDone = completed[index] && index < activeIndex;
           const isActive = index === activeIndex;
@@ -49,14 +49,14 @@ export function WorkflowProgress() {
               key={step.id}
               href={step.href}
               aria-current={isActive ? "step" : undefined}
-              className={`group flex min-h-11 items-center gap-2 rounded-lg border px-2.5 py-2 transition-colors ${
+              className={`group flex min-h-11 min-w-0 items-center gap-2 rounded-lg border px-2.5 py-2 transition-colors ${
                 isActive ? "border-primary/30 bg-primary/10 text-primary" : isDone ? "border-border bg-muted/40 text-foreground" : "border-transparent text-muted-foreground hover:border-border hover:bg-muted/50"
               }`}
             >
-              <span className="flex size-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold">
-                {isDone ? <Check className="size-3.5" /> : isActive ? <ChevronRight className="size-3.5" /> : <Circle className="size-2.5" />}
+              <span className="flex size-6 shrink-0 items-center justify-center rounded-full border text-xs font-bold">
+                {isDone ? <Check className="size-3.5" aria-hidden="true" /> : isActive ? <ChevronRight className="size-3.5" aria-hidden="true" /> : <Circle className="size-2.5" aria-hidden="true" />}
               </span>
-              <span className="text-xs font-semibold">{step.label}</span>
+              <span className="truncate text-xs font-semibold">{step.label}</span>
             </Link>
           );
         })}
