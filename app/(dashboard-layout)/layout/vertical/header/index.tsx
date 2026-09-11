@@ -31,7 +31,7 @@ const Header = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="min-h-10 min-w-10 cursor-pointer rounded-full p-2 transition hover:bg-primary/5 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="size-11 shrink-0 cursor-pointer rounded-full p-2 transition hover:bg-primary/5 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               onClick={toggleSidebar}
               aria-label="Toggle workspace navigation"
             >
