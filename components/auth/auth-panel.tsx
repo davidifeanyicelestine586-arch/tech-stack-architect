@@ -87,7 +87,7 @@ export function AuthPanel() {
   if (user) {
     return (
       <div className="flex items-center gap-1.5">
-        <span className="hidden max-w-36 truncate text-[10px] font-medium text-muted-foreground sm:block" title={user.email ?? "Signed in"}>
+        <span className="hidden max-w-36 truncate text-xs font-medium text-muted-foreground sm:block" title={user.email ?? "Signed in"}>
           {user.email ?? "Signed in"}
         </span>
         <Button
