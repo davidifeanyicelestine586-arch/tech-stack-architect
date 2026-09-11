@@ -21,11 +21,11 @@ The latest completed PR workflow for this remediation branch ran against head co
 **Result:** `success`  
 **Event:** `pull_request`
 
-This is the authoritative automated evidence for the current branch head at the time of this record.
+A subsequent documentation-only commit was added after that run, so a fresh CI result for the current documentation head must be recorded before merge.
 
 ## 2. Remediation scope verified in PR
 
-PR #38 currently contains 14 changed files covering:
+PR #38 currently contains 15 changed files covering:
 
 - design-system remediation specification
 - accessibility acceptance criteria
@@ -40,23 +40,27 @@ PR #38 currently contains 14 changed files covering:
 - workflow/tablet layout refinement
 - responsive workspace header and shell refinement
 - auth-panel microcopy cleanup
+- final QA evidence record
 
-## 3. Design-system acceptance status
+## 3. Static responsive/accessibility contract review
 
-### Confirmed
+A source-level review of the remediation diff confirms the intended responsive and interaction safeguards are present:
 
-- Product-wide keyboard focus has an explicit `:focus-visible` replacement instead of removing focus indication.
-- Reduced-motion behavior is defined globally for users who request reduced motion.
-- Core spacing and control-height tokens are documented in `globals.css`.
-- Primary interactive controls targeted by the remediation use 44px sizing where appropriate.
-- Validation severity is communicated through explicit labels/icons rather than color alone.
-- Empty/loading/status regions use semantic status/live-region patterns where appropriate.
-- The accessibility acceptance contract is documented in `docs/ACCESSIBILITY_ACCEPTANCE.md`.
-- The remediation plan and Definition of Done are documented in `docs/UI_UX_MASTER_REMEDIATION_SPEC.md`.
+- Header controls use 44px-class targets and the header is protected against unnecessary wrapping at larger widths.
+- The workspace hero reduces padding and typography on narrow screens, stacks primary actions full-width on small screens, and restores horizontal action layout at larger widths.
+- Mobile Step 4 content and badges use 12px supporting text rather than 10px microcopy.
+- Workspace content columns use `min-w-0` safeguards to reduce flex/grid overflow risk.
+- Workflow progress uses responsive column changes for intermediate widths.
+- Decorative icons in the audited surfaces are marked `aria-hidden` where appropriate.
+- Validation severity is communicated with explicit labels/icons rather than relying on color alone.
+- The global stylesheet defines explicit `:focus-visible` treatment and reduced-motion behavior.
+- The accessibility acceptance contract defines the required viewport matrix, keyboard behavior, form semantics, motion behavior, and assistive-technology checks.
+
+This is a **static/source-level verification**, not a substitute for rendering the application at each target viewport.
 
 ## 4. Manual/browser verification status
 
-Automated CI passing does **not** prove visual or assistive-technology behavior. The following remain a manual release-review responsibility unless separately evidenced:
+Automated CI and source review do **not** prove visual or assistive-technology behavior. The following remain a manual release-review responsibility unless separately evidenced:
 
 - 375/390px mobile visual regression
 - 768/820/1024px tablet regression
@@ -72,13 +76,32 @@ No manual browser or screen-reader pass is claimed by this document.
 
 ## 5. Merge-readiness decision
 
-**Automated quality:** PASS  
+**Automated quality:** PASS (latest completed run)  
+**Static responsive/accessibility review:** PASS FOR SOURCE-LEVEL CONTRACTS  
 **Remediation implementation:** SUBSTANTIALLY COMPLETE FOR CURRENT SCOPE  
 **Manual UX/accessibility evidence:** REQUIRED  
 **PR state:** DRAFT
 
-The branch is therefore **not declared fully release-ready solely from CI**. The remaining gate is evidence-backed visual/accessibility review across the responsive contract, followed by a final review of the PR diff before marking it ready for review.
+The branch is therefore **not declared fully release-ready solely from CI or source inspection**. The remaining gate is evidence-backed visual/accessibility review across the responsive contract, followed by a final review of the PR diff before marking it ready for review.
 
-## 6. Next action
+## 6. Manual verification record template
 
-Perform the manual responsive/accessibility verification described above. Record findings and screenshots/evidence separately, resolve any P0/P1 regressions, then update this document and the PR status before merge.
+Complete this section after the application has been rendered and tested:
+
+| Context | Route/surface | Interaction path | Expected | Observed | Result | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| 375px | Workspace | Load → scroll → interact with primary controls | No clipping/overflow; controls reachable | Pending | PENDING | Pending |
+| 390px | Workspace | Load → define project → browse catalog | Layout remains stable and readable | Pending | PENDING | Pending |
+| 768px | Workspace | Load → workflow → catalog → validation | Tablet hierarchy remains usable | Pending | PENDING | Pending |
+| 820px | Workspace | Load → workflow → catalog → validation | No intermediate-width collision | Pending | PENDING | Pending |
+| 1024px | Workspace | Load → full primary workflow | Desktop/tablet transition remains stable | Pending | PENDING | Pending |
+| 1280px | Workspace | Complete primary workflow | Full workspace hierarchy is stable | Pending | PENDING | Pending |
+| 1440px | Workspace | Complete primary workflow | No excessive stretching or collisions | Pending | PENDING | Pending |
+| Keyboard | Primary workflow | Tab/Shift+Tab → activate controls → dismiss overlays | Logical order and visible focus | Pending | PENDING | Pending |
+| Screen reader | Primary workflow | Navigate landmarks/forms/status updates | Names, roles, states, and live updates announced appropriately | Pending | PENDING | Pending |
+| Reduced motion | Primary workflow | Enable `prefers-reduced-motion` → interact | Motion minimized without loss of meaning | Pending | PENDING | Pending |
+| Contrast | Critical states | Inspect focus/errors/statuses | Required contrast and non-color cues | Pending | PENDING | Pending |
+
+## 7. Next action
+
+Run the manual verification matrix in a real browser/device environment, attach screenshots or equivalent evidence, resolve any P0/P1 regressions, rerun the Quality Gate on the current head, then update this record and the PR status before merge.
