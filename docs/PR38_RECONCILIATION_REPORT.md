@@ -10,6 +10,8 @@
 
 **PR #38 was not merged into `main`.** The remediation branch was reconciled locally with the current `main` branch, the remediation specification and QA evidence were updated to reflect that reconciliation, and the resulting branch is ready to push for a fresh pull-request validation cycle. The branch is **not yet release-ready** because manual UX/accessibility evidence and a fresh complete quality gate on the reconciled remote head remain required.
 
+The attempted push to `docs/ui-ux-master-remediation-spec` was rejected by GitHub because the configured credential returned `Invalid username or token`. Consequently, the remote PR head remains unchanged at the pre-reconciliation SHA until a valid repository-write credential is available. No remote mutation or merge occurred.
+
 ## Verified GitHub state before reconciliation
 
 | Item | Verified value |
@@ -79,7 +81,7 @@ The last recorded successful GitHub workflow predates the current-main reconcili
 
 ## Safe continuation sequence
 
-1. Push the reconciled local branch to `origin/docs/ui-ux-master-remediation-spec` without force-pushing or merging.
+1. Push the reconciled local branch at local commit `e46b7d1` (full SHA available from the local repository) to `origin/docs/ui-ux-master-remediation-spec` without force-pushing or merging, using a valid repository-write credential.
 2. Confirm the remote PR head and GitHub comparison now show no stale-main gap.
 3. Wait for the full quality gate on that exact head.
 4. Complete the manual/browser accessibility matrix and attach evidence.
