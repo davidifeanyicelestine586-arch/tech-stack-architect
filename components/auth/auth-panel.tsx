@@ -93,7 +93,7 @@ export function AuthPanel() {
         <Button
           variant="ghost"
           size="sm"
-          className="h-8 gap-1.5 px-2 text-xs"
+          className="h-11 gap-1.5 px-2 text-xs"
           onClick={() => void signOut()}
           disabled={busy}
           aria-label="Sign out"
@@ -109,7 +109,7 @@ export function AuthPanel() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button variant="outline" size="sm" className="h-8 gap-1.5 px-2 text-xs">
+          <Button variant="outline" size="sm" className="h-11 gap-1.5 px-2 text-xs">
             <UserRound className="size-3.5" aria-hidden="true" />
             <span>Sign in</span>
           </Button>
@@ -148,7 +148,7 @@ export function AuthPanel() {
           >
             {mode === "sign-in" ? "Create account" : "Already have an account? Sign in"}
           </Button>
-          <Button type="button" onClick={() => void submit()} disabled={busy || !email.trim() || password.length < 6} className="gap-1.5">
+          <Button type="button" onClick={() => void submit()} disabled={busy || !email.trim() || password.length < 6} className="h-11 gap-1.5">
             <LogIn className="size-3.5" aria-hidden="true" />
             {busy ? "Working…" : mode === "sign-in" ? "Sign in" : "Sign up"}
           </Button>
