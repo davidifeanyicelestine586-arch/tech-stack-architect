@@ -3,11 +3,9 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
-
 @custom-variant style-lyra (&:where(.style-lyra *));
 
 @import "./css/styles/style-lyra.css";
-
 @import "./css/pages/app.css";
 
 @theme {
@@ -15,10 +13,6 @@
   --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   --shadow-md: 0 1px 4px rgba(133, 146, 173, 0.2);
   --shadow-btn-shadow: 0 9px 17.5px rgba(0, 0, 0, 0.05);
-  --radius-lg: 7px;
-  --margin-30: 30px;
-  --text-40: 40px;
-
 }
 
 @theme inline {
@@ -62,6 +56,19 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Product design-system tokens: use these in feature code before adding new raw values. */
+  --spacing-ds-1: 4px;
+  --spacing-ds-2: 8px;
+  --spacing-ds-3: 12px;
+  --spacing-ds-4: 16px;
+  --spacing-ds-6: 24px;
+  --spacing-ds-8: 32px;
+  --spacing-ds-10: 40px;
+  --spacing-ds-12: 48px;
+  --control-height-sm: 36px;
+  --control-height-md: 44px;
+  --control-height-lg: 48px;
 }
 
 :root {
@@ -133,8 +140,6 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-
-
 @utility frontend-page {
   & .container {
     @apply max-w-[1410px];
@@ -153,10 +158,8 @@
 
   body {
     @apply bg-background text-foreground;
-
   }
 
-  /*heading text color*/
   h1,
   h2,
   h3,
@@ -173,13 +176,29 @@
   input[type="radio"]:checked {
     @apply bg-primary;
   }
+
+  /* Product-wide keyboard focus contract. Never remove focus without a visible replacement. */
+  :where(button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 
 @utility btn-circle-hover {
   @apply h-9 w-9 flex justify-center items-center rounded-lg hover:bg-primary/5 hover:text-primary cursor-pointer bg-transparent;
 }
 
-/* Card Shadow Control via Data Attribute */
 html[data-card-shadow="true"] [data-slot="card"] {
   @apply shadow-md ring-0;
 }
@@ -192,20 +211,16 @@ html[data-card-shadow="false"] [data-slot="card"] {
   /* @apply data-checked:bg-primary data-hover:bg-primary data-checked:border-primary data-checked:text-white; */
 }
 
+/* Inputs retain a strong keyboard focus ring; border emphasis is supplemental. */
 [data-slot="input"] {
-  @apply focus-visible:border-primary focus-visible:ring-[0px];
+  @apply focus-visible:border-primary;
 }
 
 [data-slot="textarea"] {
-  @apply focus-visible:border-primary focus-visible:ring-[0px];
+  @apply focus-visible:border-primary;
 }
 
-/*for sidebar */
-
 [data-sidebar-type="true"] {
-  /* Only apply the icon-only + hover-preview behavior while the sidebar
-     is actually in its real collapsed ("icon") state. When it's expanded
-     (data-collapsible is empty), labels render normally with no overrides. */
   [data-slot="sidebar"][data-collapsible="icon"] {
     .sidebar-box .hide-menu {
       @apply hidden;
@@ -236,7 +251,6 @@ html[data-card-shadow="false"] [data-slot="card"] {
         white-space: nowrap !important;
       }
 
-      /* Powerfully override Shadcn's internal button restrictions on hover */
       [data-slot="sidebar-menu-button"],
       [data-sidebar="menu-button"] {
         display: flex !important;
@@ -245,28 +259,18 @@ html[data-card-shadow="false"] [data-slot="card"] {
         height: auto !important;
         min-height: 44px !important;
         padding: 0 !important;
-
         overflow: visible !important;
         justify-content: flex-start !important;
       }
 
-
-
-      /* Inner alignment for NavUser and NavSecondary to match standard items */
       [data-sidebar="menu-button"] .flex.items-center {
         padding: 8px 12px !important;
         width: 100% !important;
         gap: 12px !important;
       }
-
-
-
-
     }
 
     .sidebar-box:not(:hover) {
-
-      /* Ensure icons are perfectly centered in mini mode */
       [data-sidebar="menu-button"] {
         display: flex !important;
         justify-content: center !important;
@@ -281,22 +285,12 @@ html[data-card-shadow="false"] [data-slot="card"] {
         gap: 0 !important;
         width: 100% !important;
       }
-
-
-
     }
   }
 }
 
-
 [data-slot="chart"] {
   @apply h-72 w-full;
-}
-
-@utility frontend-page {
-  & .container {
-    @apply max-w-[1410px];
-  }
 }
 
 @utility container {
@@ -311,10 +305,7 @@ html[data-card-shadow="false"] [data-slot="card"] {
       transform: translate(calc(-50% - 0.5rem));
     }
   }
-
-
 }
-
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
