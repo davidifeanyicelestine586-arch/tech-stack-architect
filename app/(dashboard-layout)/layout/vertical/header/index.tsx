@@ -22,8 +22,8 @@ const Header = () => {
       )}
     >
       <nav aria-label="Workspace navigation">
-        <div className="mx-auto flex min-h-12 flex-wrap items-center justify-between gap-2 p-2">
-          <div className="flex min-w-0 items-center gap-2">
+        <div className="mx-auto flex min-h-12 items-center gap-2 p-2 lg:flex-nowrap">
+          <div className="flex min-w-0 shrink-0 items-center gap-2">
             <div className="block lg:hidden" aria-label="Ediccrew Tech Stack Architect">
               <FullLogo />
             </div>
@@ -31,7 +31,7 @@ const Header = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="min-h-10 min-w-10 cursor-pointer rounded-full p-2 transition hover:bg-primary/5 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="size-11 shrink-0 cursor-pointer rounded-full p-2 transition hover:bg-primary/5 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               onClick={toggleSidebar}
               aria-label="Toggle workspace navigation"
             >
@@ -43,19 +43,23 @@ const Header = () => {
               className="ml-2 mr-4 h-4 max-lg:hidden data-[orientation=vertical]:self-center"
             />
 
-            <div className="hidden sm:block sm:w-72">
+            <div className="hidden w-48 shrink-0 sm:block lg:w-72">
               <Search />
             </div>
           </div>
 
-          <div className="flex min-w-0 flex-wrap items-center justify-end gap-1">
-            <ProjectPersistenceToolbar />
-            <AuthPanel />
+          <div className="ml-auto flex min-w-0 flex-1 items-center justify-end gap-1 overflow-visible">
+            <div className="min-w-0 max-w-full">
+              <ProjectPersistenceToolbar />
+            </div>
+            <div className="shrink-0">
+              <AuthPanel />
+            </div>
             <Separator orientation="vertical" className="mx-1 hidden h-5 md:block" />
             <Button
               variant="outline"
               size="sm"
-              className="hidden h-9 items-center gap-1.5 text-xs font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:inline-flex"
+              className="hidden h-11 shrink-0 items-center gap-1.5 px-3 text-xs font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:inline-flex"
               render={
                 <Link
                   href="https://github.com/davidifeanyicelestine586-arch/tech-stack-architect"
@@ -68,7 +72,9 @@ const Header = () => {
               <GitFork aria-hidden="true" className="size-3.5" />
               <span>GitHub</span>
             </Button>
-            <LightDark />
+            <div className="shrink-0">
+              <LightDark />
+            </div>
           </div>
         </div>
       </nav>
