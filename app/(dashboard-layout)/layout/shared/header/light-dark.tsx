@@ -44,29 +44,30 @@ const LightDark = () => {
   };
 
   if (!isMounted) {
-    // Render nothing on the server to avoid hydration mismatch
     return null;
   }
 
   return (
     <div>
-      {/* Theme Toggle */}
       {activeMode === "light" ? (
         <Button
           variant="ghost"
-          className=" h-10 w-10  hover:bg-primary/5  rounded-full cursor-pointer"
+          className="h-11 w-11 rounded-full cursor-pointer hover:bg-primary/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           onClick={toggleTheme}
+          aria-label="Switch to dark theme"
+          title="Switch to dark theme"
         >
-          <Moon className="size-5" />
+          <Moon className="size-5" aria-hidden="true" />
         </Button>
       ) : (
-        // Dark Mode Button
         <Button
           variant="ghost"
-          className=" h-10 w-10  hover:bg-primary/5  rounded-full cursor-pointer"
+          className="h-11 w-11 rounded-full cursor-pointer hover:bg-primary/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           onClick={toggleTheme}
+          aria-label="Switch to light theme"
+          title="Switch to light theme"
         >
-          <Sun className="size-5" />
+          <Sun className="size-5" aria-hidden="true" />
         </Button>
       )}
     </div>
