@@ -145,37 +145,39 @@ export function ProjectPersistenceToolbar() {
   };
 
   return (
-    <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5">
+    <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5" aria-label="Project persistence controls">
       <div className="hidden max-w-44 items-center gap-1.5 truncate lg:flex" title={projectDefinition.name || "New project"}>
         <span className="size-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />
-        <span className="truncate text-[11px] font-semibold text-foreground">
+        <span className="truncate text-xs font-semibold text-foreground">
           {projectDefinition.name.trim() || "New project"}
         </span>
       </div>
       <Badge
         variant={isDirty || persistenceError ? "outline" : "secondary"}
-        className="gap-1 whitespace-nowrap px-2 py-1 text-[10px] font-semibold"
+        className="min-h-8 gap-1 whitespace-nowrap px-2 text-xs font-semibold"
         aria-live="polite"
+        aria-label={`Persistence status: ${statusLabel}`}
       >
         {persistenceStatus === "saving" || persistenceStatus === "loading" ? (
-          <Loader2 className="size-3 animate-spin" aria-hidden="true" />
+          <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
         ) : persistenceError ? (
-          <AlertCircle className="size-3 text-rose-600 dark:text-rose-400" aria-hidden="true" />
+          <AlertCircle className="size-3.5 text-rose-600 dark:text-rose-400" aria-hidden="true" />
         ) : (
-          <CheckCircle2 className="size-3 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+          <CheckCircle2 className="size-3.5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
         )}
         <span>{statusLabel}</span>
       </Badge>
-      <Separator orientation="vertical" className="mx-0.5 hidden h-5 sm:block" />
+      <Separator orientation="vertical" className="mx-0.5 hidden h-6 sm:block" />
       <Button
         variant="ghost"
         size="sm"
-        className="h-8 gap-1.5 px-2 text-xs"
+        className="h-11 min-w-11 gap-1.5 px-2 text-xs"
         onClick={handleNewProject}
         disabled={isBusy}
         aria-label="Create new project"
+        title="Create new project"
       >
-        <Plus className="size-3.5" aria-hidden="true" />
+        <Plus className="size-4" aria-hidden="true" />
         <span>New</span>
       </Button>
       <Dialog open={openDialog} onOpenChange={handleOpenDialogChange}>
@@ -184,13 +186,14 @@ export function ProjectPersistenceToolbar() {
             <Button
               variant="outline"
               size="sm"
-              className="h-8 gap-1.5 px-2 text-xs"
+              className="h-11 min-w-11 gap-1.5 px-2 text-xs"
               disabled={isBusy}
               aria-label="Open saved project"
+              title="Open saved project"
             />
           }
         >
-          <FolderOpen className="size-3.5" aria-hidden="true" />
+          <FolderOpen className="size-4" aria-hidden="true" />
           <span>Open</span>
         </DialogTrigger>
         <DialogContent className="max-w-lg">
@@ -200,32 +203,38 @@ export function ProjectPersistenceToolbar() {
               Choose a saved project to restore its project definition and selected architecture.
             </DialogDescription>
           </DialogHeader>
-          <div className="max-h-[min(60vh,28rem)] overflow-y-auto pr-1" aria-live="polite">
+          <div
+            className="max-h-[min(60vh,28rem)] overflow-y-auto pr-1"
+            aria-live="polite"
+            aria-busy={listState === "loading"}
+          >
             {listState === "loading" ? (
-              <div className="flex items-center justify-center gap-2 rounded-lg border border-dashed border-border p-8 text-sm text-muted-foreground">
+              <div className="flex items-center justify-center gap-2 rounded-lg border border-dashed border-border p-8 text-sm text-muted-foreground" role="status">
                 <Loader2 className="size-4 animate-spin" aria-hidden="true" />
                 Loading saved projects…
               </div>
             ) : listState === "error" ? (
-              <Alert variant="destructive">
+              <Alert variant="destructive" role="alert">
                 <AlertCircle className="size-4" aria-hidden="true" />
                 <AlertDescription>
                   {listError || persistenceError?.message}
                 </AlertDescription>
               </Alert>
             ) : listState === "ready" ? (
-              <div className="grid gap-2">
+              <div className="grid gap-2" role="list" aria-label="Saved projects">
                 {projects?.map((project) => (
                   <div
                     key={project.id}
+                    role="listitem"
                     className="flex items-start gap-3 rounded-lg border border-border bg-card p-3 transition-colors hover:border-primary/40 hover:bg-primary/5"
                   >
                     <button
                       type="button"
-                      className="min-w-0 flex-1 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      className="min-h-11 min-w-0 flex-1 rounded-md text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                       onClick={() => void handleOpenProject(project)}
-                      disabled={isBusy}
+                      disabled={isBusy || isDeleting}
                       aria-label={`Open ${project.name || "Untitled project"}`}
+                      aria-busy={isBusy}
                     >
                       <span className="block truncate text-sm font-semibold text-foreground">
                         {project.name || "Untitled project"}
@@ -233,19 +242,19 @@ export function ProjectPersistenceToolbar() {
                       <span className="mt-1 block truncate text-xs text-muted-foreground">
                         {project.description || project.domain || "No description"}
                       </span>
-                      <span className="mt-2 block text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                      <span className="mt-2 block text-xs font-medium uppercase tracking-wider text-muted-foreground">
                         {formatUpdatedAt(project.updatedAt)}
                       </span>
                     </button>
                     <Button
                       type="button"
                       variant="ghost"
-                      size="icon-sm"
-                      className="shrink-0 text-muted-foreground hover:text-destructive"
+                      size="icon"
+                      className="size-11 shrink-0 text-muted-foreground hover:text-destructive"
                       onClick={() => setDeleteTarget(project)}
                       disabled={isBusy || isDeleting}
                       aria-label={`Delete ${project.name || "Untitled project"}`}
-                      title="Delete project"
+                      title={`Delete ${project.name || "Untitled project"}`}
                     >
                       <Trash2 className="size-4" aria-hidden="true" />
                     </Button>
@@ -253,7 +262,7 @@ export function ProjectPersistenceToolbar() {
                 ))}
               </div>
             ) : (
-              <div className="rounded-lg border border-dashed border-border p-8 text-center">
+              <div className="rounded-lg border border-dashed border-border p-8 text-center" role="status">
                 <FolderOpen className="mx-auto size-7 text-muted-foreground/70" aria-hidden="true" />
                 <p className="mt-3 text-sm font-semibold text-foreground">No saved projects yet</p>
                 <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
@@ -263,8 +272,18 @@ export function ProjectPersistenceToolbar() {
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => void refreshProjects()} disabled={isBusy} className="gap-1.5">
-              <RefreshCw className="size-3.5" aria-hidden="true" />
+            <Button
+              variant="outline"
+              onClick={() => void refreshProjects()}
+              disabled={isBusy}
+              className="h-11 gap-1.5"
+              aria-busy={listState === "loading"}
+            >
+              {listState === "loading" ? (
+                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+              ) : (
+                <RefreshCw className="size-4" aria-hidden="true" />
+              )}
               Refresh list
             </Button>
           </DialogFooter>
@@ -273,22 +292,24 @@ export function ProjectPersistenceToolbar() {
       <Button
         variant="default"
         size="sm"
-        className="h-8 gap-1.5 px-2 text-xs shadow-xs"
+        className="h-11 min-w-11 gap-1.5 px-2 text-xs shadow-xs"
         onClick={() => void handleSave()}
         disabled={saveButtonState.disabled}
         aria-label="Save current project"
+        title="Save current project"
+        aria-busy={persistenceStatus === "saving"}
       >
         {persistenceStatus === "saving" ? (
-          <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
+          <Loader2 className="size-4 animate-spin" aria-hidden="true" />
         ) : (
-          <Save className="size-3.5" aria-hidden="true" />
+          <Save className="size-4" aria-hidden="true" />
         )}
         <span>{saveButtonState.label}</span>
       </Button>
       {persistenceError && (
         <div className="basis-full pt-1 sm:basis-auto sm:pt-0" role="alert">
-          <div className="flex items-center gap-2 rounded-md border border-rose-200 bg-rose-50 px-2 py-1.5 text-[10px] text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">
-            <span className="max-w-52 truncate" title={`${getPersistenceErrorTitle(persistenceError.code)}: ${persistenceError.message}`}>
+          <div className="flex flex-wrap items-center gap-2 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">
+            <span className="min-w-0 flex-1 leading-relaxed">
               <span className="font-semibold">{getPersistenceErrorTitle(persistenceError.code)}:</span>{" "}
               {persistenceError.message}
             </span>
@@ -297,11 +318,16 @@ export function ProjectPersistenceToolbar() {
                 type="button"
                 variant="outline"
                 size="sm"
-                className="h-6 shrink-0 gap-1 px-1.5 text-[10px]"
+                className="h-11 shrink-0 gap-1 px-2 text-xs"
                 onClick={() => void handleReloadSavedVersion()}
                 disabled={isBusy}
+                aria-busy={persistenceStatus === "loading"}
               >
-                <RefreshCw className="size-3" aria-hidden="true" />
+                {persistenceStatus === "loading" ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                ) : (
+                  <RefreshCw className="size-4" aria-hidden="true" />
+                )}
                 Reload saved version
               </Button>
             )}
@@ -340,9 +366,9 @@ export function ProjectPersistenceToolbar() {
                 void handleDelete();
               }}
               disabled={isDeleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="min-h-11 bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {isDeleting && <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />}
+              {isDeleting && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
               {isDeleting ? "Deleting…" : "Delete project"}
             </AlertDialogAction>
           </AlertDialogFooter>
