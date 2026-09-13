@@ -50,10 +50,6 @@ function Search() {
       if (item.items) {
         results.push(...searchItems(item.items, q, currentPath));
       }
-
-      if (item.item) {
-        results.push(...searchItems(item.item, q, currentPath));
-      }
     });
 
     return results;
