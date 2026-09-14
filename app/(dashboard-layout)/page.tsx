@@ -31,11 +31,11 @@ export default function WorkspacePage() {
 
   return (
     <div className="flex flex-col gap-6 pb-12 sm:gap-8">
-      <section className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4 shadow-xs sm:p-6 md:p-8">
+      <section className="relative overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-xs sm:p-6 md:p-8">
         <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center md:gap-6">
           <div className="flex max-w-2xl flex-col gap-2">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline" className="gap-1 border-primary/30 bg-background/80 px-2.5 py-1 text-xs font-semibold text-primary">
+              <Badge variant="outline" className="gap-1 px-2.5 py-1 text-xs font-semibold">
                 <Sparkles className="size-3" aria-hidden="true" />
                 Guided architecture workspace
               </Badge>

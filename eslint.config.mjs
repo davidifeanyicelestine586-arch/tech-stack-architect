@@ -15,7 +15,9 @@ export default defineConfig([
   ...nextTypeScriptConfig,
   {
     rules: {
-      "@typescript-eslint/no-explicit-any": "off",
+      // Keep explicit-any visible during the cleanup without making the
+      // existing repository-wide debt a build blocker in this pass.
+      "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-unused-vars": "warn",
     },
   },

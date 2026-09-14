@@ -3,6 +3,14 @@ import { useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
 
+type ViewTransition = {
+  ready: Promise<void>;
+};
+
+type DocumentWithViewTransition = Document & {
+  startViewTransition?: (callback: () => void) => ViewTransition;
+};
+
 const subscribe = () => () => {};
 const getClientSnapshot = () => true;
 const getServerSnapshot = () => false;
@@ -20,15 +28,15 @@ const LightDark = () => {
       setActiveMode(activeMode === "light" ? "dark" : "light");
     };
 
-    if (!(document as any).startViewTransition) {
+    const documentWithTransition = document as DocumentWithViewTransition;
+    const startViewTransition = documentWithTransition.startViewTransition;
+
+    if (!startViewTransition) {
       toggleMode();
       return;
     }
 
-    const transition = (document as any).startViewTransition(() => {
-      toggleMode();
-    });
-
+    const transition = startViewTransition(toggleMode);
     await transition.ready;
 
     document.documentElement.animate(
@@ -39,7 +47,7 @@ const LightDark = () => {
         duration: 800,
         easing: "ease-in-out",
         pseudoElement: "::view-transition-new(root)",
-      }
+      },
     );
   };
 
