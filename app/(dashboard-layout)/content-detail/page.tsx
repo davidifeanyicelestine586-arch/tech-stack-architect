@@ -22,22 +22,22 @@ export const metadata: Metadata = {
 export default function ContentDetailPage() {
   return (
     <div className="flex flex-col gap-8 pb-12">
-      <section className="flex flex-col gap-4 rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-6 shadow-xs md:p-8">
+      <section className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 shadow-xs md:p-8">
         <Button
           variant="ghost"
           className="w-fit gap-2 px-0 text-xs text-muted-foreground hover:bg-transparent hover:text-foreground"
           render={<Link href="/" />}
         >
-          <ArrowLeft className="size-3.5" />
+          <ArrowLeft className="size-3.5" aria-hidden="true" />
           Back to Workspace
         </Button>
         <div className="flex items-start gap-3">
           <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <BookOpen className="size-5" />
+            <BookOpen className="size-5" aria-hidden="true" />
           </div>
           <div className="flex flex-col gap-1">
-            <Badge variant="outline" className="w-fit gap-1 border-primary/30 text-[10px] text-primary">
-              <ShieldCheck className="size-3" />
+            <Badge variant="outline" className="w-fit gap-1 text-[10px]">
+              <ShieldCheck className="size-3" aria-hidden="true" />
               Registry documentation
             </Badge>
             <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
@@ -80,8 +80,8 @@ export default function ContentDetailPage() {
 
                     <div className="flex flex-wrap gap-1.5">
                       {component.difficulty && <Badge variant="secondary" className="text-[9px]">{component.difficulty}</Badge>}
-                      <Badge variant="secondary" className="gap-1 text-[9px]"><Clock className="size-3" />{component.estimatedLearningHours ?? 0}h</Badge>
-                      <Badge variant="secondary" className="text-[9px]">Complexity {component.complexity ?? "—"}/5</Badge>
+                      <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground"><Clock className="size-3" aria-hidden="true" />{component.estimatedLearningHours ?? 0}h learning</span>
+                      <span className="text-[10px] text-muted-foreground">Complexity {component.complexity ?? "—"}/5</span>
                     </div>
 
                     <div className="grid gap-2 text-[10px] text-muted-foreground">
