@@ -4,7 +4,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowRight, Clock, Trophy, ChevronDown } from "lucide-react";
+import { Layers, ArrowRight, Clock, Trophy, ChevronDown } from "lucide-react";
 import { useTechStack } from "@/hooks/use-tech-stack";
 
 export function RecipeRecommendations() {
@@ -16,7 +16,7 @@ export function RecipeRecommendations() {
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2">
             <h3 className="flex items-center gap-2 text-sm font-bold">
-              <Sparkles className="size-4 text-primary" />
+              <Layers className="size-4 text-muted-foreground" aria-hidden="true" />
               Stack Templates
             </h3>
             <Badge variant="outline" className="text-[10px] font-mono">
@@ -68,8 +68,8 @@ export function RecipeRecommendations() {
                 <Badge variant="secondary" className="text-[9px] font-bold uppercase tracking-wider">
                   {recipe.domain.replace("-", " ")}
                 </Badge>
-                <div className="flex shrink-0 items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                  <Trophy className="size-3" />
+                <div className="shrink-0 text-xs font-semibold text-muted-foreground">
+                  <Trophy className="size-3" aria-hidden="true" />
                   {score}% match
                 </div>
               </div>
@@ -83,7 +83,7 @@ export function RecipeRecommendations() {
             <CardContent className="flex flex-col gap-3 pt-0">
               <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
                 <span className="flex items-center gap-1">
-                  <Clock className="size-3" /> ~{recipe.estimatedHours}h
+                  <Clock className="size-3" aria-hidden="true" /> ~{recipe.estimatedHours}h
                 </span>
                 <span className="size-1 rounded-full bg-border" />
                 <span>{recipe.difficulty}</span>
