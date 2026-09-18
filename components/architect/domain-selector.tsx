@@ -4,7 +4,7 @@ import React from "react";
 import { useTechStack } from "@/hooks/use-tech-stack";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Globe, Bot, Cpu, Sparkles, Layers } from "lucide-react";
+import { Globe, Bot, Cpu, Layers } from "lucide-react";
 
 export function DomainSelector() {
   const { domains, activeDomain, setActiveDomain, components } = useTechStack();
@@ -49,7 +49,7 @@ export function DomainSelector() {
         >
           <div className="flex w-full items-center justify-between">
             <div className="rounded-lg border border-border/60 bg-background p-1.5">
-              <Sparkles className="size-4 text-primary" aria-hidden="true" />
+              <Layers className="size-4 text-primary" aria-hidden="true" />
             </div>
             <Badge variant="secondary" className="text-xs font-semibold">
               {components.length}
