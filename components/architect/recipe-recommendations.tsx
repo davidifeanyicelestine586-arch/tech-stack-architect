@@ -44,7 +44,7 @@ export function RecipeRecommendations() {
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="flex items-center gap-2 text-sm font-bold">
-              <Sparkles className="size-4 text-primary" />
+              <Layers className="size-4 text-muted-foreground" aria-hidden="true" />
               Stack Templates
             </h3>
             <Badge variant="outline" className="text-[10px] font-mono">
