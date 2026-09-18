@@ -38,19 +38,7 @@ export function SelectedStack({ variant = "default" }: SelectedStackProps) {
   };
 
   if (selectedComponents.length === 0) {
-    return (
-      <Card className="border-dashed bg-muted/20" aria-label="Selected technology stack">
-        <CardContent className={`flex flex-col items-center justify-center text-center ${isMobile ? "p-7" : "p-10 sm:p-12"}`}>
-          <div className="mb-3 rounded-full bg-muted/60 p-3" aria-hidden="true">
-            <Layers className="size-6 text-muted-foreground" />
-          </div>
-          <h3 className="text-sm font-semibold text-foreground">Your stack is empty</h3>
-          <p className="mt-1 max-w-[220px] text-xs leading-relaxed text-muted-foreground">
-            Add technologies from the browser to start building your architecture.
-          </p>
-        </CardContent>
-      </Card>
-    );
+    return null;
   }
 
   return (

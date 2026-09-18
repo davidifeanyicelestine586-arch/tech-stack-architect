@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { BookOpen, FileCode2, Layers, ShieldCheck, Sparkles } from "lucide-react";
+import { BookOpen, FileCode2, Layers, SearchCheck, ShieldCheck } from "lucide-react";
 import { ComponentBrowser } from "@/components/architect/component-browser";
 import { DomainSelector } from "@/components/architect/domain-selector";
 import { SelectedStack } from "@/components/architect/selected-stack";
@@ -31,12 +31,12 @@ export default function WorkspacePage() {
 
   return (
     <div className="flex flex-col gap-6 pb-12 sm:gap-8">
-      <section className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4 shadow-xs sm:p-6 md:p-8">
+      <section className="relative overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-xs sm:p-6 md:p-8">
         <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center md:gap-6">
           <div className="flex max-w-2xl flex-col gap-2">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline" className="gap-1 border-primary/30 bg-background/80 px-2.5 py-1 text-xs font-semibold text-primary">
-                <Sparkles className="size-3" aria-hidden="true" />
+              <Badge variant="outline" className="gap-1 px-2.5 py-1 text-xs font-semibold">
+                <SearchCheck className="size-3" aria-hidden="true" />
                 Guided architecture workspace
               </Badge>
               <Badge variant="secondary" className="px-2.5 py-1 text-xs">v2.0 Architecture</Badge>
@@ -48,7 +48,7 @@ export default function WorkspacePage() {
           </div>
           <div className="grid w-full shrink-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap md:w-auto md:gap-3">
             <Button className="h-11 w-full gap-2 px-4 shadow-xs sm:w-auto sm:px-5" render={<Link href="#define" />}>
-              <Sparkles className="size-4" aria-hidden="true" /> Analyze My Project
+              <SearchCheck className="size-4" aria-hidden="true" /> Analyze My Project
             </Button>
             <Button variant="outline" className="h-11 w-full gap-2 sm:w-auto" render={<Link href="#components" />}>
               <Layers className="size-4" aria-hidden="true" /> Browse Technology Catalog
@@ -92,8 +92,8 @@ export default function WorkspacePage() {
         <div className="flex min-w-0 flex-col gap-6 sm:gap-8 lg:col-span-8">
           <section className="flex min-w-0 flex-col gap-5" id="components">
             <div>
-              <div className="flex items-center gap-2"><Badge variant="outline" className="text-xs font-bold">Step 4</Badge><h2 className="text-lg font-bold tracking-tight text-foreground">Build Your Stack</h2></div>
-              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Review recommended technologies first, then browse the catalog when you want to make manual adjustments.</p>
+              <div className="flex items-center gap-2"><Badge variant="outline" className="text-xs font-bold">Step 4</Badge><h2 className="text-lg font-bold tracking-tight text-foreground">Adjust Your Stack</h2></div>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Recommendations are your starting point. Use the catalog to add, remove, and refine technologies before validation.</p>
             </div>
             <DomainSelector />
             <ComponentBrowser />
@@ -123,7 +123,7 @@ export default function WorkspacePage() {
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <FeatureCard icon={<ShieldCheck className="size-4" aria-hidden="true" />} iconClassName="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" title="Deterministic Validation" description="Checks dependencies, hardware conflicts, and architectural rules before you treat a stack as ready." />
-        <FeatureCard icon={<Sparkles className="size-4" aria-hidden="true" />} iconClassName="bg-primary/10 text-primary" title="Explainable Recommendations" description="Recommendations are matched against your project requirements so you can understand why a technology fits." />
+        <FeatureCard icon={<SearchCheck className="size-4" aria-hidden="true" />} iconClassName="bg-primary/10 text-primary" title="Explainable Recommendations" description="Recommendations are matched against your project requirements so you can understand why a technology fits." />
         <FeatureCard icon={<FileCode2 className="size-4" aria-hidden="true" />} iconClassName="bg-sky-500/10 text-sky-600 dark:text-sky-400" title="Architecture Blueprint" description="Turn a validated stack into an engineering blueprint, starter commands, and exportable documentation." />
       </section>
     </div>

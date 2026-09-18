@@ -3,18 +3,36 @@
 import { useState, useMemo } from "react";
 import { Search as SearchIcon, Layers } from "lucide-react";
 import SimpleBar from "simplebar-react";
-import SidebarContent from "../../vertical/sidebar/sidebaritems";
+import SidebarContent, {
+  type ChildItem,
+  type MenuItem,
+} from "../../vertical/sidebar/sidebaritems";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
+
+type SearchableItem = MenuItem | ChildItem;
+
+type SearchResult = {
+  name: string;
+  url: string;
+  path: string;
+  icon?: MenuItem["icon"];
+};
 
 function Search() {
   const [query, setQuery] = useState("");
 
-  const searchItems = (items: any[], q: string, parentPath = "") => {
-    let results: any[] = [];
+  const searchItems = (
+    items: SearchableItem[],
+    q: string,
+    parentPath = "",
+  ): SearchResult[] => {
+    const results: SearchResult[] = [];
 
     items.forEach((item) => {
-      const currentPath = parentPath ? `${parentPath} → ${item.name}` : item.name;
+      const currentPath = parentPath
+        ? `${parentPath} → ${item.name ?? ""}`
+        : item.name ?? "";
 
       if (
         item.name &&
@@ -29,7 +47,9 @@ function Search() {
         });
       }
 
-      if (item.items) results = [...results, ...searchItems(item.items, q, currentPath)];
+      if (item.items) {
+        results.push(...searchItems(item.items, q, currentPath));
+      }
     });
 
     return results;

@@ -23,7 +23,7 @@ pnpm build
 pnpm start
 ```
 
-The production server should be started with the host-provided `PORT` when applicable.
+The repository `build` script uses `next build --webpack` for compatibility with Hostinger environments whose system glibc is older than the native SWC binary requires. This is a supported Next.js build mode. The production server should be started with the host-provided `PORT` when applicable.
 
 ## Development
 
@@ -43,7 +43,7 @@ Before publishing a deployment, confirm that the hosting environment:
 - Uses Node.js 22.x.
 - Uses the repository root as the application directory.
 - Installs dependencies from the committed lockfile.
-- Runs `pnpm build` before starting the application.
+- Runs `pnpm build` before starting the application. The current script invokes `next build --webpack` for Hostinger compatibility.
 - Runs `pnpm start` for the production process.
 - Provides any required environment configuration through the hosting platform rather than committing credentials to the repository.
 - Allows the application to listen on the port supplied by the hosting platform.

@@ -19,14 +19,11 @@ export function ComponentCard({ component }: ComponentCardProps) {
   const isSelected = selectedComponentIds.includes(component.id);
   const pinSummary = formatPinGroups(component.pins);
 
-  const getDifficultyBadge = (diff?: string) => {
-    switch (diff) {
-      case "Beginner": return <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">Beginner</span>;
-      case "Intermediate": return <span className="inline-flex items-center rounded-full bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-600 dark:text-amber-400">Intermediate</span>;
-      case "Advanced": return <span className="inline-flex items-center rounded-full bg-rose-500/10 px-2 py-0.5 text-xs font-semibold text-rose-600 dark:text-rose-400">Advanced</span>;
-      default: return null;
-    }
-  };
+  const difficultyClass = {
+    Beginner: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+    Intermediate: "border-amber-500/20 bg-amber-500/10 text-amber-600 dark:text-amber-400",
+    Advanced: "border-rose-500/20 bg-rose-500/10 text-rose-600 dark:text-rose-400",
+  } as const;
 
   return (
     <>
@@ -38,34 +35,75 @@ export function ComponentCard({ component }: ComponentCardProps) {
           : "border-border bg-card hover:border-border/80 hover:shadow-md"
       )}>
         <CardHeader className="p-4 pb-2">
-          <div className="mb-1.5 flex items-center justify-between gap-2">
-            <Badge variant="outline" className="bg-muted/30 px-2 py-0 font-mono text-xs uppercase">{component.category}</Badge>
-            <div className="flex items-center gap-1.5">
-              {getDifficultyBadge(component.difficulty)}
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(true)}
-                className="flex size-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:scale-[0.98]"
-                title="View full specification"
-                aria-label={`View ${component.name} details`}
-              >
-                <Info className="size-4" aria-hidden="true" />
-              </button>
+          <div className="mb-1.5 flex items-start justify-between gap-3">
+            <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+              <Badge variant="outline" className="bg-muted/30 px-2 py-0 font-mono text-xs uppercase">
+                {component.category}
+              </Badge>
+              {component.difficulty && (
+                <Badge
+                  variant="outline"
+                  className={cn("px-2 py-0 text-xs font-semibold", difficultyClass[component.difficulty])}
+                >
+                  {component.difficulty}
+                </Badge>
+              )}
             </div>
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              className="flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:scale-[0.98]"
+              title="View full specification"
+              aria-label={`View ${component.name} details`}
+            >
+              <Info className="size-4" aria-hidden="true" />
+            </button>
           </div>
-          <CardTitle className="flex items-center justify-between text-sm font-bold text-foreground transition-colors group-hover:text-primary"><span>{component.name}</span></CardTitle>
-          <p className="line-clamp-2 pt-1 text-xs leading-relaxed text-muted-foreground">{component.description}</p>
+
+          <CardTitle className="text-sm font-bold text-foreground transition-colors group-hover:text-primary">
+            {component.name}
+          </CardTitle>
+          <p className="line-clamp-2 pt-1 text-xs leading-relaxed text-muted-foreground">
+            {component.description}
+          </p>
         </CardHeader>
 
         <CardContent className="flex flex-col gap-3 p-4 pt-2">
-          <div className="flex min-h-[22px] flex-wrap items-center gap-1.5" aria-label="Component constraints and capabilities">
-            {pinSummary && <span className="inline-flex items-center gap-1 rounded bg-emerald-500/10 px-1.5 py-0.5 font-mono text-xs text-emerald-600 dark:text-emerald-400"><Cpu className="size-3" aria-hidden="true" /> {pinSummary}</span>}
-            {component.requires && component.requires.length > 0 && <span className="inline-flex items-center rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">Requires: {component.requires.slice(0, 2).join(", ")}{component.requires.length > 2 ? "..." : ""}</span>}
-            {component.conflicts && component.conflicts.length > 0 && <span className="inline-flex items-center gap-1 rounded bg-rose-500/10 px-1.5 py-0.5 text-xs text-rose-600 dark:text-rose-400"><AlertTriangle className="size-3" aria-hidden="true" /> <span>Compatibility issue</span></span>}
-          </div>
+          {(pinSummary || (component.requires && component.requires.length > 0) || (component.conflicts && component.conflicts.length > 0)) && (
+            <div className="grid gap-1.5 text-xs" aria-label="Component constraints and capabilities">
+              {pinSummary && (
+                <div className="flex items-start gap-1.5 text-emerald-600 dark:text-emerald-400">
+                  <Cpu className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
+                  <span className="font-mono">{pinSummary}</span>
+                </div>
+              )}
+              {component.requires && component.requires.length > 0 && (
+                <div className="text-muted-foreground">
+                  <span className="font-medium text-foreground">Requires:</span>{" "}
+                  {component.requires.slice(0, 2).join(", ")}
+                  {component.requires.length > 2 ? "…" : ""}
+                </div>
+              )}
+              {component.conflicts && component.conflicts.length > 0 && (
+                <div className="flex items-start gap-1.5 text-rose-600 dark:text-rose-400">
+                  <AlertTriangle className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
+                  <span>Compatibility issue — review before adding</span>
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="flex items-center justify-between border-t border-border/50 pt-2.5">
-            <div className="flex items-center gap-1 font-mono text-xs text-muted-foreground"><Clock className="size-3" aria-hidden="true" /><span>~{component.estimatedLearningHours || 4}h to learn</span></div>
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              className="flex min-h-11 items-center gap-1.5 rounded-md px-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              aria-label={`View ${component.name} specification`}
+            >
+              <Clock className="size-3.5" aria-hidden="true" />
+              <span>~{component.estimatedLearningHours || 4}h learning</span>
+            </button>
+
             <Button
               type="button"
               size="sm"
