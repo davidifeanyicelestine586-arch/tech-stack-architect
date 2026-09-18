@@ -1,6 +1,9 @@
 name: Refresh lockfile
 
 on:
+  push:
+    branches:
+      - fix/patch-vulnerabilities-9ddcff79-1789075809
   workflow_dispatch:
 
 permissions:
