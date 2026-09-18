@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState, useTransition } from "react";
-import { ClipboardList, Loader2, Sparkles } from "lucide-react";
+import { ClipboardList, Loader2, SearchCheck } from "lucide-react";
 import { useTechStack } from "@/hooks/use-tech-stack";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,11 +13,13 @@ import { validateProjectDefinition } from "@/engine/requirementAnalyzer.js";
 export function ProjectDefinitionForm() {
   const { domains, projectDefinition, updateProjectDefinition, analyzeProject } = useTechStack();
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [isPending, startTransition] = useTransition();
 
   const updateDraft = <Key extends keyof ProjectDefinition>(key: Key, value: ProjectDefinition[Key]) => {
     updateProjectDefinition(key, value);
     if (error) setError("");
+    if (Object.keys(fieldErrors).length > 0) setFieldErrors({});
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -31,11 +33,19 @@ export function ProjectDefinitionForm() {
     const validation = validateProjectDefinition(project);
 
     if (!validation.valid) {
+      const nextFieldErrors: Record<string, string> = {};
+      validation.errors.forEach((message) => {
+        if (message === "Project name is required.") nextFieldErrors.name = message;
+        if (message === "Project description is required.") nextFieldErrors.description = message;
+        if (message === "Project domain is required.") nextFieldErrors.domain = message;
+      });
+      setFieldErrors(nextFieldErrors);
       setError(validation.errors.join(" "));
       return;
     }
 
     setError("");
+    setFieldErrors({});
     startTransition(() => {
       analyzeProject(project);
     });
@@ -79,11 +89,11 @@ export function ProjectDefinitionForm() {
                   onChange={(event) => updateDraft("name", event.target.value)}
                   placeholder="AI Document Q&A Platform"
                   aria-describedby="project-definition-error project-name-error"
-                  aria-invalid={Boolean(error)}
+                  aria-invalid={Boolean(fieldErrors.name)}
                   disabled={isPending}
                 />
                 <span id="project-name-error" className="min-h-4 text-[11px] font-normal text-rose-600 dark:text-rose-400">
-                  {error.includes("name") ? error : ""}
+                  {fieldErrors.name}
                 </span>
               </label>
 
@@ -95,13 +105,13 @@ export function ProjectDefinitionForm() {
                   onChange={(event) => updateDraft("domain", event.target.value)}
                   disabled={isPending}
                   aria-describedby="project-definition-error project-domain-error"
-                  aria-invalid={Boolean(error)}
+                  aria-invalid={Boolean(fieldErrors.domain)}
                   className="h-11 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {domains.map((domain) => <option key={domain.id} value={domain.id}>{domain.title}</option>)}
                 </select>
                 <span id="project-domain-error" className="min-h-4 text-[11px] font-normal text-rose-600 dark:text-rose-400">
-                  {error.includes("domain") ? error : ""}
+                  {fieldErrors.domain}
                 </span>
               </label>
             </div>
@@ -117,12 +127,12 @@ export function ProjectDefinitionForm() {
                 onChange={(event) => updateDraft("description", event.target.value)}
                 placeholder="A SaaS application where users upload PDF documents and ask questions about their contents."
                 aria-describedby="project-definition-error project-description-error"
-                aria-invalid={Boolean(error)}
+                aria-invalid={Boolean(fieldErrors.description)}
                 className="min-h-24 rounded-md border border-input bg-background px-3 py-2.5 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={isPending}
               />
               <span id="project-description-error" className="min-h-4 text-[11px] font-normal text-rose-600 dark:text-rose-400">
-                {error.includes("description") ? error : ""}
+                {fieldErrors.description}
               </span>
             </label>
 
@@ -134,12 +144,12 @@ export function ProjectDefinitionForm() {
                 onChange={(event) => updateDraft("requirements", event.target.value)}
                 placeholder="web application, document upload, PDF processing, data storage, deployment"
                 aria-describedby="project-definition-error project-requirements-error"
-                aria-invalid={Boolean(error)}
+                aria-invalid={false}
                 className="min-h-24 rounded-md border border-input bg-background px-3 py-2.5 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={isPending}
               />
               <span id="project-requirements-error" className="min-h-4 text-[11px] font-normal text-rose-600 dark:text-rose-400">
-                {error.includes("requirements") ? error : ""}
+                
               </span>
             </label>
           </fieldset>
@@ -154,7 +164,7 @@ export function ProjectDefinitionForm() {
                 onChange={(event) => updateDraft("difficulty", event.target.value as ProjectDefinition["difficulty"])}
                 disabled={isPending}
                 aria-describedby="project-definition-error project-difficulty-error"
-                aria-invalid={Boolean(error)}
+                aria-invalid={false}
                 className="h-11 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <option value="Beginner">Beginner — prioritize simplicity</option>
@@ -162,7 +172,7 @@ export function ProjectDefinitionForm() {
                 <option value="Advanced">Advanced — prioritize capability and control</option>
               </select>
               <span id="project-difficulty-error" className="min-h-4 text-[11px] font-normal text-rose-600 dark:text-rose-400">
-                {error.includes("difficulty") ? error : ""}
+                
               </span>
             </label>
           </fieldset>
@@ -179,7 +189,7 @@ export function ProjectDefinitionForm() {
             <div className="sm:text-right">
               <p className="mb-2 text-[11px] text-muted-foreground">Recommended — we’ll use this information to select compatible technologies.</p>
               <Button type="submit" className="h-11 w-full gap-2 px-5 text-sm font-semibold sm:w-auto" disabled={isPending} aria-disabled={isPending}>
-                {isPending ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : <Sparkles className="size-4" aria-hidden="true" />}
+                {isPending ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : <SearchCheck className="size-4" aria-hidden="true" />}
                 {isPending ? "Analyzing…" : "Analyze My Project"}
               </Button>
             </div>
