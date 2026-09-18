@@ -52,7 +52,7 @@ export function ProjectDefinitionForm() {
   };
 
   return (
-    <Card id="define" className="scroll-mt-24 overflow-hidden border-primary/20 bg-card">
+    <Card className="scroll-mt-24 overflow-hidden border-primary/20 bg-card">
       <CardHeader className="border-b border-border/50 pb-4">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-3">
