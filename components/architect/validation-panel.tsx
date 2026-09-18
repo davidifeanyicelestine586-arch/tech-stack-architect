@@ -55,7 +55,7 @@ export function ValidationPanel() {
   const getScoreBg = (s: number) => s >= 90 ? "bg-emerald-500/10" : s >= 70 ? "bg-amber-500/10" : "bg-rose-500/10";
 
   return (
-    <Card id="validation" className={cn("overflow-hidden", isReady && "border-emerald-500/30")}>
+    <Card className={cn("overflow-hidden", isReady && "border-emerald-500/30")}>
       <CardHeader className="border-b border-border/50 pb-3">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
