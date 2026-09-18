@@ -14,15 +14,7 @@ export function RecommendationPanel() {
   const [detailComponent, setDetailComponent] = useState<Component | null>(null);
 
   if (!requirementAnalysis) {
-    return (
-      <Card className="border-dashed bg-muted/20">
-        <CardContent className="flex flex-col items-center justify-center p-8 text-center">
-          <div className="mb-3 rounded-full bg-primary/10 p-3 text-primary"><SearchCheck className="size-5" aria-hidden="true" /></div>
-          <h2 className="text-sm font-semibold text-foreground">Your Recommended Technologies</h2>
-          <p className="mt-1 max-w-md text-xs leading-relaxed text-muted-foreground">Complete the project definition and choose <span className="font-semibold text-foreground">Analyze My Project</span>. Architect will match technologies to your goals and explain each recommendation.</p>
-        </CardContent>
-      </Card>
-    );
+    return null;
   }
 
   const recommendations = requirementAnalysis.recommendations.filter((recommendation) => !ignoredRecommendationIds.includes(recommendation.component.id));
