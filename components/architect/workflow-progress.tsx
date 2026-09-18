@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 
 const steps = [
   { id: "define", label: "Define", href: "#define" },
-  { id: "analyze", label: "Analyze", href: "#recommendations" },
+  { id: "analyze", label: "Analyze", href: "#define" },
   { id: "review", label: "Review", href: "#recommendations" },
   { id: "build", label: "Build", href: "#components" },
   { id: "validate", label: "Validate", href: "#validation" },
