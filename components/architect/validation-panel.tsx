@@ -20,26 +20,7 @@ export function ValidationPanel() {
   const { validationReport, selectedComponents } = useTechStack();
 
   if (selectedComponents.length === 0) {
-    return (
-      <Card className="overflow-hidden border-dashed bg-muted/20">
-        <CardHeader className="border-b border-border/50 pb-3">
-          <div className="flex items-center gap-2">
-            <ShieldCheck aria-hidden="true" className="size-4 text-muted-foreground" />
-            <Badge variant="outline" className="text-xs font-bold">Step 5</Badge>
-            <CardTitle className="text-sm font-bold">Compatibility Check</CardTitle>
-          </div>
-          <CardDescription className="pt-1 text-xs leading-relaxed">
-            Your stack will be checked for dependencies, conflicts, and architecture rules.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="p-4">
-          <div role="status" className="flex items-center gap-2 rounded-lg border border-border/60 bg-background/60 p-3 text-xs text-muted-foreground">
-            <Info aria-hidden="true" className="size-3.5 shrink-0" />
-            Add technologies to unlock the compatibility result.
-          </div>
-        </CardContent>
-      </Card>
-    );
+    return null;
   }
 
   const { score, status, warnings, suggestions, dependencyReport, conflictReport } = validationReport;
