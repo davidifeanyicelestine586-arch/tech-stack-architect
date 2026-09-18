@@ -72,7 +72,7 @@ export default function WorkspacePage() {
         </div>
       </section>
 
-      <div id="define" className="scroll-mt-24">
+      <div className="scroll-mt-24">
         <ProjectDefinitionForm />
       </div>
       <div id="recommendations" className="scroll-mt-24"><RecommendationPanel /></div>
@@ -105,11 +105,11 @@ export default function WorkspacePage() {
           <div className="hidden lg:block">
             <SelectedStack />
           </div>
-          <div id="validation" className="scroll-mt-24"><ValidationPanel /></div>
+          <div className="scroll-mt-24"><ValidationPanel /></div>
         </div>
       </div>
 
-      <div id="blueprint" className="scroll-mt-24"><BlueprintPanel /></div>
+      <div className="scroll-mt-24"><BlueprintPanel /></div>
 
       <Card id="docs" className="border-primary/20 bg-primary/5">
         <CardHeader className="pb-2">
