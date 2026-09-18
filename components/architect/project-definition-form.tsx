@@ -42,18 +42,18 @@ export function ProjectDefinitionForm() {
   };
 
   return (
-    <Card id="define" className="scroll-mt-24 overflow-hidden border-primary/20 bg-gradient-to-br from-primary/5 via-card to-card">
+    <Card id="define" className="scroll-mt-24 overflow-hidden border-primary/20 bg-card">
       <CardHeader className="border-b border-border/50 pb-4">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-start gap-3">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
               <ClipboardList className="size-5" aria-hidden="true" />
             </div>
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <CardTitle className="text-lg">What are you building?</CardTitle>
-                <Badge variant="outline" className="gap-1 border-primary/30 text-[10px] text-primary">
-                  <Sparkles className="size-3" aria-hidden="true" /> Guided analysis
+                <Badge variant="outline" className="text-[10px]">
+                  Guided analysis
                 </Badge>
               </div>
               <CardDescription className="mt-1 max-w-2xl text-xs leading-relaxed">
@@ -64,6 +64,7 @@ export function ProjectDefinitionForm() {
           <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">Step 1 of 6</span>
         </div>
       </CardHeader>
+
       <CardContent className="p-4 md:p-6">
         <form className="grid gap-6" onSubmit={handleSubmit} aria-busy={isPending}>
           <fieldset className="grid gap-4">
@@ -77,11 +78,15 @@ export function ProjectDefinitionForm() {
                   value={projectDefinition.name}
                   onChange={(event) => updateDraft("name", event.target.value)}
                   placeholder="AI Document Q&A Platform"
-                  aria-describedby="project-definition-error"
+                  aria-describedby="project-definition-error project-name-error"
                   aria-invalid={Boolean(error)}
                   disabled={isPending}
                 />
+                <span id="project-name-error" className="min-h-4 text-[11px] font-normal text-rose-600 dark:text-rose-400">
+                  {error.includes("name") ? error : ""}
+                </span>
               </label>
+
               <label htmlFor="project-domain" className="grid gap-1.5 text-xs font-semibold text-foreground">
                 Project type
                 <select
@@ -89,10 +94,15 @@ export function ProjectDefinitionForm() {
                   value={projectDefinition.domain}
                   onChange={(event) => updateDraft("domain", event.target.value)}
                   disabled={isPending}
+                  aria-describedby="project-definition-error project-domain-error"
+                  aria-invalid={Boolean(error)}
                   className="h-11 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {domains.map((domain) => <option key={domain.id} value={domain.id}>{domain.title}</option>)}
                 </select>
+                <span id="project-domain-error" className="min-h-4 text-[11px] font-normal text-rose-600 dark:text-rose-400">
+                  {error.includes("domain") ? error : ""}
+                </span>
               </label>
             </div>
           </fieldset>
@@ -106,10 +116,16 @@ export function ProjectDefinitionForm() {
                 value={projectDefinition.description}
                 onChange={(event) => updateDraft("description", event.target.value)}
                 placeholder="A SaaS application where users upload PDF documents and ask questions about their contents."
+                aria-describedby="project-definition-error project-description-error"
+                aria-invalid={Boolean(error)}
                 className="min-h-24 rounded-md border border-input bg-background px-3 py-2.5 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={isPending}
               />
+              <span id="project-description-error" className="min-h-4 text-[11px] font-normal text-rose-600 dark:text-rose-400">
+                {error.includes("description") ? error : ""}
+              </span>
             </label>
+
             <label htmlFor="project-requirements" className="grid gap-1.5 text-xs font-semibold text-foreground">
               Goals and requirements
               <textarea
@@ -117,9 +133,14 @@ export function ProjectDefinitionForm() {
                 value={projectDefinition.requirements}
                 onChange={(event) => updateDraft("requirements", event.target.value)}
                 placeholder="web application, document upload, PDF processing, data storage, deployment"
+                aria-describedby="project-definition-error project-requirements-error"
+                aria-invalid={Boolean(error)}
                 className="min-h-24 rounded-md border border-input bg-background px-3 py-2.5 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={isPending}
               />
+              <span id="project-requirements-error" className="min-h-4 text-[11px] font-normal text-rose-600 dark:text-rose-400">
+                {error.includes("requirements") ? error : ""}
+              </span>
             </label>
           </fieldset>
 
@@ -132,12 +153,17 @@ export function ProjectDefinitionForm() {
                 value={projectDefinition.difficulty}
                 onChange={(event) => updateDraft("difficulty", event.target.value as ProjectDefinition["difficulty"])}
                 disabled={isPending}
+                aria-describedby="project-definition-error project-difficulty-error"
+                aria-invalid={Boolean(error)}
                 className="h-11 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <option value="Beginner">Beginner — prioritize simplicity</option>
                 <option value="Intermediate">Intermediate — balance simplicity and capability</option>
                 <option value="Advanced">Advanced — prioritize capability and control</option>
               </select>
+              <span id="project-difficulty-error" className="min-h-4 text-[11px] font-normal text-rose-600 dark:text-rose-400">
+                {error.includes("difficulty") ? error : ""}
+              </span>
             </label>
           </fieldset>
 
