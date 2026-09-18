@@ -21,7 +21,7 @@ export function ValidationPanel() {
 
   if (selectedComponents.length === 0) {
     return (
-      <Card id="validation" className="overflow-hidden border-dashed bg-muted/20">
+      <Card className="overflow-hidden border-dashed bg-muted/20">
         <CardHeader className="border-b border-border/50 pb-3">
           <div className="flex items-center gap-2">
             <ShieldCheck aria-hidden="true" className="size-4 text-muted-foreground" />
