@@ -30,7 +30,7 @@ export function BlueprintPanel() {
   };
 
   if (selectedComponents.length === 0) {
-    return <div className="flex flex-col gap-4"><Card className="border-dashed bg-muted/20"><CardContent className="flex flex-col items-center justify-center p-8 text-center"><FileCode2 className="mb-3 size-6 text-muted-foreground" /><h3 className="text-sm font-semibold text-foreground">Architecture Blueprint</h3><p className="mt-1 max-w-sm text-xs text-muted-foreground">Your blueprint appears here after you build a technology stack and run the compatibility check.</p></CardContent></Card></div>;
+    return null;
   }
 
   const handleCopy = async (format: "json" | "markdown") => {
