@@ -1,4 +1,3 @@
-import type { NextConfig } from "next";
 import { buildContentSecurityPolicy } from "./lib/security/csp.js";
 
 const securityHeaders = [
@@ -13,7 +12,8 @@ const securityHeaders = [
   },
 ];
 
-const nextConfig: NextConfig = {
+/** @type {import("next").NextConfig} */
+const nextConfig = {
   poweredByHeader: false,
   async headers() {
     return [
