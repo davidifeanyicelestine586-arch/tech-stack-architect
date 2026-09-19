@@ -244,8 +244,8 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
     const recipe = recipes.find((r) => r.id === recipeId); if (!recipe) return;
     setActiveRecipeId(recipeId); if (recipe.domain) setActiveDomain(recipe.domain);
     const mergedIds = Array.from(new Set([...selectedComponentIds, ...(recipe.components || [])])); setSelectedComponentIds(mergedIds);
-    const result = (architect as any).build({ recipe: recipeId, selectedComponents: mergedIds });
-    if (result.blueprint) setBlueprint({ ...(result.blueprint as Blueprint), project: projectDefinition.name.trim() || projectDefinition.description.trim() ? projectDefinition : undefined, validation: toValidationSummary(result.report as ValidationReport) });
+    const result: { blueprint: Blueprint | null; report: ValidationReport } = architect.build({ recipe: recipeId, selectedComponents: mergedIds });
+    if (result.blueprint) setBlueprint({ ...result.blueprint, project: projectDefinition.name.trim() || projectDefinition.description.trim() ? projectDefinition : undefined, validation: toValidationSummary(result.report) });
   }, [recipes, selectedComponentIds, architect, projectDefinition]);
   const toggleComponent = useCallback((id: string) => setSelectedComponentIds((prev) => prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]), []);
   const selectComponents = useCallback((ids: string[]) => setSelectedComponentIds(Array.from(new Set(ids))), []);
