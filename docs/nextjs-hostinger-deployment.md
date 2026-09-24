@@ -1,19 +1,20 @@
-# Next.js Deployment Guide
+# Historical: Next.js + Hostinger Deployment
 
-This guide covers the production deployment requirements for the Tech Stack Architect Next.js application.
+> **Historical record.** Hostinger is no longer the active production deployment target for Tech Stack Architect. Use [Vercel Deployment](./vercel-deployment.md) for current deployment operations.
 
-## Runtime requirements
+This document records the repository's previous Hostinger deployment requirements and the compatibility issue that led to the hosting migration.
 
-| Requirement | Value |
+## Previous runtime baseline
+
+| Requirement | Previous value |
 |---|---|
 | Node.js | 22.x |
 | Package manager | pnpm 11.23.0 |
 | Framework | Next.js 16.x |
-| Default port | 3000, unless `PORT` is provided by the host |
+| Production server | `next start` |
+| Default port | 3000 unless supplied by the host |
 
-Use the repository root as the application directory.
-
-## Production commands
+## Previous production commands
 
 From the repository root:
 
@@ -23,39 +24,27 @@ pnpm build
 pnpm start
 ```
 
-The repository `build` script uses `next build --webpack` for compatibility with Hostinger environments whose system glibc is older than the native SWC binary requires. This is a supported Next.js build mode. The production server should be started with the host-provided `PORT` when applicable.
+The repository `build` script uses `next build --webpack`. During the Hostinger migration, this allowed the application to build on the hosting environment where the native SWC binary was incompatible with the host's older glibc version.
 
-## Development
+## What happened
 
-For local development:
+The repository build completed successfully on Hostinger, including dependency installation, TypeScript checking, static generation, and final build optimization.
 
-```bash
-pnpm install --frozen-lockfile
-pnpm dev
-```
+The deployed application nevertheless returned an **Internal Server Error** at runtime. Hostinger's runtime log surface remained empty while the failure was reproduced. The deployment configuration exposed the Next.js framework, Node 22.x, pnpm, repository root, build command, and environment variables, but the runtime failure could not be resolved with sufficient evidence.
 
-Then open the local development address shown by Next.js.
+This distinction matters:
 
-## Hosting checklist
+- **Build success** was established.
+- **Runtime health on Hostinger** was not established.
+- The issue was treated as a hosting/runtime integration problem rather than as proof that the Next.js application itself could not build.
 
-Before publishing a deployment, confirm that the hosting environment:
+## Migration decision
 
-- Uses Node.js 22.x.
-- Uses the repository root as the application directory.
-- Installs dependencies from the committed lockfile.
-- Runs `pnpm build` before starting the application. The current script invokes `next build --webpack` for Hostinger compatibility.
-- Runs `pnpm start` for the production process.
-- Provides any required environment configuration through the hosting platform rather than committing credentials to the repository.
-- Allows the application to listen on the port supplied by the hosting platform.
+The project was moved to Vercel so the application could use a deployment platform closely aligned with its Next.js architecture and Git-based deployment workflow.
 
-## Verification
+Current deployment documentation is maintained in:
 
-After deployment, verify that:
+- [Vercel Deployment](./vercel-deployment.md)
+- [Current Project State](./current-project-state.md)
 
-1. The live application loads successfully.
-2. The main project-analysis workflow is usable.
-3. Recommendations can be reviewed and added to a stack.
-4. Compatibility validation produces a result.
-5. Blueprint generation can be reached from a valid stack.
-
-For repository setup and development commands, see the [main README](../README.md).
+This file remains only as historical engineering context.
