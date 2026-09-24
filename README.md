@@ -60,9 +60,7 @@ Blueprint
 | Data / persistence | Supabase |
 | Package manager | pnpm 11.23.0 |
 | Motion | Motion |
-| Icons | Lucide React / Iconify |
-| Tables | TanStack React Table |
-| Rich text | TipTap |
+| Icons | Lucide React |
 | Charts | Recharts |
 
 Exact dependency declarations are maintained in [`package.json`](package.json) and [`pnpm-lock.yaml`](pnpm-lock.yaml).
