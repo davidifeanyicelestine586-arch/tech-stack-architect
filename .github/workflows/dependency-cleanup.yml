@@ -1,7 +1,9 @@
 name: Dependency Cleanup
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - chore/ai-slop-flush-template-residue
 
 permissions:
   contents: write
