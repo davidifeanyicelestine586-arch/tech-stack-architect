@@ -2,7 +2,7 @@
 
 Tech Stack Architect is a web application for turning project requirements into a structured, explainable technology-stack proposal. It helps users compare technologies, review recommendation factors, validate a proposed stack, and produce an architecture blueprint.
 
-**Live application:** https://architect.ediccrew.com  
+**Live application:**   
 **Source repository:** https://github.com/davidifeanyicelestine586-arch/tech-stack-architect
 
 ## Contents
