@@ -159,6 +159,8 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
     if (key === "domain" && typeof value === "string") {
       setActiveDomain(value);
     }
+    setRequirementAnalysis(null);
+    setBlueprint(null);
     setPersistenceError(null);
     setPersistenceStatus((status) => (status === "error" ? "idle" : status));
   }, []);
