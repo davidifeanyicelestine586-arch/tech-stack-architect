@@ -1,0 +1,36 @@
+name: Dependency Cleanup
+
+on:
+  pull_request:
+    types: [synchronize]
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.23.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm remove date-fns @iconify/react @tiptap/extension-bullet-list @tiptap/extension-code-block-lowlight @tiptap/extension-image @tiptap/extension-link @tiptap/extension-list @tiptap/extension-list-item @tiptap/extension-ordered-list @tiptap/extension-underline @tiptap/react @tiptap/starter-kit
+      - run: |
+          if git diff --quiet -- package.json pnpm-lock.yaml; then
+            echo "No dependency changes required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json pnpm-lock.yaml
+          git commit -m "chore: remove unused editor and icon dependencies"
+          git push
