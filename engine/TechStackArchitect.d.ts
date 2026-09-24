@@ -3,6 +3,7 @@ import type {
   Component,
   Domain,
   MergedReport,
+  ProjectDefinition,
   Recipe,
   RecipeMatch,
   RequirementAnalysis,
@@ -29,7 +30,7 @@ export default class TechStackArchitect {
   getRecipes(): Recipe[];
   getRecipe(id: string): Recipe | null;
   recommendRecipes(selected: string[]): RecipeMatch[];
-  analyzeRequirements(project: Parameters<TechStackArchitect["analyzeRequirements"]>[0]): RequirementAnalysis;
+  analyzeRequirements(project: ProjectDefinition): RequirementAnalysis;
   validate(selected: string[]): ValidationReport;
   resolveMissingDependencies(selected: string[]): string[];
   build(input: {
