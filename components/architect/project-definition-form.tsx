@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState, useTransition } from "react";
+import { FormEvent, useRef, useState, useTransition } from "react";
 import { ClipboardList, Loader2, SearchCheck } from "lucide-react";
 import { useTechStack } from "@/hooks/use-tech-stack";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,9 @@ export function ProjectDefinitionForm() {
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [isPending, startTransition] = useTransition();
+  const nameRef = useRef<HTMLInputElement>(null);
+  const domainRef = useRef<HTMLSelectElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   const updateDraft = <Key extends keyof ProjectDefinition>(key: Key, value: ProjectDefinition[Key]) => {
     updateProjectDefinition(key, value);
@@ -41,6 +44,11 @@ export function ProjectDefinitionForm() {
       });
       setFieldErrors(nextFieldErrors);
       setError(validation.errors.join(" "));
+      requestAnimationFrame(() => {
+        if (nextFieldErrors.name) nameRef.current?.focus();
+        else if (nextFieldErrors.description) descriptionRef.current?.focus();
+        else if (nextFieldErrors.domain) domainRef.current?.focus();
+      });
       return;
     }
 
@@ -84,6 +92,7 @@ export function ProjectDefinitionForm() {
                 Project name
                 <Input
                   id="project-name"
+                  ref={nameRef}
                   className="h-11 text-sm"
                   value={projectDefinition.name}
                   onChange={(event) => updateDraft("name", event.target.value)}
@@ -101,6 +110,7 @@ export function ProjectDefinitionForm() {
                 Project type
                 <select
                   id="project-domain"
+                  ref={domainRef}
                   value={projectDefinition.domain}
                   onChange={(event) => updateDraft("domain", event.target.value)}
                   disabled={isPending}
@@ -123,6 +133,7 @@ export function ProjectDefinitionForm() {
               Describe the project
               <textarea
                 id="project-description"
+                ref={descriptionRef}
                 value={projectDefinition.description}
                 onChange={(event) => updateDraft("description", event.target.value)}
                 placeholder="A SaaS application where users upload PDF documents and ask questions about their contents."
