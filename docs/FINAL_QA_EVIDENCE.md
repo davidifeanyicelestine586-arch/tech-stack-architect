@@ -1,17 +1,21 @@
 # Final QA Evidence — UI/UX Remediation
 
 **Repository:** `davidifeanyicelestine586-arch/tech-stack-architect`  
-**Remediation branch:** `refactor/ai-slop-flush`  
-**Pull request:** #39 — `refactor: begin AI slop flush` (merged)  
-**Evidence date:** 2026-09-19
+**Current branch:** `main`  
+**Current main commit checked:** `e5641fe74a8fa302fef2364c998dd0cd816a9b2d`  
+**Evidence refresh:** September 2026
 
-## Current remote baseline
+## 1. Current status
 
-PR #39 was merged into `main` on 2026-09-18. Current `main` is `654fc9fe31c5442966a1d494b2d4c4f1afc23a8d`. The subsequent Hostinger compatibility fix is tracked separately in draft PR #41; the semantic navigation icon cleanup is tracked separately in draft PR #42.
+The AI-slop-flush remediation has been merged into `main`. The repository now uses the canonical Next.js application surface under `app/`, product components under `components/`, deterministic architecture logic under `engine/`, and supporting persistence/security utilities under `lib/`.
 
-## 1. Automated quality gate
+The previous Hostinger deployment path is historical. The current deployment target is Vercel.
 
-The repository's Quality Gate workflow runs:
+The Vercel deployment was configured from the `main` branch with the repository's Next.js build configuration. This document does **not** treat deployment status alone as proof of complete production runtime verification.
+
+## 2. Automated quality gate
+
+The repository quality gate runs:
 
 1. `pnpm install --frozen-lockfile`
 2. `pnpm lint`
@@ -19,101 +23,114 @@ The repository's Quality Gate workflow runs:
 4. `pnpm test`
 5. `pnpm build`
 
-**Latest verified AI-slop-flush Quality Gate:** run `35344681286` (#168)  
-**Head:** `51a435d0cb698cf2b889045d22231b7eea845b19`  
+**Latest previously verified AI-slop-flush Quality Gate:** run `35344681286` (#168)  
+**Verified head:** `51a435d0cb698cf2b889045d22231b7eea845b19`  
 **Result:** `success`
 
-All quality job stages completed successfully: dependency installation, lint, TypeScript check, tests, and production build.
+This establishes a verified successful quality gate for that AI-slop-flush head. It should not be interpreted as a fresh test result for every later commit.
 
-## 2. Remediation scope verified in PR
+## 3. Remediation scope
 
-PR #38 currently contains **16 changed files**. The current diff covers:
+The completed remediation addressed:
 
-- design-system remediation specification
-- accessibility acceptance criteria
-- implementation notes
-- reconciliation/release audit documentation
-- final QA evidence
-- global focus-visible and reduced-motion foundations
-- project definition form integration
-- persistence toolbar states and target sizing
-- validation panel semantics and severity communication
-- component browser interaction/accessibility improvements
-- component card and domain selector states
-- selected-stack interaction and status feedback
-- workflow/tablet layout refinement
-- responsive workspace header and shell refinement
-- auth-panel interaction-target and microcopy hardening
+- design-system and surface hierarchy
+- accessibility semantics and interaction targets
+- project-definition form validation and field associations
+- progressive disclosure of recommendation, validation, selected-stack, and blueprint states
+- workflow navigation and stage semantics
+- technology-card information hierarchy
+- generic decorative/AI-style icon usage
+- canonical TypeScript typing in the workspace
+- dependency hygiene around Motion
+- tracked dependency/build artifacts
+- legacy `ui/` deprecation boundaries
+- production deployment configuration compatibility
 
-## 3. Static responsive/accessibility contract review
+The canonical product workflow is:
 
-A source-level review of the remediation diff confirms the intended responsive and interaction safeguards are present:
+**Define → Analyze → Review → Build → Validate → Blueprint**
 
-- Header controls use 44px-class targets and the header is protected against unnecessary wrapping at larger widths.
-- The workspace hero reduces padding and typography on narrow screens, stacks primary actions full-width on small screens, and restores horizontal action layout at larger widths.
-- Mobile Step 4 content and badges use 12px supporting text rather than 10px microcopy.
-- Workspace content columns use `min-w-0` safeguards to reduce flex/grid overflow risk.
-- Workflow progress uses responsive column changes for intermediate widths.
-- Decorative icons in audited surfaces are marked `aria-hidden` where appropriate.
-- Validation severity is communicated with explicit labels/icons rather than relying on color alone.
-- The global stylesheet defines explicit `:focus-visible` treatment and reduced-motion behavior.
-- Repeated catalog actions expose contextual accessible names.
-- Persistence and selected-stack operations expose loading/busy feedback and 44px-class action targets.
-- The accessibility acceptance contract defines the required viewport matrix, keyboard behavior, form semantics, motion behavior, and assistive-technology checks.
+## 4. Static/source-level verification
 
-This is **static/source-level verification**, not proof of rendered viewport or assistive-technology behavior.
+The repository review confirms that:
 
-## 4. Security/reconciliation review
+- required form labels and error associations exist in the audited project-definition flow
+- audited decorative icons are hidden from assistive technology where appropriate
+- workflow and product surfaces expose semantic states instead of relying on decorative styling
+- progressive disclosure prevents empty downstream panels from dominating the initial workspace
+- the legacy `ui/` directory is explicitly marked as deprecated/reference-only
+- direct dependency declarations and lockfile state were reconciled for the current Next.js 16.3.3 baseline
+- tracked `node_modules` content was removed from the repository
+- the production build script remains `next build --webpack`
 
-The merged AI-slop-flush baseline includes the current-main CSRF/origin hardening delivered by PR #37. PR #39 subsequently merged the audited workspace changes into `main`.
-
-The verified Quality Gate passed after the AI-slop-flush changes, including dependency installation, lint, TypeScript checking, tests, and the production build. A subsequent Hostinger production deployment also completed successfully after the Next.js config compatibility fix tracked in PR #41.
+This is source-level verification, not proof of every rendered or runtime behavior.
 
 ## 5. Manual/browser verification status
 
-Automated CI and source review do **not** prove visual or assistive-technology behavior. The following remain manual release-review responsibilities:
+The following remain explicit release-review responsibilities unless evidence is attached:
 
 - 375/390px mobile visual regression
 - 768/820/1024px tablet regression
 - 1280/1440px desktop regression
 - keyboard-only traversal and focus order
-- screen-reader smoke test
+- screen-reader smoke testing
 - contrast verification of critical states
-- reduced-motion visual behavior
-- touch-target verification on representative mobile devices
-- production/published deployment smoke test
+- reduced-motion behavior
+- representative touch-target verification
+- production smoke testing on the current Vercel deployment
+- API/persistence runtime verification against the production Supabase configuration
 
-No manual browser or screen-reader pass is claimed by this document.
+No browser or screen-reader result should be marked PASS here without actual evidence.
 
-## 6. Merge-readiness decision
+## 6. Deployment verification boundary
 
-**GitHub Quality Gate:** PASS on the current remote head  
-**Static responsive/accessibility review:** PASS FOR SOURCE-LEVEL CONTRACTS  
-**Reconciliation/current-main integration:** PASS  
-**Manual UX/accessibility evidence:** REQUIRED  
-**PR #39 state:** MERGED  
-**Manual UX/accessibility evidence:** REQUIRED
+The previous Hostinger deployment successfully completed its build but returned a runtime Internal Server Error with empty runtime logs. That hosting path is now retained only as historical context.
 
-The branch is **not yet fully release-ready** because the evidence-backed visual/accessibility review has not been completed. CI is no longer a blocker.
+The active deployment target is Vercel. The project is configured around:
 
-## 7. Manual verification record
+```text
+GitHub main
+    ↓
+Vercel production deployment
+    ↓
+architect.ediccrew.com
+```
 
-Complete this section after the application has been rendered and tested:
+The current Vercel deployment configuration should be maintained through [docs/vercel-deployment.md](./vercel-deployment.md).
+
+## 7. Manual verification matrix
+
+Complete this matrix when a real browser/device pass is performed:
 
 | Context | Route/surface | Interaction path | Expected | Observed | Result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| 375px | Workspace | Load → scroll → interact with primary controls | No clipping/overflow; controls reachable | Pending | PENDING | Pending |
-| 390px | Workspace | Load → define project → browse catalog | Layout remains stable and readable | Pending | PENDING | Pending |
-| 768px | Workspace | Load → workflow → catalog → validation | Tablet hierarchy remains usable | Pending | PENDING | Pending |
-| 820px | Workspace | Load → workflow → catalog → validation | No intermediate-width collision | Pending | PENDING | Pending |
-| 1024px | Workspace | Load → full primary workflow | Desktop/tablet transition remains stable | Pending | PENDING | Pending |
-| 1280px | Workspace | Complete primary workflow | Full workspace hierarchy is stable | Pending | PENDING | Pending |
-| 1440px | Workspace | Complete primary workflow | No excessive stretching or collisions | Pending | PENDING | Pending |
-| Keyboard | Primary workflow | Tab/Shift+Tab → activate controls → dismiss overlays | Logical order and visible focus | Pending | PENDING | Pending |
-| Screen reader | Primary workflow | Navigate landmarks/forms/status updates | Names, roles, states, and live updates announced appropriately | Pending | PENDING | Pending |
-| Reduced motion | Primary workflow | Enable `prefers-reduced-motion` → interact | Motion minimized without loss of meaning | Pending | PENDING | Pending |
-| Contrast | Critical states | Inspect focus/errors/statuses | Required contrast and non-color cues | Pending | PENDING | Pending |
+| 375px | Workspace | Load → scroll → primary controls | No clipping/overflow | Pending | PENDING | Pending |
+| 390px | Workspace | Define → Analyze → Review | Stable and readable | Pending | PENDING | Pending |
+| 768px | Workspace | Workflow → catalog → validation | Tablet hierarchy remains usable | Pending | PENDING | Pending |
+| 820px | Workspace | Workflow → catalog → validation | No intermediate-width collision | Pending | PENDING | Pending |
+| 1024px | Workspace | Full primary workflow | Stable transition | Pending | PENDING | Pending |
+| 1280px | Workspace | Complete primary workflow | Stable desktop hierarchy | Pending | PENDING | Pending |
+| 1440px | Workspace | Complete primary workflow | No excessive stretching | Pending | PENDING | Pending |
+| Keyboard | Primary workflow | Tab/Shift+Tab → activate → dismiss | Logical order and visible focus | Pending | PENDING | Pending |
+| Screen reader | Primary workflow | Landmarks/forms/status updates | Names, roles, and state changes announced | Pending | PENDING | Pending |
+| Reduced motion | Primary workflow | Enable preference → interact | Meaning preserved with reduced motion | Pending | PENDING | Pending |
+| Contrast | Critical states | Inspect focus/errors/statuses | Contrast and non-color cues | Pending | PENDING | Pending |
+| Production | Vercel deployment | Open domain → exercise workflow | App, APIs, persistence behave as expected | Pending | PENDING | Pending |
 
-## 8. Next action
+## 8. Evidence policy
 
-Complete the manual verification matrix in a real browser/device environment, attach screenshots or equivalent evidence, resolve any P0/P1 regressions, and perform the final production diff review. PR #39 is already merged; remaining deployment and semantic-icon follow-ups are tracked separately.
+This project deliberately distinguishes:
+
+- **Implemented** — code exists in the repository.
+- **Automated** — a CI/local automated check passed.
+- **Source verified** — code/configuration was inspected against a defined contract.
+- **Browser verified** — behavior was observed in a real browser/device.
+- **Production verified** — behavior was observed on the deployed production system.
+- **Planned** — intended future work.
+- **Not confirmed** — evidence is insufficient.
+
+No final release claim should collapse these categories into a single "verified" label.
+
+## 9. Next action
+
+Run the current production browser smoke test against the Vercel deployment and attach evidence for the manual verification matrix. Update this record with the observed result rather than converting pending checks into assumptions.
