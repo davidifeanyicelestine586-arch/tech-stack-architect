@@ -42,9 +42,7 @@ The `ui/` directory is not the canonical application surface. New work should no
 - Supabase
 - pnpm 11.23.0
 - Motion
-- Lucide React / Iconify
-- TanStack React Table
-- TipTap
+- Lucide React
 - Recharts
 
 ## Deployment
