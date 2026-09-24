@@ -1,69 +1,90 @@
 # Tech Stack Architect
 
-Tech Stack Architect is a web application for turning project requirements into a structured technology-stack proposal. It helps users compare technologies, review recommendation factors, validate a proposed stack, and produce an architecture blueprint.
+Tech Stack Architect is a web application for turning project requirements into a structured, explainable technology-stack proposal. It helps users compare technologies, review recommendation factors, validate a proposed stack, and produce an architecture blueprint.
 
 **Live application:** https://architect.ediccrew.com  
 **Source repository:** https://github.com/davidifeanyicelestine586-arch/tech-stack-architect
 
 ## Contents
 
-- [Overview](#overview)
-- [Key capabilities](#key-capabilities)
+- [What it does](#what-it-does)
+- [Workflow](#workflow)
 - [Technology stack](#technology-stack)
+- [Repository structure](#repository-structure)
 - [Requirements](#requirements)
-- [Installation](#installation)
+- [Local development](#local-development)
 - [Configuration](#configuration)
-- [Usage](#usage)
-- [Validation and testing](#validation-and-testing)
+- [Validation](#validation)
 - [Documentation](#documentation)
 - [Deployment](#deployment)
 - [Contributing](#contributing)
-- [License](#license)
-- [Acknowledgments](#acknowledgments)
 - [Support](#support)
+- [License](#license)
 
-## Overview
+## What it does
 
-The application follows a requirements-to-architecture workflow:
+Tech Stack Architect starts with the project rather than a preferred tool. It captures requirements and constraints, evaluates a structured technology catalog, exposes the reasoning behind recommendations, checks a selected stack for known compatibility issues, and turns the result into a reusable architecture blueprint.
+
+The recommendation and validation engines are **deterministic and registry-based**. They operate on known project metadata, dependencies, conflicts, recipes, and rules rather than calling an external AI service to invent a stack.
+
+## Workflow
 
 ```text
-Project requirements
-        ↓
-Technology analysis
-        ↓
-Recommendation review
-        ↓
-Compatibility validation
-        ↓
-Architecture blueprint
+Define
+  ↓
+Analyze
+  ↓
+Review
+  ↓
+Build
+  ↓
+Validate
+  ↓
+Blueprint
 ```
 
-It is intended to make technology selection easier to explain and evaluate rather than presenting a stack as an unexplained list of tools.
-
-## Key capabilities
-
-- **Requirements analysis** — translate project needs and constraints into structured technical criteria.
-- **Technology recommendations** — compare candidate technologies using explicit recommendation factors.
-- **Compatibility validation** — identify compatibility concerns in a proposed stack before implementation.
-- **Architecture blueprinting** — present the resulting stack in a structured architecture-oriented format.
-- **Project records** — support saving and reopening project work when the persistence environment is configured.
+1. **Define** — describe the project, domain, requirements, constraints, and preferences.
+2. **Analyze** — evaluate the project context against the technology catalog.
+3. **Review** — inspect explainable recommendation factors and candidate technologies.
+4. **Build** — assemble and refine the selected stack.
+5. **Validate** — check dependencies, conflicts, and registered engineering constraints.
+6. **Blueprint** — generate a structured architecture result for further implementation or export.
 
 ## Technology stack
 
 | Layer | Technology |
 | --- | --- |
-| Framework | Next.js 16 |
+| Framework | Next.js 16.3.3 |
 | UI | React 19, TypeScript |
 | Styling | Tailwind CSS, shadcn/ui |
-| Data | Supabase |
+| Data / persistence | Supabase |
 | Package manager | pnpm 11.23.0 |
-| Motion | Motion / Framer Motion |
+| Motion | Motion |
 | Icons | Lucide React / Iconify |
 | Tables | TanStack React Table |
 | Rich text | TipTap |
 | Charts | Recharts |
 
-Exact dependency versions are maintained in [`package.json`](package.json) and `pnpm-lock.yaml`.
+Exact dependency declarations are maintained in [`package.json`](package.json) and [`pnpm-lock.yaml`](pnpm-lock.yaml).
+
+## Repository structure
+
+The canonical application is the Next.js implementation:
+
+```text
+app/                 Next.js routes and application shell
+components/          Product UI and reusable interface components
+context/             Application state and workflow provider
+data/                Technology, domain, recipe, and project registries
+engine/               Deterministic architecture logic
+hooks/                Reusable React hooks
+lib/                  Persistence, security, configuration, and utilities
+tests/                Automated Node.js tests
+docs/                 Current guides and engineering records
+ui/                   Deprecated legacy compatibility/reference surface
+```
+
+The `ui/` directory is **not** the canonical product surface. New features belong in `app/`, `components/`, `context/`, `engine/`, `lib/`, and related canonical directories.
 
 ## Requirements
 
@@ -71,11 +92,11 @@ Exact dependency versions are maintained in [`package.json`](package.json) and `
 - pnpm 11.23.0
 - Git
 
-These versions match the repository's current quality workflow.
+These versions match the repository's current package-manager declaration and CI/deployment baseline.
 
-## Installation
+## Local development
 
-Clone the repository and install dependencies from the lockfile:
+Clone the repository and install the committed dependency graph:
 
 ```bash
 git clone https://github.com/davidifeanyicelestine586-arch/tech-stack-architect.git
@@ -83,27 +104,17 @@ cd tech-stack-architect
 pnpm install --frozen-lockfile
 ```
 
-**Source download:** https://github.com/davidifeanyicelestine586-arch/tech-stack-architect/archive/refs/heads/main.zip
-
-## Configuration
-
-For local development, create an environment file only if your local setup requires external persistence services.
-
-Keep credentials out of source control and use server-side environment configuration for private service credentials.
-
-The application can also use `PORT` to select a non-default production server port. The default is `3000`.
-
-Refer to the deployment and persistence documentation for environment-specific configuration details.
-
-## Usage
-
 Start the development server:
 
 ```bash
 pnpm dev
 ```
 
-Open `http://localhost:3000` and create a project to explore the requirements, recommendations, validation, and blueprint workflow.
+Open the local address reported by Next.js, normally:
+
+```text
+http://localhost:3000
+```
 
 For a production-style local run:
 
@@ -112,9 +123,17 @@ pnpm build
 pnpm start
 ```
 
-## Validation and testing
+## Configuration
 
-Run the complete local quality gate:
+Keep credentials and environment-specific values outside source control.
+
+The application uses Supabase-backed persistence when the required server configuration is available. The deployment environment should provide the required values rather than committing secrets to the repository.
+
+For Vercel, configure the required environment variables in the project settings for the appropriate environments. Do not copy secret values into documentation or issues.
+
+## Validation
+
+Run the repository quality checks locally:
 
 ```bash
 pnpm lint
@@ -123,55 +142,52 @@ pnpm test
 pnpm build
 ```
 
-The repository also runs these checks through GitHub Actions on pushes to `main` and pull requests.
+The GitHub Actions quality gate runs the same core install, lint, TypeScript, test, and production-build checks.
+
+Automated checks do not replace browser-level release verification. Visual, keyboard, assistive-technology, responsive, and production smoke checks should be recorded separately when performed.
 
 ## Documentation
 
-The [`docs/`](docs/) directory contains deeper implementation and verification material, including:
+The [`docs/`](docs/) directory is organized around two purposes:
 
-- Deployment and hosting notes
-- Persistence implementation records
-- UX and accessibility review material
-- Visual verification notes
-- Migration and QA reports
+- **Current guides** — setup, deployment, architecture, and operational references that describe how the project works now.
+- **Engineering records** — QA reports, migration records, security notes, and historical implementation evidence.
 
-The README is intentionally kept at the public project level. Detailed implementation history belongs in the documentation directory.
+Start with [`docs/README.md`](docs/README.md) for the documentation map.
 
 ## Deployment
 
-The live application is available at:
+The current deployment target is **Vercel**, with GitHub `main` as the production branch.
 
-https://architect.ediccrew.com
+The repository is configured as a standard Next.js application:
 
-Deployment documentation is available in [`docs/nextjs-hostinger-deployment.md`](docs/nextjs-hostinger-deployment.md) and [`docs/nextjs-deployment-entrypoint-report.md`](docs/nextjs-deployment-entrypoint-report.md).
+```text
+Framework: Next.js
+Root directory: ./
+Install command: pnpm install
+Build command: pnpm run build
+Output directory: Next.js default
+Production branch: main
+```
+
+See [`docs/vercel-deployment.md`](docs/vercel-deployment.md) for the deployment and environment checklist.
+
+The previous Hostinger deployment work is retained as historical engineering context; Hostinger is no longer the active deployment target.
 
 ## Contributing
 
 Please read [`CONTRIBUTING.md`](CONTRIBUTING.md) before making changes.
 
-Before opening a pull request, run:
-
-```bash
-pnpm lint
-pnpm check
-pnpm test
-pnpm build
-```
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
-## Acknowledgments
-
-This project uses and benefits from the open-source ecosystem, including Next.js, React, TypeScript, Tailwind CSS, shadcn/ui, Supabase, Motion, Lucide, Iconify, TanStack Table, TipTap, and Recharts.
-
-See [`package.json`](package.json) for the project's dependency declarations.
+Keep changes focused, update the relevant documentation when behavior or configuration changes, and avoid committing secrets, generated build output, or unrelated files.
 
 ## Support
 
 - **Issues and feature requests:** https://github.com/davidifeanyicelestine586-arch/tech-stack-architect/issues
-- **Project repository:** https://github.com/davidifeanyicelestine586-arch/tech-stack-architect
+- **Source repository:** https://github.com/davidifeanyicelestine586-arch/tech-stack-architect
 - **Live application:** https://architect.ediccrew.com
 
-When reporting an issue, include reproducible steps and relevant error details. Never post passwords, API keys, or other private credentials in public issues.
+When reporting an issue, include reproducible steps and relevant error details. Never post passwords, API keys, service-role keys, or other private credentials in public issues.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
