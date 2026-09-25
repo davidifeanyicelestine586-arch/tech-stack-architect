@@ -1,6 +1,4 @@
-import { defineConfig } from "playwright/test";
-
-export default defineConfig({
+export default {
   testDir: ".",
   testMatch: "scripts/header-collision-audit.spec.mjs",
   timeout: 60_000,
@@ -10,4 +8,4 @@ export default defineConfig({
     baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || "http://127.0.0.1:3000",
     headless: true,
   },
-});
+};
