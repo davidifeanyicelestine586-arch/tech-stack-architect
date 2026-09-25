@@ -34,6 +34,19 @@ for (const width of viewports) {
         return width * height;
       };
 
+      const persistence = header.querySelector("[data-header-persistence]");
+      const persistenceStyle = persistence ? getComputedStyle(persistence) : null;
+      const persistenceDebug = persistence ? {
+        rect: rectOf(persistence),
+        display: persistenceStyle?.display,
+        width: persistenceStyle?.width,
+        flexBasis: persistenceStyle?.flexBasis,
+        flexGrow: persistenceStyle?.flexGrow,
+        flexShrink: persistenceStyle?.flexShrink,
+        order: persistenceStyle?.order,
+        justifyContent: persistenceStyle?.justifyContent,
+      } : null;
+
       const nodes = Array.from(
         header.querySelectorAll("button, a, [role='button'], [role='switch'], [aria-pressed='true'], [data-slot='badge']")
       ).filter((el) => {
@@ -50,7 +63,7 @@ for (const width of viewports) {
           if (area > 4) overlaps.push({ area, first: items[i], second: items[j] });
         }
       }
-      return { viewport: window.innerWidth, headerHeight: header.getBoundingClientRect().height, items, overlaps };
+      return { viewport: window.innerWidth, headerHeight: header.getBoundingClientRect().height, persistenceDebug, items, overlaps };
     });
 
     fs.writeFileSync(path.join(reportDir, `header-${width}.json`), JSON.stringify(result, null, 2));
