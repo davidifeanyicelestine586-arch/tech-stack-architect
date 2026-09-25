@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FileCode2, Download, Copy, Terminal, CheckCircle2, BookOpen, AlertCircle, RefreshCw, ArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { workflowStepLabel } from "@/lib/navigation/workflow";
 
 export function BlueprintPanel() {
   const { blueprint, projectDefinition, generateCustomBlueprint, selectedComponents, copyBlueprint, downloadBlueprint } = useTechStack();
@@ -48,7 +49,7 @@ export function BlueprintPanel() {
   const project = blueprint?.project || (projectDefinition.name || projectDefinition.description ? projectDefinition : null);
 
   if (!blueprint) {
-    return <div id="blueprint" className="flex flex-col gap-4"><Card id="exports" className="border-border bg-card"><CardContent className="flex flex-col items-center justify-center p-10 text-center"><div className="mb-4 flex size-12 items-center justify-center rounded-lg bg-muted text-muted-foreground"><Terminal className="size-6" aria-hidden="true" /></div><Badge variant="outline" className="mb-2 text-[10px]">Step 6 · Finalize</Badge><h3 className="text-lg font-bold text-foreground">Generate your Architecture Blueprint</h3><p className="mt-2 max-w-md text-xs leading-relaxed text-muted-foreground">Your stack is assembled. Turn it into a development-ready blueprint with project context, learning goals, starter commands, and validation results.</p><Button className="mt-6 min-h-11 gap-2 px-5 text-xs" onClick={handleGenerate} disabled={isGenerating}><Terminal className="size-3.5" aria-hidden="true" />{isGenerating ? "Generating Blueprint…" : "Generate Architecture Blueprint"}</Button></CardContent></Card></div>;
+    return <div id="blueprint" className="flex flex-col gap-4"><Card id="exports" className="border-border bg-card"><CardContent className="flex flex-col items-center justify-center p-10 text-center"><div className="mb-4 flex size-12 items-center justify-center rounded-lg bg-muted text-muted-foreground"><Terminal className="size-6" aria-hidden="true" /></div><Badge variant="outline" className="mb-2 text-[10px]">{workflowStepLabel("blueprint")}</Badge><h3 className="text-lg font-bold text-foreground">Generate your Architecture Blueprint</h3><p className="mt-2 max-w-md text-xs leading-relaxed text-muted-foreground">Your stack is assembled. Turn it into a development-ready blueprint with project context, learning goals, starter commands, and validation results.</p><Button className="mt-6 min-h-11 gap-2 px-5 text-xs" onClick={handleGenerate} disabled={isGenerating}><Terminal className="size-3.5" aria-hidden="true" />{isGenerating ? "Generating Blueprint…" : "Generate Architecture Blueprint"}</Button></CardContent></Card></div>;
   }
 
   return (

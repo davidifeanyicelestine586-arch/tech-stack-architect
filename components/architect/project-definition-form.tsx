@@ -1,5 +1,6 @@
 "use client";
 
+import { WORKFLOW_STEPS, workflowStepNumber } from "@/lib/navigation/workflow";
 import { FormEvent, useRef, useState, useTransition } from "react";
 import { ClipboardList, Loader2, SearchCheck } from "lucide-react";
 import { useTechStack } from "@/hooks/use-tech-stack";
@@ -79,7 +80,7 @@ export function ProjectDefinitionForm() {
               </CardDescription>
             </div>
           </div>
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">Step 1 of 6</span>
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">{`Step ${workflowStepNumber("define")} of ${WORKFLOW_STEPS.length}`}</span>
         </div>
       </CardHeader>
 

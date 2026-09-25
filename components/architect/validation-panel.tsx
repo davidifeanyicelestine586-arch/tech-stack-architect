@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { ShieldCheck, AlertTriangle, CheckCircle2, Info, ArrowUpRight, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { workflowStepLabel } from "@/lib/navigation/workflow";
 
 type IssueSeverity = "error" | "warning" | "info" | "suggestion";
 
@@ -42,7 +43,7 @@ export function ValidationPanel() {
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               {isReady ? <CheckCircle2 aria-hidden="true" className="size-4 text-emerald-600 dark:text-emerald-400" /> : <ShieldCheck aria-hidden="true" className="size-4 text-primary" />}
-              <Badge variant="outline" className="shrink-0 text-xs font-bold">Step 5</Badge>
+              <Badge variant="outline" className="shrink-0 text-xs font-bold">{workflowStepLabel("validate")}</Badge>
               <CardTitle className="text-sm font-bold">Compatibility Check</CardTitle>
             </div>
             <CardDescription className="pt-1 text-xs">{isReady ? "Your selected technologies work together." : `${status}. Review these items before generating your blueprint.`}</CardDescription>

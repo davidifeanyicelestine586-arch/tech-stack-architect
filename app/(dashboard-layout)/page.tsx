@@ -7,6 +7,7 @@ import { DomainSelector } from "@/components/architect/domain-selector";
 import { SelectedStack } from "@/components/architect/selected-stack";
 import { ValidationPanel } from "@/components/architect/validation-panel";
 import { RecipeRecommendations } from "@/components/architect/recipe-recommendations";
+import { workflowStepLabel } from "@/lib/navigation/workflow";
 import { BlueprintPanel } from "@/components/architect/blueprint-panel";
 import { ProjectDefinitionForm } from "@/components/architect/project-definition-form";
 import { RecommendationPanel } from "@/components/architect/recommendation-panel";
@@ -80,7 +81,7 @@ export default function WorkspacePage() {
       <div className="lg:hidden">
         <div className="mb-3 flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-xs font-bold uppercase tracking-wider text-primary">Step 4 · Build</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-primary">{workflowStepLabel("build")}</p>
             <h2 className="text-base font-bold tracking-tight text-foreground">Keep your stack in view</h2>
           </div>
           <Badge variant="outline" className="shrink-0 text-xs">Mobile workspace</Badge>
@@ -92,7 +93,7 @@ export default function WorkspacePage() {
         <div className="flex min-w-0 flex-col gap-6 sm:gap-8 lg:col-span-8">
           <section className="flex min-w-0 flex-col gap-5" id="components">
             <div>
-              <div className="flex items-center gap-2"><Badge variant="outline" className="text-xs font-bold">Step 4</Badge><h2 className="text-lg font-bold tracking-tight text-foreground">Adjust Your Stack</h2></div>
+              <div className="flex items-center gap-2"><Badge variant="outline" className="text-xs font-bold">{workflowStepLabel("build")}</Badge><h2 className="text-lg font-bold tracking-tight text-foreground">Adjust Your Stack</h2></div>
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Recommendations are your starting point. Use the catalog to add, remove, and refine technologies before validation.</p>
             </div>
             <DomainSelector />

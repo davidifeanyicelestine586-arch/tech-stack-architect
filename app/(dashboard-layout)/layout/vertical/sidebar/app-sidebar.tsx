@@ -16,13 +16,6 @@ import { NavSecondary } from "./nav-secondary";
 import { NavUser } from "./nav-user";
 import { Badge } from "@/components/ui/badge";
 
-const mobileSidebarItems = sidebaritems
-  .map((section) => ({
-    ...section,
-    items: section.items?.filter((item) => item.mobilePrimary),
-  }))
-  .filter((section) => section.items && section.items.length > 0);
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar
@@ -42,13 +35,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <SimpleBar style={{ height: "100%" }}>
           <SidebarGroup className="flex items-center justify-center px-3 py-4 group-data-[state=collapsed]:px-2">
-            <nav aria-label="Main workspace navigation" className="flex w-full flex-col">
-              <div className="hidden w-full flex-col gap-4 px-0 lg:flex group-data-[state=collapsed]:px-0">
-                <NavCollapse menu={sidebaritems} className="text-sm" />
-              </div>
-              <div className="flex w-full flex-col gap-4 px-0 lg:hidden group-data-[state=collapsed]:px-0">
-                <NavCollapse menu={mobileSidebarItems} className="text-sm" />
-              </div>
+            <nav aria-label="Main workspace navigation" className="flex w-full flex-col gap-4">
+              <NavCollapse menu={sidebaritems} className="text-sm" />
             </nav>
           </SidebarGroup>
         </SimpleBar>

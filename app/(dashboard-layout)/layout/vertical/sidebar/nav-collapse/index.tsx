@@ -66,7 +66,9 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
                   href={item.url || "#"}
                   target={item.external ? "_blank" : undefined}
                   aria-current={currentValue(item)}
+                  data-mobile-primary={item.mobilePrimary ? "true" : "false"}
                   className={cn(
+                    !item.mobilePrimary && "max-lg:hidden",
                     "block rounded-md outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                     className,
                   )}
@@ -77,7 +79,12 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
             }
 
             return (
-              <details key={itemIndex} className="group/nav" open={active || item.isActive}>
+              <details
+                key={itemIndex}
+                className={cn("group/nav", !item.mobilePrimary && "max-lg:hidden")}
+                data-mobile-primary={item.mobilePrimary ? "true" : "false"}
+                open={active || item.isActive}
+              >
                 <summary
                   className="cursor-pointer list-none rounded-md outline-none transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden"
                   aria-label={`${item.name} menu`}

@@ -13,7 +13,7 @@ import { ProjectPersistenceToolbar } from "@/components/architect/project-persis
 import { AuthPanel } from "@/components/auth/auth-panel";
 
 const Header = () => {
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar, isMobile, openMobile, open } = useSidebar();
 
   return (
     <header
@@ -21,7 +21,7 @@ const Header = () => {
         "fixed inset-x-0 top-0 z-50 border-b border-border bg-background/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:sticky lg:top-0",
       )}
     >
-      <nav aria-label="Workspace navigation">
+      <div role="group" aria-label="Workspace controls">
         <div className="mx-auto flex min-h-12 items-center gap-2 p-2 lg:flex-nowrap">
           <div className="flex min-w-0 shrink-0 items-center gap-2">
             <div className="block lg:hidden" aria-label="Ediccrew Tech Stack Architect">
@@ -33,7 +33,9 @@ const Header = () => {
               size="icon"
               className="size-11 shrink-0 cursor-pointer rounded-full p-2 transition hover:bg-primary/5 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               onClick={toggleSidebar}
-              aria-label="Toggle workspace navigation"
+              aria-label={isMobile ? "Toggle mobile workspace navigation" : "Toggle workspace navigation"}
+              aria-expanded={isMobile ? openMobile : open}
+              aria-controls="workspace-navigation"
             >
               <PanelLeft aria-hidden="true" size={21} />
             </Button>
@@ -77,7 +79,7 @@ const Header = () => {
             </div>
           </div>
         </div>
-      </nav>
+      </div>
     </header>
   );
 };

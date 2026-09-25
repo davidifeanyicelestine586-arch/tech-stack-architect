@@ -4,15 +4,8 @@ import Link from "next/link";
 import { Check, ChevronRight, Circle } from "lucide-react";
 import { useTechStack } from "@/hooks/use-tech-stack";
 import { Badge } from "@/components/ui/badge";
+import { WORKFLOW_STEPS, workflowStepHref } from "@/lib/navigation/workflow";
 
-const steps = [
-  { id: "define", label: "Define", href: "#define" },
-  { id: "analyze", label: "Analyze", href: "#define" },
-  { id: "review", label: "Review", href: "#recommendations" },
-  { id: "build", label: "Build", href: "#components" },
-  { id: "validate", label: "Validate", href: "#validation" },
-  { id: "blueprint", label: "Blueprint", href: "#blueprint" },
-] as const;
 
 export function WorkflowProgress() {
   const { projectDefinition, requirementAnalysis, selectedComponentIds, validationReport, blueprint } = useTechStack();
@@ -29,7 +22,17 @@ export function WorkflowProgress() {
     hasStack && Boolean(validationReport),
     hasBlueprint,
   ];
-  const activeIndex = hasBlueprint ? 5 : hasStack ? 4 : hasRecommendations ? 2 : hasProject ? 1 : 0;
+  const activeIndex = hasBlueprint
+    ? 5
+    : validationReport
+      ? 4
+      : hasStack
+        ? 3
+        : hasRecommendations
+          ? 2
+          : hasProject
+            ? 1
+            : 0;
 
   return (
     <section aria-label="Architecture progress" className="rounded-xl border border-border bg-card p-3 shadow-xs sm:p-4">
@@ -41,13 +44,13 @@ export function WorkflowProgress() {
         <Badge variant="outline" className="hidden shrink-0 text-xs sm:inline-flex">Step {activeIndex + 1} of 6</Badge>
       </div>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6">
-        {steps.map((step, index) => {
+        {WORKFLOW_STEPS.map((step, index) => {
           const isDone = completed[index] && index < activeIndex;
           const isActive = index === activeIndex;
           return (
             <Link
               key={step.id}
-              href={step.href}
+              href={workflowStepHref(step.id)}
               aria-current={isActive ? "step" : undefined}
               className={`group flex min-h-11 min-w-0 items-center gap-2 rounded-lg border px-2.5 py-2 transition-colors ${
                 isActive ? "border-primary/30 bg-primary/10 text-primary" : isDone ? "border-border bg-muted/40 text-foreground" : "border-transparent text-muted-foreground hover:border-border hover:bg-muted/50"
