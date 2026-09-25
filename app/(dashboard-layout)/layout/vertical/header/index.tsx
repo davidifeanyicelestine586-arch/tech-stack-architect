@@ -50,33 +50,31 @@ const Header = () => {
             </div>
           </div>
 
-          <div className="contents lg:ml-auto lg:flex lg:min-w-0 lg:flex-1 lg:items-center lg:justify-end lg:gap-1">
-            <div className="min-w-0 max-w-full max-lg:order-3 max-lg:basis-full max-lg:w-full">
-              <ProjectPersistenceToolbar />
-            </div>
-            <div className="order-1 shrink-0 lg:order-none">
-              <AuthPanel />
-            </div>
-            <Separator orientation="vertical" className="mx-1 hidden h-5 md:block max-lg:hidden" />
-            <Button
-              variant="outline"
-              size="sm"
-              className="hidden h-11 shrink-0 items-center gap-1.5 px-3 text-xs font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:inline-flex"
-              render={
-                <Link
-                  href="https://github.com/davidifeanyicelestine586-arch/tech-stack-architect"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Open Tech Stack Architect GitHub repository in a new tab"
-                />
-              }
-            >
-              <GitFork aria-hidden="true" className="size-3.5" />
-              <span>GitHub</span>
-            </Button>
-            <div className="order-2 shrink-0 lg:order-none">
-              <LightDark />
-            </div>
+          <div className="order-3 w-full min-w-0 max-lg:basis-full lg:order-none lg:ml-auto lg:flex lg:min-w-0 lg:flex-1 lg:items-center lg:justify-end lg:gap-1">
+            <ProjectPersistenceToolbar />
+          </div>
+          <div className="order-1 ml-auto shrink-0 lg:order-none lg:ml-0">
+            <AuthPanel />
+          </div>
+          <Separator orientation="vertical" className="mx-1 hidden h-5 md:block max-lg:hidden" />
+          <Button
+            variant="outline"
+            size="sm"
+            className="order-1 hidden h-11 shrink-0 items-center gap-1.5 px-3 text-xs font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:inline-flex lg:order-none"
+            render={
+              <Link
+                href="https://github.com/davidifeanyicelestine586-arch/tech-stack-architect"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Open Tech Stack Architect GitHub repository in a new tab"
+              />
+            }
+          >
+            <GitFork aria-hidden="true" className="size-3.5" />
+            <span>GitHub</span>
+          </Button>
+          <div className="order-2 shrink-0 lg:order-none">
+            <LightDark />
           </div>
         </div>
       </div>
