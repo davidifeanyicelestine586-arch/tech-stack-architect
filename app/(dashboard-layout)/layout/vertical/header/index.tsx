@@ -21,7 +21,7 @@ const Header = () => {
         "fixed inset-x-0 top-0 z-50 border-b border-border bg-background/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:sticky lg:top-0",
       )}
     >
-      <nav aria-label="Workspace navigation">
+      <div role="group" aria-label="Workspace controls">
         <div className="mx-auto flex min-h-12 items-center gap-2 p-2 lg:flex-nowrap">
           <div className="flex min-w-0 shrink-0 items-center gap-2">
             <div className="block lg:hidden" aria-label="Ediccrew Tech Stack Architect">
@@ -79,7 +79,7 @@ const Header = () => {
             </div>
           </div>
         </div>
-      </nav>
+      </div>
     </header>
   );
 };
