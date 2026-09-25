@@ -22,45 +22,43 @@ const Header = () => {
       )}
     >
       <div role="group" aria-label="Workspace controls">
-        <div className="mx-auto flex min-h-12 items-center gap-2 p-2 lg:flex-nowrap">
-          <div className="flex min-w-0 shrink-0 items-center gap-2">
-            <div className="block lg:hidden" aria-label="Ediccrew Tech Stack Architect">
-              <FullLogo />
-            </div>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              className="size-11 shrink-0 cursor-pointer rounded-full p-2 transition hover:bg-primary/5 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              onClick={toggleSidebar}
-              aria-label={isMobile ? "Toggle mobile workspace navigation" : "Toggle workspace navigation"}
-              aria-expanded={isMobile ? openMobile : open}
-              aria-controls="workspace-navigation"
-            >
-              <PanelLeft aria-hidden="true" size={21} />
-            </Button>
-
-            <Separator
-              orientation="vertical"
-              className="ml-2 mr-4 h-4 max-lg:hidden data-[orientation=vertical]:self-center"
-            />
-
-            <div className="hidden w-48 shrink-0 sm:block lg:w-72">
-              <Search />
-            </div>
+        <div className="mx-auto grid min-h-12 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 p-2 lg:flex lg:flex-nowrap">
+        <div className="flex min-w-0 shrink-0 items-center gap-2 lg:order-1">
+          <div className="block lg:hidden" aria-label="Ediccrew Tech Stack Architect">
+            <FullLogo />
           </div>
 
-          <div data-header-persistence className="order-3 w-full min-w-0 shrink-0 max-lg:basis-full lg:order-none lg:ml-auto lg:flex lg:min-w-0 lg:flex-1 lg:items-center lg:justify-end lg:gap-1">
-            <ProjectPersistenceToolbar />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-11 shrink-0 cursor-pointer rounded-full p-2 transition hover:bg-primary/5 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            onClick={toggleSidebar}
+            aria-label={isMobile ? "Toggle mobile workspace navigation" : "Toggle workspace navigation"}
+            aria-expanded={isMobile ? openMobile : open}
+            aria-controls="workspace-navigation"
+          >
+            <PanelLeft aria-hidden="true" size={21} />
+          </Button>
+
+          <Separator
+            orientation="vertical"
+            className="ml-2 mr-4 h-4 max-lg:hidden data-[orientation=vertical]:self-center"
+          />
+
+          <div className="hidden w-48 shrink-0 sm:block lg:w-72">
+            <Search />
           </div>
-          <div className="order-1 ml-auto shrink-0 lg:order-none lg:ml-0">
+        </div>
+
+        <div className="flex min-w-0 items-center justify-end gap-1 lg:contents">
+          <div className="shrink-0 lg:order-3">
             <AuthPanel />
           </div>
-          <Separator orientation="vertical" className="mx-1 hidden h-5 md:block max-lg:hidden" />
+
           <Button
             variant="outline"
             size="sm"
-            className="order-1 hidden h-11 shrink-0 items-center gap-1.5 px-3 text-xs font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:inline-flex lg:order-none"
+            className="hidden h-11 shrink-0 items-center gap-1.5 px-3 text-xs font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:inline-flex lg:order-5"
             render={
               <Link
                 href="https://github.com/davidifeanyicelestine586-arch/tech-stack-architect"
@@ -73,10 +71,17 @@ const Header = () => {
             <GitFork aria-hidden="true" className="size-3.5" />
             <span>GitHub</span>
           </Button>
-          <div className="order-2 shrink-0 lg:order-none">
+
+          <div className="shrink-0 lg:order-6">
             <LightDark />
           </div>
         </div>
+
+        <div data-header-persistence className="col-span-2 w-full min-w-0 lg:order-2 lg:ml-auto lg:flex lg:min-w-0 lg:flex-1 lg:items-center lg:justify-end lg:gap-1">
+          <ProjectPersistenceToolbar />
+        </div>
+
+        <Separator orientation="vertical" className="hidden h-5 lg:order-4 lg:mx-1 lg:block" />
       </div>
     </header>
   );
