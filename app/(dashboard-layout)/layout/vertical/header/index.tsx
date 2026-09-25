@@ -22,8 +22,8 @@ const Header = () => {
       )}
     >
       <div role="group" aria-label="Workspace controls">
-        <div className="mx-auto grid min-h-12 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 p-2 lg:flex lg:flex-nowrap">
-        <div className="flex min-w-0 shrink-0 items-center gap-2 lg:order-1">
+        <div className="mx-auto grid min-h-12 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 p-2 xl:flex xl:flex-nowrap">
+        <div className="flex min-w-0 shrink-0 items-center gap-2 xl:order-1">
           <div className="block lg:hidden" aria-label="Ediccrew Tech Stack Architect">
             <FullLogo />
           </div>
@@ -50,15 +50,15 @@ const Header = () => {
           </div>
         </div>
 
-        <div className="flex min-w-0 items-center justify-end gap-1 lg:contents">
-          <div className="shrink-0 lg:order-3">
+        <div className="flex min-w-0 items-center justify-end gap-1 xl:contents">
+          <div className="shrink-0 xl:order-3">
             <AuthPanel />
           </div>
 
           <Button
             variant="outline"
             size="sm"
-            className="hidden h-11 shrink-0 items-center gap-1.5 px-3 text-xs font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:inline-flex lg:order-5"
+            className="hidden h-11 shrink-0 items-center gap-1.5 px-3 text-xs font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:inline-flex xl:order-5"
             render={
               <Link
                 href="https://github.com/davidifeanyicelestine586-arch/tech-stack-architect"
@@ -72,16 +72,16 @@ const Header = () => {
             <span>GitHub</span>
           </Button>
 
-          <div className="shrink-0 lg:order-6">
+          <div className="shrink-0 xl:order-6">
             <LightDark />
           </div>
         </div>
 
-        <div data-header-persistence className="col-span-2 w-full min-w-0 lg:order-2 lg:ml-auto lg:flex lg:min-w-0 lg:flex-1 lg:items-center lg:justify-end lg:gap-1">
+        <div data-header-persistence className="col-span-2 w-full min-w-0 xl:order-2 xl:ml-auto lg:flex xl:min-w-0 xl:flex-1 xl:items-center xl:justify-end xl:gap-1">
           <ProjectPersistenceToolbar />
         </div>
 
-        <Separator orientation="vertical" className="hidden h-5 lg:order-4 lg:mx-1 lg:block" />
+        <Separator orientation="vertical" className="hidden h-5 xl:order-4 xl:mx-1 xl:block" />
         </div>
       </div>
     </header>
