@@ -4,7 +4,6 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
 import { ThemeProvider } from "@/components/Themeprovider";
-import { AuthPanel } from "@/components/auth/auth-panel";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -12,14 +11,23 @@ const geist = Geist({
   variable: "--font-geist",
 });
 
+const PRODUCT_TITLE = "Ediccrew Tech Stack Architect";
+const PRODUCT_DESCRIPTION = "Design, validate, understand, and generate production-ready technology stacks.";
+
 export const metadata: Metadata = {
-  title: "Ediccrew | Tech Stack Architect",
-  description:
-    "Interactive technology stack validation, conflict arbitration, recipe matching, and blueprint generation platform.",
+  title: {
+    default: PRODUCT_TITLE,
+    template: `%s | ${PRODUCT_TITLE}`,
+  },
+  description: PRODUCT_DESCRIPTION,
   openGraph: {
-    title: "Ediccrew | Tech Stack Architect",
-    description:
-      "Design, validate, understand, and generate technology stacks.",
+    title: PRODUCT_TITLE,
+    description: PRODUCT_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: PRODUCT_TITLE,
+    description: PRODUCT_DESCRIPTION,
   },
 };
 
@@ -49,11 +57,6 @@ export default function RootLayout({
           defaultTheme="light"
           enableSystem={false}
         >
-          <div className="pointer-events-none fixed right-3 top-3 z-50">
-            <div className="pointer-events-auto rounded-lg border border-border/70 bg-background/95 p-1 shadow-lg backdrop-blur">
-              <AuthPanel />
-            </div>
-          </div>
           {children}
         </ThemeProvider>
       </body>
