@@ -32,10 +32,12 @@ jobs:
           done
           cat /tmp/next.log
           exit 1
+      - name: Install Playwright test runner
+        run: pnpm add --save-dev playwright@1.55.0
       - name: Install Playwright Chromium
-        run: pnpm dlx playwright@1.55.0 install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
       - name: Run header collision audit
-        run: pnpm dlx playwright@1.55.0 test --config=playwright.header.config.mjs
+        run: pnpm exec playwright test --config=playwright.header.config.mjs
         env:
           PLAYWRIGHT_TEST_BASE_URL: http://127.0.0.1:3000
       - name: Upload screenshots and reports
