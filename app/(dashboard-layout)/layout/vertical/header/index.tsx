@@ -50,7 +50,7 @@ const Header = () => {
             </div>
           </div>
 
-          <div className="order-3 w-full min-w-0 max-lg:basis-full lg:order-none lg:ml-auto lg:flex lg:min-w-0 lg:flex-1 lg:items-center lg:justify-end lg:gap-1">
+          <div data-header-persistence className="order-3 w-full min-w-0 max-lg:basis-full lg:order-none lg:ml-auto lg:flex lg:min-w-0 lg:flex-1 lg:items-center lg:justify-end lg:gap-1">
             <ProjectPersistenceToolbar />
           </div>
           <div className="order-1 ml-auto shrink-0 lg:order-none lg:ml-0">
