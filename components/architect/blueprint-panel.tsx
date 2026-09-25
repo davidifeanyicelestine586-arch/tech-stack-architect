@@ -14,6 +14,7 @@ export function BlueprintPanel() {
   const [copiedMd, setCopiedMd] = React.useState(false);
   const [isGenerating, setIsGenerating] = React.useState(false);
   const [copyError, setCopyError] = React.useState("");
+  const [downloadError, setDownloadError] = React.useState("");
 
   const selectedComponentSignature = React.useMemo(() => JSON.stringify(selectedComponents.map((component) => component.id).sort()), [selectedComponents]);
   const blueprintComponentSignature = React.useMemo(() => JSON.stringify((blueprint?.components ?? []).map((component) => component.id).sort()), [blueprint]);
@@ -34,9 +35,14 @@ export function BlueprintPanel() {
   }
 
   const handleCopy = async (format: "json" | "markdown") => {
-    setCopyError(""); const success = await copyBlueprint(format);
+    setCopyError(""); setDownloadError(""); const success = await copyBlueprint(format);
     if (success) { if (format === "json") { setCopiedJson(true); setTimeout(() => setCopiedJson(false), 2000); } else { setCopiedMd(true); setTimeout(() => setCopiedMd(false), 2000); } }
     else setCopyError("Copy was blocked by the browser. Use the download action instead.");
+  };
+
+  const handleDownload = (format: "json" | "markdown") => {
+    setDownloadError("");
+    if (!downloadBlueprint(format)) setDownloadError("Download could not be started. Try again or use Copy instead.");
   };
 
   const project = blueprint?.project || (projectDefinition.name || projectDefinition.description ? projectDefinition : null);
@@ -67,7 +73,7 @@ export function BlueprintPanel() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <Card className="h-fit"><CardHeader className="pb-3"><CardTitle className="text-sm font-bold">Next steps</CardTitle><CardDescription className="text-xs">Take the validated architecture into development.</CardDescription></CardHeader><CardContent className="flex flex-col gap-2.5"><Button variant="outline" size="sm" className="min-h-11 justify-start gap-2 text-xs font-medium" onClick={() => handleCopy("markdown")}>{copiedMd ? <CheckCircle2 className="size-4 text-emerald-500" /> : <Copy className="size-4" aria-hidden="true" />}{copiedMd ? "Copied Markdown" : "Copy as Markdown"}</Button><Button variant="outline" size="sm" className="min-h-11 justify-start gap-2 text-xs font-medium" onClick={() => handleCopy("json")}>{copiedJson ? <CheckCircle2 className="size-4 text-emerald-500" /> : <Copy className="size-4" />}{copiedJson ? "Copied JSON" : "Copy as JSON"}</Button>{copyError && <p className="text-[10px] text-amber-700 dark:text-amber-400" role="status">{copyError}</p>}<div className="my-1 h-px bg-border" /><Button className="min-h-11 justify-start gap-2 text-xs" onClick={() => downloadBlueprint("markdown")}><Download className="size-4" aria-hidden="true" />Download .md Blueprint</Button><Button variant="secondary" className="min-h-11 justify-start gap-2 text-xs" onClick={() => downloadBlueprint("json")}><Download className="size-4" />Download .json Schema</Button></CardContent></Card>
+          <Card className="h-fit"><CardHeader className="pb-3"><CardTitle className="text-sm font-bold">Next steps</CardTitle><CardDescription className="text-xs">Take the validated architecture into development.</CardDescription></CardHeader><CardContent className="flex flex-col gap-2.5"><Button variant="outline" size="sm" className="min-h-11 justify-start gap-2 text-xs font-medium" onClick={() => handleCopy("markdown")}>{copiedMd ? <CheckCircle2 className="size-4 text-emerald-500" /> : <Copy className="size-4" aria-hidden="true" />}{copiedMd ? "Copied Markdown" : "Copy as Markdown"}</Button><Button variant="outline" size="sm" className="min-h-11 justify-start gap-2 text-xs font-medium" onClick={() => handleCopy("json")}>{copiedJson ? <CheckCircle2 className="size-4 text-emerald-500" /> : <Copy className="size-4" />}{copiedJson ? "Copied JSON" : "Copy as JSON"}</Button>{copyError && <p className="text-[10px] text-amber-700 dark:text-amber-400" role="status">{copyError}</p>}<div className="my-1 h-px bg-border" />{downloadError && <p className="text-[10px] text-amber-700 dark:text-amber-400" role="status">{downloadError}</p>}<Button className="min-h-11 justify-start gap-2 text-xs" onClick={() => handleDownload("markdown")}><Download className="size-4" aria-hidden="true" />Download .md Blueprint</Button><Button variant="secondary" className="min-h-11 justify-start gap-2 text-xs" onClick={() => handleDownload("json")}><Download className="size-4" />Download .json Schema</Button></CardContent></Card>
           <Card className="border-border bg-muted/20"><CardContent className="flex flex-col items-center gap-2 p-4 text-center"><ArrowDown className="size-4 text-muted-foreground" aria-hidden="true" /><h4 className="text-xs font-bold text-primary">From idea to implementation</h4><p className="text-[10px] leading-relaxed text-muted-foreground">Your project context, selected technologies, compatibility results, and starter commands stay together in one blueprint.</p></CardContent></Card>
         </div>
       </div>

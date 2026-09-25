@@ -112,6 +112,7 @@ test("exporter produces JSON and Markdown representations", () => {
   const markdown = exporter.exportMarkdown(report);
   assert.match(markdown, /# Example Blueprint/);
   assert.match(markdown, /Production Ready/);
+  assert.match(markdown, /## Domain\nweb-saas/);
   assert.match(markdown, /Next\.js/);
   assert.match(markdown, /npm run dev/);
 });
