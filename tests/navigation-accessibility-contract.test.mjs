@@ -24,7 +24,7 @@ test("responsive navigation uses one NavCollapse tree", () => {
 });
 
 test("header controls are not exposed as a navigation landmark", () => {
-  assert.doesNotMatch(headerSource, /<nav\\b/);
+  assert.doesNotMatch(headerSource, /<nav\b/);
 });
 
 test("mobile navigation trigger exposes disclosure state and target", () => {
