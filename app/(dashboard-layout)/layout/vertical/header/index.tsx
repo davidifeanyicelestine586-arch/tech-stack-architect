@@ -13,7 +13,7 @@ import { ProjectPersistenceToolbar } from "@/components/architect/project-persis
 import { AuthPanel } from "@/components/auth/auth-panel";
 
 const Header = () => {
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar, isMobile, openMobile, open } = useSidebar();
 
   return (
     <header
@@ -33,7 +33,9 @@ const Header = () => {
               size="icon"
               className="size-11 shrink-0 cursor-pointer rounded-full p-2 transition hover:bg-primary/5 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               onClick={toggleSidebar}
-              aria-label="Toggle workspace navigation"
+              aria-label={isMobile ? "Toggle mobile workspace navigation" : "Toggle workspace navigation"}
+              aria-expanded={isMobile ? openMobile : open}
+              aria-controls="workspace-navigation"
             >
               <PanelLeft aria-hidden="true" size={21} />
             </Button>
