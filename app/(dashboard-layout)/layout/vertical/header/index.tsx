@@ -50,14 +50,14 @@ const Header = () => {
             </div>
           </div>
 
-          <div className="ml-auto flex min-w-0 flex-1 items-center justify-end gap-1 overflow-visible">
-            <div className="min-w-0 max-w-full">
+          <div className="contents lg:ml-auto lg:flex lg:min-w-0 lg:flex-1 lg:items-center lg:justify-end lg:gap-1">
+            <div className="min-w-0 max-w-full max-lg:order-3 max-lg:basis-full max-lg:w-full">
               <ProjectPersistenceToolbar />
             </div>
-            <div className="shrink-0">
+            <div className="order-1 shrink-0 lg:order-none">
               <AuthPanel />
             </div>
-            <Separator orientation="vertical" className="mx-1 hidden h-5 md:block" />
+            <Separator orientation="vertical" className="mx-1 hidden h-5 md:block max-lg:hidden" />
             <Button
               variant="outline"
               size="sm"
@@ -74,7 +74,7 @@ const Header = () => {
               <GitFork aria-hidden="true" className="size-3.5" />
               <span>GitHub</span>
             </Button>
-            <div className="shrink-0">
+            <div className="order-2 shrink-0 lg:order-none">
               <LightDark />
             </div>
           </div>
