@@ -145,7 +145,7 @@ export function ProjectPersistenceToolbar() {
   };
 
   return (
-    <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5" aria-label="Project persistence controls">
+    <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5 max-lg:justify-start" aria-label="Project persistence controls">
       <div className="hidden max-w-44 items-center gap-1.5 truncate lg:flex" title={projectDefinition.name || "New project"}>
         <span className="size-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />
         <span className="truncate text-xs font-semibold text-foreground">
