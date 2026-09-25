@@ -50,7 +50,7 @@ for (const width of viewports) {
           if (area > 4) overlaps.push({ area, first: items[i], second: items[j] });
         }
       }
-      return { viewport: window.innerWidth, items, overlaps };
+      return { viewport: window.innerWidth, headerHeight: header.getBoundingClientRect().height, items, overlaps };
     });
 
     fs.writeFileSync(path.join(reportDir, `header-${width}.json`), JSON.stringify(result, null, 2));
@@ -67,3 +67,25 @@ for (const width of viewports) {
     expect(result.overlaps, `Header overlap detected at ${width}px`).toEqual([]);
   });
 }
+
+
+test("write responsive header summary", async () => {
+  const rows = viewports.map((width) => {
+    const file = path.join(reportDir, `header-${width}.json`);
+    const result = JSON.parse(fs.readFileSync(file, "utf8"));
+    return {
+      width,
+      overlaps: result.overlaps.length,
+      headerHeight: Math.round(result.headerHeight),
+    };
+  });
+  const markdown = [
+    "| Viewport | Header height | Overlapping elements | File likely responsible |",
+    "|---:|---:|---:|---|",
+    ...rows.map((row) => `| ${row.width}px | ${row.headerHeight}px | ${row.overlaps} | ${row.overlaps ? "header/toolbar flex layout" : "none"} |`),
+    "",
+    "Overlap threshold: intersection area > 4px².",
+  ].join("\n");
+  fs.writeFileSync(path.join(reportDir, "summary.md"), markdown);
+  console.log("\n" + markdown);
+});
