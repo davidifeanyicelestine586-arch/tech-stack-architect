@@ -16,10 +16,15 @@ const workflowProgress = read("components/architect/workflow-progress.tsx");
 const workspace = read("app/(dashboard-layout)/page.tsx");
 const rootLayout = read("app/layout.tsx");
 const projectDefinition = read("components/architect/project-definition-form.tsx");
+const headerSource = header;
 
 test("responsive navigation uses one NavCollapse tree", () => {
   assert.equal((sidebar.match(/<NavCollapse\b/g) ?? []).length, 1);
   assert.match(navCollapse, /!item\.mobilePrimary && "max-lg:hidden"/);
+});
+
+test("header controls are not exposed as a navigation landmark", () => {
+  assert.doesNotMatch(headerSource, /<nav\\b/);
 });
 
 test("mobile navigation trigger exposes disclosure state and target", () => {
