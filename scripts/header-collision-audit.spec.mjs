@@ -57,17 +57,18 @@ for (const width of viewports) {
 
       const items = nodes.map((el) => ({ rect: rectOf(el), meta: describe(el) }));
       const overlaps = [];
+      const overflowing = items.filter((item) => item.rect.x < -4 || item.rect.right > window.innerWidth + 4 || item.rect.y < -4);
       for (let i = 0; i < items.length; i += 1) {
         for (let j = i + 1; j < items.length; j += 1) {
           const area = intersectionArea(items[i].rect, items[j].rect);
           if (area > 4) overlaps.push({ area, first: items[i], second: items[j] });
         }
       }
-      return { viewport: window.innerWidth, headerHeight: header.getBoundingClientRect().height, persistenceDebug, items, overlaps };
+      return { viewport: window.innerWidth, headerHeight: header.getBoundingClientRect().height, persistenceDebug, items, overlaps, overflowing };
     });
 
     fs.writeFileSync(path.join(reportDir, `header-${width}.json`), JSON.stringify(result, null, 2));
-    console.log(`\nViewport ${width}px — ${result.overlaps.length} overlap(s)`);
+    console.log(`\nViewport ${width}px — ${result.overlaps.length} overlap(s), ${result.overflowing.length} overflow(s)`);
     for (const overlap of result.overlaps) {
       console.log(JSON.stringify({
         viewport: width,
@@ -78,6 +79,7 @@ for (const width of viewports) {
     }
 
     expect(result.overlaps, `Header overlap detected at ${width}px`).toEqual([]);
+    expect(result.overflowing, `Header element overflow detected at ${width}px`).toEqual([]);
   });
 }
 
