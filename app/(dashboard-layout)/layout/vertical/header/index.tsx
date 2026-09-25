@@ -82,6 +82,7 @@ const Header = () => {
         </div>
 
         <Separator orientation="vertical" className="hidden h-5 lg:order-4 lg:mx-1 lg:block" />
+        </div>
       </div>
     </header>
   );
