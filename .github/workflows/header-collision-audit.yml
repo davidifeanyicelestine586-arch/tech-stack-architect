@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - fix/header-responsive-collision
+  pull_request:
   workflow_dispatch:
 
 jobs:
