@@ -77,7 +77,7 @@ const Header = () => {
           </div>
         </div>
 
-        <div data-header-persistence className="col-span-2 w-full min-w-0 xl:order-2 xl:ml-auto lg:flex xl:min-w-0 xl:flex-1 xl:items-center xl:justify-end xl:gap-1">
+        <div data-header-persistence className="col-span-2 w-full min-w-0 xl:order-2 xl:ml-auto xl:flex xl:min-w-0 xl:flex-1 xl:items-center xl:justify-end xl:gap-1">
           <ProjectPersistenceToolbar />
         </div>
 
