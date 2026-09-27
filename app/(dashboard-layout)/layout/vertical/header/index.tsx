@@ -22,62 +22,66 @@ const Header = () => {
       )}
     >
       <div role="group" aria-label="Workspace controls">
-        <div className="mx-auto flex min-h-12 items-center gap-2 p-2 lg:flex-nowrap">
-          <div className="flex min-w-0 shrink-0 items-center gap-2">
-            <div className="block lg:hidden" aria-label="Ediccrew Tech Stack Architect">
-              <FullLogo />
-            </div>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              className="size-11 shrink-0 cursor-pointer rounded-full p-2 transition hover:bg-primary/5 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              onClick={toggleSidebar}
-              aria-label={isMobile ? "Toggle mobile workspace navigation" : "Toggle workspace navigation"}
-              aria-expanded={isMobile ? openMobile : open}
-              aria-controls="workspace-navigation"
-            >
-              <PanelLeft aria-hidden="true" size={21} />
-            </Button>
-
-            <Separator
-              orientation="vertical"
-              className="ml-2 mr-4 h-4 max-lg:hidden data-[orientation=vertical]:self-center"
-            />
-
-            <div className="hidden w-48 shrink-0 sm:block lg:w-72">
-              <Search />
-            </div>
+        <div className="mx-auto grid min-h-12 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 p-2 xl:flex xl:flex-nowrap">
+        <div className="flex min-w-0 shrink-0 items-center gap-2 xl:order-1">
+          <div className="block lg:hidden" aria-label="Ediccrew Tech Stack Architect">
+            <FullLogo />
           </div>
 
-          <div className="ml-auto flex min-w-0 flex-1 items-center justify-end gap-1 overflow-visible">
-            <div className="min-w-0 max-w-full">
-              <ProjectPersistenceToolbar />
-            </div>
-            <div className="shrink-0">
-              <AuthPanel />
-            </div>
-            <Separator orientation="vertical" className="mx-1 hidden h-5 md:block" />
-            <Button
-              variant="outline"
-              size="sm"
-              className="hidden h-11 shrink-0 items-center gap-1.5 px-3 text-xs font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:inline-flex"
-              render={
-                <Link
-                  href="https://github.com/davidifeanyicelestine586-arch/tech-stack-architect"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Open Tech Stack Architect GitHub repository in a new tab"
-                />
-              }
-            >
-              <GitFork aria-hidden="true" className="size-3.5" />
-              <span>GitHub</span>
-            </Button>
-            <div className="shrink-0">
-              <LightDark />
-            </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-11 shrink-0 cursor-pointer rounded-full p-2 transition hover:bg-primary/5 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            onClick={toggleSidebar}
+            aria-label={isMobile ? "Toggle mobile workspace navigation" : "Toggle workspace navigation"}
+            aria-expanded={isMobile ? openMobile : open}
+            aria-controls="workspace-navigation"
+          >
+            <PanelLeft aria-hidden="true" size={21} />
+          </Button>
+
+          <Separator
+            orientation="vertical"
+            className="ml-2 mr-4 h-4 max-lg:hidden data-[orientation=vertical]:self-center"
+          />
+
+          <div className="hidden w-48 shrink-0 sm:block lg:w-72">
+            <Search />
           </div>
+        </div>
+
+        <div className="flex min-w-0 items-center justify-end gap-1 xl:contents">
+          <div className="shrink-0 xl:order-3">
+            <AuthPanel />
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            className="hidden h-11 shrink-0 items-center gap-1.5 px-3 text-xs font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:inline-flex xl:order-5"
+            render={
+              <Link
+                href="https://github.com/davidifeanyicelestine586-arch/tech-stack-architect"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Open Tech Stack Architect GitHub repository in a new tab"
+              />
+            }
+          >
+            <GitFork aria-hidden="true" className="size-3.5" />
+            <span>GitHub</span>
+          </Button>
+
+          <div className="shrink-0 xl:order-6">
+            <LightDark />
+          </div>
+        </div>
+
+        <div data-header-persistence className="col-span-2 w-full min-w-0 xl:order-2 xl:ml-auto xl:flex xl:min-w-0 xl:flex-1 xl:items-center xl:justify-end xl:gap-1">
+          <ProjectPersistenceToolbar />
+        </div>
+
+        <Separator orientation="vertical" className="hidden h-5 xl:order-4 xl:mx-1 xl:block" />
         </div>
       </div>
     </header>
