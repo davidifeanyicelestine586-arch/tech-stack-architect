@@ -30,6 +30,13 @@ test("fully resolved Next.js stack is valid and production ready", () => {
   assert.equal(report.conflictReport.hasConflicts, false);
 });
 
+test("Next.js only requires Node.js and can use Vercel optionally", () => {
+  const report = createArchitect().validate(["nextjs", "nodejs"]);
+  assert.equal(report.valid, true);
+  assert.equal(report.status, "Production Ready");
+  assert.deepEqual(report.dependencyReport.missing, []);
+});
+
 test("missing required dependencies make a stack invalid", () => {
   const report = createArchitect().validate(["nextjs"]);
 
@@ -81,10 +88,36 @@ test("recipe engine scores and recommends recipes from selected components", () 
   assert.equal(recommendations[0].score, 100);
 });
 
+test("SQLite on Vercel is rejected because serverless disk is not durable", () => {
+  const report = createArchitect().validate([
+    "nextjs",
+    "nodejs",
+    "vercel",
+    "sqlite",
+    "local-filesystem",
+  ]);
+
+  assert.equal(report.valid, false);
+  assert.equal(report.conflictReport.hasConflicts, true);
+  assert.ok(report.conflictReport.componentConflicts.some(
+    (conflict) =>
+      (conflict.source === "sqlite" && conflict.target === "vercel") ||
+      (conflict.source === "vercel" && conflict.target === "sqlite")
+  ));
+  assert.match(
+    report.conflictReport.componentConflicts.find(
+      (conflict) =>
+        (conflict.source === "sqlite" && conflict.target === "vercel") ||
+        (conflict.source === "vercel" && conflict.target === "sqlite")
+    )?.reason ?? "",
+    /persistent local disk|durable/i
+  );
+});
+
 test("recipe application produces a blueprint and validates the selected recipe stack", () => {
   const result = createArchitect().build({
     recipe: "bootstrapped-payment-dashboard",
-    selectedComponents: ["nextjs", "sqlite", "nodejs", "vercel", "local-filesystem"],
+    selectedComponents: ["nextjs", "sqlite", "nodejs", "local-filesystem"],
   });
 
   assert.equal(result.blueprint.title, "Bootstrapped Payment Dashboard");
