@@ -20,7 +20,6 @@
   min-height: var(--site-header-height);
   width: 100%;
   padding: 8px 12px;
-  overflow: hidden;
 }
 
 .site-header__brand {
