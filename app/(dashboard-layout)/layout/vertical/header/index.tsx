@@ -57,6 +57,7 @@ const Header = () => {
         <Separator orientation="vertical" className="site-header__separator site-header__optional-separator" />
 
         <Button
+          nativeButton={false}
           variant="outline"
           size="sm"
           className="site-header__github"
