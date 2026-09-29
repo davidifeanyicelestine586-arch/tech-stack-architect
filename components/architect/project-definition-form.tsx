@@ -97,7 +97,7 @@ export function ProjectDefinitionForm() {
                   className="h-11 text-sm"
                   value={projectDefinition.name}
                   onChange={(event) => updateDraft("name", event.target.value)}
-                  placeholder="AI Document Q&A Platform"
+                  placeholder="Example: AI Document Q&A Platform"
                   aria-describedby="project-definition-error project-name-error"
                   aria-invalid={Boolean(fieldErrors.name)}
                   disabled={isPending}
@@ -137,10 +137,10 @@ export function ProjectDefinitionForm() {
                 ref={descriptionRef}
                 value={projectDefinition.description}
                 onChange={(event) => updateDraft("description", event.target.value)}
-                placeholder="A SaaS application where users upload PDF documents and ask questions about their contents."
+                placeholder="Example: A SaaS application where users upload PDF documents and ask questions about their contents."
                 aria-describedby="project-definition-error project-description-error"
                 aria-invalid={Boolean(fieldErrors.description)}
-                className="min-h-24 rounded-md border border-input bg-background px-3 py-2.5 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                className="min-h-24 rounded-md border border-input bg-background px-3 py-2.5 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground/70 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={isPending}
               />
               <span id="project-description-error" className="min-h-4 text-[11px] font-normal text-rose-600 dark:text-rose-400">
@@ -154,7 +154,7 @@ export function ProjectDefinitionForm() {
                 id="project-requirements"
                 value={projectDefinition.requirements}
                 onChange={(event) => updateDraft("requirements", event.target.value)}
-                placeholder="web application, document upload, PDF processing, data storage, deployment"
+                placeholder="Example: web application, document upload, PDF processing, data storage, deployment"
                 aria-describedby="project-definition-error project-requirements-error"
                 aria-invalid={false}
                 className="min-h-24 rounded-md border border-input bg-background px-3 py-2.5 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
