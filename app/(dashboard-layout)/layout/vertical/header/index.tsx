@@ -50,6 +50,10 @@ const Header = () => {
           </div>
         </div>
 
+        <div data-header-persistence className="flex shrink-0 items-center">
+          <ProjectPersistenceToolbar />
+        </div>
+
         <div className="flex shrink-0 items-center gap-1">
           <div className="shrink-0">
             <AuthPanel />
@@ -77,9 +81,7 @@ const Header = () => {
           </div>
         </div>
 
-        <div data-header-persistence className="flex shrink-0 items-center">
-          <ProjectPersistenceToolbar />
-        </div>
+
 
         <Separator orientation="vertical" className="h-5 shrink-0 mx-1" />
         </div>
