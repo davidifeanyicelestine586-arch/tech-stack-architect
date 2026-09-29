@@ -31,8 +31,9 @@ export function NavUser() {
           {navItems.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
+                nativeButton={false}
                 size="sm"
-                className="h-8 cursor-pointer text-xs"
+                className="h-8 min-h-10 cursor-pointer text-xs"
                 render={<Link href={item.url} target={item.url.startsWith("http") ? "_blank" : undefined} />}
               >
                 <item.icon className="size-4 shrink-0 text-muted-foreground" />
