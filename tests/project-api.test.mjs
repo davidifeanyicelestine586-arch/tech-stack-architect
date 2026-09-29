@@ -66,6 +66,12 @@ class ApiService {
     return scope.kind === "anonymous" ? scope.sessionId : scope.userId;
   }
 
+  withoutScopeKey(record) {
+    const copy = { ...record };
+    delete copy.scopeKey;
+    return copy;
+  }
+
   assertOwned(scope, id) {
     const record = this.records.get(id);
     if (!record || record.scopeKey !== this.scopeKey(scope)) {
@@ -94,14 +100,13 @@ class ApiService {
     if (this.failWith) throw this.failWith;
     return [...this.records.values()]
       .filter((record) => record.scopeKey === this.scopeKey(scope))
-      .map(({ scopeKey, ...record }) => record);
+      .map((record) => this.withoutScopeKey(record));
   }
 
   async getProject({ scope, id }) {
     this.calls.push({ operation: "get", scope, id });
     if (this.failWith) throw this.failWith;
-    const { scopeKey, ...record } = this.assertOwned(scope, id);
-    return record;
+    return this.withoutScopeKey(this.assertOwned(scope, id));
   }
 
   async updateProject({ scope, id, expectedRevision, snapshot }) {
@@ -113,8 +118,7 @@ class ApiService {
     }
     record.revision += 1;
     record.snapshot = snapshot;
-    const { scopeKey, ...updated } = record;
-    return updated;
+    return this.withoutScopeKey(record);
   }
 
   async deleteProject({ scope, id }) {
