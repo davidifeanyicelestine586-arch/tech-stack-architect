@@ -116,6 +116,22 @@ const TechStackContext = createContext<TechStackContextType | null>(null);
 const canonicalSnapshotSignature = (snapshot: ProjectSnapshotV1) =>
   JSON.stringify({ ...snapshot, selectedComponentIds: [...snapshot.selectedComponentIds].sort() });
 
+const CATEGORY_GROUPS: Record<string, string> = {
+  Frontend: "Frontend",
+  "Frontend Framework": "Frontend",
+  Protocol: "Integration",
+  Workflow: "AI & Automation",
+  "AI Gateway": "AI & Automation",
+  Orchestration: "AI & Automation",
+  "Operating System": "Runtime",
+  Interface: "Hardware",
+  Power: "Hardware",
+  Actuator: "Hardware",
+  Sensor: "Hardware",
+  "Motor Driver": "Hardware",
+  Microcontroller: "Hardware",
+};
+
 const toValidationSummary = (report: ValidationReport) => ({
   valid: report.valid,
   score: report.score,
