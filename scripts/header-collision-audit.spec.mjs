@@ -26,7 +26,11 @@ for (const width of viewports) {
         text: (el.innerText || el.getAttribute("aria-label") || "").trim().replace(/\s+/g, " ").slice(0, 80),
         ariaLabel: el.getAttribute("aria-label"),
         className: typeof el.className === "string" ? el.className : "",
-        selectorHint: el.id ? `#${el.id}` : el.getAttribute("aria-label") ? `[aria-label="${el.getAttribute("aria-label")}"]` : el.tagName.toLowerCase(),
+        selectorHint: el.id
+          ? `#${el.id}`
+          : el.getAttribute("aria-label")
+            ? `[aria-label="${el.getAttribute("aria-label")}"]`
+            : el.tagName.toLowerCase(),
       });
       const intersectionArea = (a, b) => {
         const width = Math.max(0, Math.min(a.right, b.right) - Math.max(a.x, b.x));
@@ -47,6 +51,11 @@ for (const width of viewports) {
         justifyContent: persistenceStyle?.justifyContent,
       } : null;
 
+      const scrollContainer = header.querySelector("[data-header-scroll]");
+      const intentionallyScrollable = Boolean(
+        scrollContainer && scrollContainer.scrollWidth > scrollContainer.clientWidth
+      );
+
       const nodes = Array.from(
         header.querySelectorAll("button, a, [role='button'], [role='switch'], [aria-pressed='true'], [data-slot='badge']")
       ).filter((el) => {
@@ -55,34 +64,44 @@ for (const width of viewports) {
         return r.width > 0 && r.height > 0 && style.visibility !== "hidden" && style.display !== "none";
       });
 
-      const items = nodes.map((el) => ({ rect: rectOf(el), meta: describe(el) }));
+      const items = nodes.map((el) => ({
+        rect: rectOf(el),
+        meta: describe(el),
+        intentionallyScrollable,
+      }));
       const overlaps = [];
-      const overflowing = items.filter((item) => item.rect.x < -4 || item.rect.right > window.innerWidth + 4 || item.rect.y < -4);
+      const overflowing = items.filter((item) =>
+        !item.intentionallyScrollable &&
+        (item.rect.x < -4 || item.rect.right > window.innerWidth + 4 || item.rect.y < -4)
+      );
+
       for (let i = 0; i < items.length; i += 1) {
         for (let j = i + 1; j < items.length; j += 1) {
           const area = intersectionArea(items[i].rect, items[j].rect);
           if (area > 4) overlaps.push({ area, first: items[i], second: items[j] });
         }
       }
-      return { viewport: window.innerWidth, headerHeight: header.getBoundingClientRect().height, persistenceDebug, items, overlaps, overflowing };
+
+      return {
+        viewport: window.innerWidth,
+        headerHeight: header.getBoundingClientRect().height,
+        persistenceDebug,
+        intentionallyScrollable,
+        pageOverflow: document.documentElement.scrollWidth > window.innerWidth + 4,
+        items,
+        overlaps,
+        overflowing,
+      };
     });
 
     fs.writeFileSync(path.join(reportDir, `header-${width}.json`), JSON.stringify(result, null, 2));
-    console.log(`\nViewport ${width}px — ${result.overlaps.length} overlap(s), ${result.overflowing.length} overflow(s)`);
-    for (const overlap of result.overlaps) {
-      console.log(JSON.stringify({
-        viewport: width,
-        first: overlap.first.meta,
-        second: overlap.second.meta,
-        intersectionArea: overlap.area,
-      }));
-    }
+    console.log(`\nViewport ${width}px — ${result.overlaps.length} overlap(s), ${result.overflowing.length} overflow(s), scrollable=${result.intentionallyScrollable}`);
 
     expect(result.overlaps, `Header overlap detected at ${width}px`).toEqual([]);
+    expect(result.pageOverflow, `Page overflow detected at ${width}px`).toBe(false);
     expect(result.overflowing, `Header element overflow detected at ${width}px`).toEqual([]);
   });
 }
-
 
 test("write responsive header summary", async () => {
   const rows = viewports.map((width) => {
@@ -92,12 +111,14 @@ test("write responsive header summary", async () => {
       width,
       overlaps: result.overlaps.length,
       headerHeight: Math.round(result.headerHeight),
+      pageOverflow: result.pageOverflow,
+      intentionallyScrollable: result.intentionallyScrollable,
     };
   });
   const markdown = [
-    "| Viewport | Header height | Overlapping elements | File likely responsible |",
-    "|---:|---:|---:|---|",
-    ...rows.map((row) => `| ${row.width}px | ${row.headerHeight}px | ${row.overlaps} | ${row.overlaps ? "header/toolbar flex layout" : "none"} |`),
+    "| Viewport | Header height | Overlapping elements | Page overflow | Horizontal header scroll |",
+    "|---:|---:|---:|:---:|:---:|",
+    ...rows.map((row) => `| ${row.width}px | ${row.headerHeight}px | ${row.overlaps} | ${row.pageOverflow ? "yes" : "no"} | ${row.intentionallyScrollable ? "yes" : "no"} |`),
     "",
     "Overlap threshold: intersection area > 4px².",
   ].join("\n");
