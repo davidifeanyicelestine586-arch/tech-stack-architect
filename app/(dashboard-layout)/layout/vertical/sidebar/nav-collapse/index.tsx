@@ -19,7 +19,7 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
   const { state } = useSidebar();
   const isCollapse = state === "collapsed";
   const [hash, setHash] = useState("");
-  const { requirementAnalysis, selectedComponentIds, validationReport, blueprint } = useTechStack();
+  const { requirementAnalysis, selectedComponentIds, validationReport } = useTechStack();
 
   const isLocked = (routeId?: string) => {
     if (routeId === "recommendations") return !requirementAnalysis;
