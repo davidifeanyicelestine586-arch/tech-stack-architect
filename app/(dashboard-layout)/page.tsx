@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+"use client";
+
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { BookOpen, FileCode2, Layers, SearchCheck, ShieldCheck } from "lucide-react";
@@ -18,17 +19,18 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import componentsData from "@/data/components.json";
 import domainsData from "@/data/domain.json";
 import recipesData from "@/data/recipes.json";
-
-export const dynamic = "force-dynamic";
-export const metadata: Metadata = {
-  title: "Workspace | Ediccrew Tech Stack Architect",
-  description: "Design, validate, understand, and generate production-ready technology stacks.",
-};
+import { useTechStack } from "@/hooks/use-tech-stack";
+import { useEffect } from "react";
 
 export default function WorkspacePage() {
   const domains = domainsData;
   const components = componentsData;
   const recipes = recipesData;
+  const { projectDefinition, requirementAnalysis, selectedComponentIds, validationReport, blueprint } = useTechStack();
+
+  useEffect(() => {
+    document.title = "Workspace | Ediccrew Tech Stack Architect";
+  }, []);
 
   return (
     <div className="flex flex-col gap-6 pb-12 sm:gap-8">
@@ -44,7 +46,7 @@ export default function WorkspacePage() {
             </div>
             <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl md:text-3xl">Ediccrew Tech Stack Architect</h1>
             <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
-              Describe what you are building and let Architect guide you from project definition to a validated technology stack and architecture blueprint.
+              Describe what you are building and let Architect guide you from project definition to a validated technology stack and architecture blueprint. The engine is deterministic and explainable: every recommendation and compatibility result comes from the registered rules and technology metadata.
             </p>
           </div>
           <div className="grid w-full shrink-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap md:w-auto md:gap-3">
@@ -59,12 +61,12 @@ export default function WorkspacePage() {
 
         <div className="mt-5 border-t border-border/60 pt-5 sm:mt-6 sm:pt-5">
           <WorkflowProgress />
-          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">Start with your project. Architect handles the technical complexity as you move through each step.</p>
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs leading-relaxed text-muted-foreground"><span>Deterministic rules</span><span>Explainable matches</span><span>Validation before blueprint</span><span>Sign in when you want saved projects</span></div>
         </div>
 
         <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4 border-t border-border/60 pt-5 sm:mt-6 sm:grid-cols-4 sm:pt-6">
           <Metric label="Project Types" value={domains.length} />
-          <Metric label="Technologies" value={`${components.length}+`} />
+          <Metric label="Technologies" value={components.length} />
           <Metric label="Stack Templates" value={recipes.length} />
           <div className="flex min-w-0 flex-col">
             <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Compatibility Check</span>
@@ -76,7 +78,9 @@ export default function WorkspacePage() {
       <div id="define" className="scroll-mt-24">
         <ProjectDefinitionForm />
       </div>
-      <div id="recommendations" className="scroll-mt-24"><RecommendationPanel /></div>
+      <div id="recommendations" className="scroll-mt-24">
+        {requirementAnalysis ? <RecommendationPanel /> : <LockedSection step="2 · Analyze" title="Analyze your project to unlock recommendations" description="Complete the project definition above and Architect will reveal technology matches with their reasoning." />}
+      </div>
 
       <div className="lg:hidden">
         <div className="mb-3 flex items-start justify-between gap-3">
@@ -86,7 +90,7 @@ export default function WorkspacePage() {
           </div>
           <Badge variant="outline" className="shrink-0 text-xs">Mobile workspace</Badge>
         </div>
-        <SelectedStack variant="mobile" />
+        {selectedComponentIds.length > 0 ? <SelectedStack variant="mobile" /> : <LockedSection step="4 · Build" title="Your selected stack will appear here" description="Add a recommendation or browse the catalog after analysis." />}
       </div>
 
       <div className="grid grid-cols-1 items-start gap-6 sm:gap-8 lg:grid-cols-12">
@@ -96,21 +100,31 @@ export default function WorkspacePage() {
               <div className="flex items-center gap-2"><Badge variant="outline" className="text-xs font-bold">{workflowStepLabel("build")}</Badge><h2 className="text-lg font-bold tracking-tight text-foreground">Adjust Your Stack</h2></div>
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Recommendations are your starting point. Use the catalog to add, remove, and refine technologies before validation.</p>
             </div>
-            <DomainSelector />
-            <ComponentBrowser />
+            {requirementAnalysis ? (
+              <>
+                <DomainSelector />
+                <ComponentBrowser />
+              </>
+            ) : (
+              <LockedSection step="4 · Build" title="Technology catalog is locked until analysis" description="Analyze the project first so the catalog can prioritize the relevant technologies." />
+            )}
           </section>
-          <RecipeRecommendations />
+          {selectedComponentIds.length > 0 ? <RecipeRecommendations /> : <LockedSection step="3 · Review" title="Stack templates unlock after recommendations" description="Select at least one compatible technology to compare reusable stack recipes." />}
         </div>
 
         <div className="flex min-w-0 flex-col gap-6 lg:sticky lg:top-24 lg:col-span-4">
           <div className="hidden lg:block">
             <SelectedStack />
           </div>
-          <div id="validation" className="scroll-mt-24"><ValidationPanel /></div>
+          <div id="validation" className="scroll-mt-24">
+            {selectedComponentIds.length > 0 ? <ValidationPanel /> : <LockedSection step="5 · Validate" title="Validation unlocks after you build a stack" description="Add at least one technology, then Architect will check dependencies, conflicts, and architectural rules." />}
+          </div>
         </div>
       </div>
 
-      <div id="blueprint" className="scroll-mt-24"><BlueprintPanel /></div>
+      <div id="blueprint" className="scroll-mt-24">
+        {validationReport && selectedComponentIds.length > 0 ? <BlueprintPanel /> : <LockedSection step="6 · Blueprint" title="Blueprint generation comes after validation" description="Resolve the stack first, then turn the validated architecture into a development-ready blueprint." />}
+      </div>
 
       <Card id="docs" className="border-primary/20 bg-primary/5">
         <CardHeader className="pb-2">
@@ -133,6 +147,18 @@ export default function WorkspacePage() {
 
 function Metric({ label, value }: { label: string; value: string | number }) {
   return <div className="flex min-w-0 flex-col"><span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</span><span className="text-lg font-bold text-foreground sm:text-xl">{value}</span></div>;
+}
+
+function LockedSection({ step, title, description }: { step: string; title: string; description: string }) {
+  return (
+    <Card className="border-dashed border-border bg-muted/20">
+      <CardContent className="flex min-h-32 flex-col items-start justify-center gap-1.5 p-5">
+        <Badge variant="outline" className="text-[10px] font-semibold">{step}</Badge>
+        <h2 className="text-sm font-bold text-foreground">{title}</h2>
+        <p className="max-w-2xl text-xs leading-relaxed text-muted-foreground">{description}</p>
+      </CardContent>
+    </Card>
+  );
 }
 
 function FeatureCard({ icon, iconClassName, title, description }: { icon: ReactNode; iconClassName: string; title: string; description: string }) {
