@@ -26,7 +26,7 @@ export default function WorkspacePage() {
   const domains = domainsData;
   const components = componentsData;
   const recipes = recipesData;
-  const { projectDefinition, requirementAnalysis, selectedComponentIds, validationReport, blueprint } = useTechStack();
+  const { requirementAnalysis, selectedComponentIds, validationReport } = useTechStack();
 
   useEffect(() => {
     document.title = "Workspace | Ediccrew Tech Stack Architect";
@@ -123,7 +123,7 @@ export default function WorkspacePage() {
       </div>
 
       <div id="blueprint" className="scroll-mt-24">
-        {validationReport && selectedComponentIds.length > 0 ? <BlueprintPanel /> : <LockedSection step="6 · Blueprint" title="Blueprint generation comes after validation" description="Resolve the stack first, then turn the validated architecture into a development-ready blueprint." />}
+        {validationReport.valid && selectedComponentIds.length > 0 ? <BlueprintPanel /> : <LockedSection step="6 · Blueprint" title="Blueprint generation comes after validation" description="Resolve the stack first, then turn the validated architecture into a development-ready blueprint." />}
       </div>
 
       <Card id="docs" className="border-primary/20 bg-primary/5">
