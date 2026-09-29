@@ -305,7 +305,7 @@ export function ProjectPersistenceToolbar() {
         ) : (
           <Save className="size-4" aria-hidden="true" />
         )}
-        <span>{saveButtonState.label}</span>
+        <span>{saveButtonState.disabled ? "Save after analysis" : saveButtonState.label}</span>
       </Button>
       {saveButtonState.disabled && !isBusy && !persistenceError && <span id="save-project-hint" className="hidden text-[10px] leading-tight text-muted-foreground xl:inline">Analyze a project to save</span>}
       {persistenceError && (
