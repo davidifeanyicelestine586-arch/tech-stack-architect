@@ -26,7 +26,7 @@ function checkFileExists(targetPath, referer) {
     try {
         fs.accessSync(resolvedPath);
         console.log(`✔ OK: [${targetPath}] referenced by ${path.basename(referer)}`);
-    } catch (e) {
+    } catch {
         console.error(`❌ BROKEN: [${targetPath}] referenced by ${path.basename(referer)} (Resolved to: ${resolvedPath})`);
         totalFailed++;
     }
