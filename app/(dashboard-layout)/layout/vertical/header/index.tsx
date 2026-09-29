@@ -22,8 +22,8 @@ const Header = () => {
       )}
     >
       <div role="group" aria-label="Workspace controls">
-        <div className="mx-auto grid min-h-12 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 p-2 xl:flex xl:flex-nowrap">
-        <div className="flex min-w-0 shrink-0 items-center gap-2 xl:order-1">
+        <div className="mx-auto flex min-h-12 min-w-max items-center gap-2 overflow-x-auto overscroll-x-contain p-2">
+        <div className="flex shrink-0 items-center gap-2">
           <div className="block lg:hidden" aria-label="Ediccrew Tech Stack Architect">
             <FullLogo />
           </div>
@@ -50,8 +50,8 @@ const Header = () => {
           </div>
         </div>
 
-        <div className="flex min-w-0 items-center justify-end gap-1 xl:contents">
-          <div className="shrink-0 xl:order-3">
+        <div className="flex shrink-0 items-center gap-1">
+          <div className="shrink-0">
             <AuthPanel />
           </div>
 
@@ -72,16 +72,16 @@ const Header = () => {
             <span>GitHub</span>
           </Button>
 
-          <div className="shrink-0 xl:order-6">
+          <div className="shrink-0">
             <LightDark />
           </div>
         </div>
 
-        <div data-header-persistence className="col-span-2 w-full min-w-0 xl:order-2 xl:ml-auto xl:flex xl:min-w-0 xl:flex-1 xl:items-center xl:justify-end xl:gap-1">
+        <div data-header-persistence className="flex shrink-0 items-center">
           <ProjectPersistenceToolbar />
         </div>
 
-        <Separator orientation="vertical" className="hidden h-5 xl:order-4 xl:mx-1 xl:block" />
+        <Separator orientation="vertical" className="h-5 shrink-0 mx-1" />
         </div>
       </div>
     </header>
