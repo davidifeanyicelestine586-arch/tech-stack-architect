@@ -4,7 +4,6 @@ import { BookMarked, GitFork } from "lucide-react";
 import {
   SidebarMenu,
   SidebarMenuItem,
-  SidebarMenuButton,
   SidebarGroupContent,
   SidebarGroup,
 } from "@/components/ui/sidebar";
@@ -30,14 +29,14 @@ export function NavUser() {
         <SidebarMenu>
           {navItems.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton
-                size="sm"
-                className="h-8 min-h-10 cursor-pointer text-xs"
-                render={<Link href={item.url} target={item.url.startsWith("http") ? "_blank" : undefined} />}
+              <Link
+                href={item.url}
+                target={item.url.startsWith("http") ? "_blank" : undefined}
+                className="flex min-h-10 items-center gap-2 rounded-md px-2 py-2 text-xs font-medium text-sidebar-foreground outline-none transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring"
               >
-                <item.icon className="size-4 shrink-0 text-muted-foreground" />
+                <item.icon className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
                 <span className="truncate">{item.title}</span>
-              </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
