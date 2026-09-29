@@ -46,7 +46,7 @@ const Header = () => {
                 className="ml-2 mr-4 h-4 data-[orientation=vertical]:self-center"
               />
 
-              <div className="w-40 shrink-0 sm:w-48 lg:w-64 xl:w-72">
+              <div className="w-40 shrink-0 sm:w-48 lg:w-56 xl:w-56">
                 <Search />
               </div>
             </div>
