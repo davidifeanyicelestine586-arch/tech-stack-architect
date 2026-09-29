@@ -1,4 +1,4 @@
-export default {
+const config = {
   testDir: ".",
   testMatch: "scripts/header-collision-audit.spec.mjs",
   timeout: 60_000,
@@ -9,3 +9,5 @@ export default {
     headless: true,
   },
 };
+
+export default config;

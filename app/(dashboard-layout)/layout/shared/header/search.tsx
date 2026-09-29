@@ -19,41 +19,41 @@ type SearchResult = {
   icon?: MenuItem["icon"];
 };
 
+const searchItems = (
+  items: SearchableItem[],
+  q: string,
+  parentPath = "",
+): SearchResult[] => {
+  const results: SearchResult[] = [];
+
+  items.forEach((item) => {
+    const currentPath = parentPath
+      ? `${parentPath} → ${item.name ?? ""}`
+      : item.name ?? "";
+
+    if (
+      item.name &&
+      item.url &&
+      item.name.toLowerCase().includes(q.toLowerCase())
+    ) {
+      results.push({
+        name: item.name,
+        url: item.url,
+        path: currentPath,
+        icon: item.icon,
+      });
+    }
+
+    if (item.items) {
+      results.push(...searchItems(item.items, q, currentPath));
+    }
+  });
+
+  return results;
+};
+
 function Search() {
   const [query, setQuery] = useState("");
-
-  const searchItems = (
-    items: SearchableItem[],
-    q: string,
-    parentPath = "",
-  ): SearchResult[] => {
-    const results: SearchResult[] = [];
-
-    items.forEach((item) => {
-      const currentPath = parentPath
-        ? `${parentPath} → ${item.name ?? ""}`
-        : item.name ?? "";
-
-      if (
-        item.name &&
-        item.url &&
-        item.name.toLowerCase().includes(q.toLowerCase())
-      ) {
-        results.push({
-          name: item.name,
-          url: item.url,
-          path: currentPath,
-          icon: item.icon,
-        });
-      }
-
-      if (item.items) {
-        results.push(...searchItems(item.items, q, currentPath));
-      }
-    });
-
-    return results;
-  };
 
   const results = useMemo(() => {
     if (!query.trim()) return [];
