@@ -2,7 +2,7 @@ import { test, expect } from "playwright/test";
 import fs from "node:fs";
 import path from "node:path";
 
-const viewports = [375, 390, 414, 768, 1024, 1440];
+const viewports = [320, 375, 390, 414, 480, 768, 820, 992, 1024, 1200, 1280, 1440];
 const reportDir = path.resolve("playwright-report/header-collision");
 fs.mkdirSync(reportDir, { recursive: true });
 
@@ -10,13 +10,20 @@ for (const width of viewports) {
   test(`header collision audit — ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/", { waitUntil: "networkidle" });
-    await page.locator("header").waitFor();
+    const header = page.locator("header");
+    await header.waitFor();
+
+    const initial = await header.evaluate((element) => {
+      const r = element.getBoundingClientRect();
+      return { top: r.top, height: r.height, bottom: r.bottom };
+    });
+
     await page.screenshot({
       path: path.join(reportDir, `header-${width}.png`),
       fullPage: true,
     });
 
-    const result = await page.locator("header").evaluate((header) => {
+    const result = await header.evaluate((header) => {
       const rectOf = (el) => {
         const r = el.getBoundingClientRect();
         return { x: r.x, y: r.y, width: r.width, height: r.height, right: r.right, bottom: r.bottom };
@@ -38,24 +45,6 @@ for (const width of viewports) {
         return width * height;
       };
 
-      const persistence = header.querySelector("[data-header-persistence]");
-      const persistenceStyle = persistence ? getComputedStyle(persistence) : null;
-      const persistenceDebug = persistence ? {
-        rect: rectOf(persistence),
-        display: persistenceStyle?.display,
-        width: persistenceStyle?.width,
-        flexBasis: persistenceStyle?.flexBasis,
-        flexGrow: persistenceStyle?.flexGrow,
-        flexShrink: persistenceStyle?.flexShrink,
-        order: persistenceStyle?.order,
-        justifyContent: persistenceStyle?.justifyContent,
-      } : null;
-
-      const scrollContainer = header.querySelector("[data-header-scroll]");
-      const intentionallyScrollable = Boolean(
-        scrollContainer && scrollContainer.scrollWidth > scrollContainer.clientWidth
-      );
-
       const nodes = Array.from(
         header.querySelectorAll("button, a, [role='button'], [role='switch'], [aria-pressed='true'], [data-slot='badge']")
       ).filter((el) => {
@@ -64,15 +53,10 @@ for (const width of viewports) {
         return r.width > 0 && r.height > 0 && style.visibility !== "hidden" && style.display !== "none";
       });
 
-      const items = nodes.map((el) => ({
-        rect: rectOf(el),
-        meta: describe(el),
-        intentionallyScrollable,
-      }));
+      const items = nodes.map((el) => ({ rect: rectOf(el), meta: describe(el) }));
       const overlaps = [];
       const overflowing = items.filter((item) =>
-        !item.intentionallyScrollable &&
-        (item.rect.x < -4 || item.rect.right > window.innerWidth + 4 || item.rect.y < -4)
+        item.rect.x < -4 || item.rect.right > window.innerWidth + 4 || item.rect.y < -4
       );
 
       for (let i = 0; i < items.length; i += 1) {
@@ -85,8 +69,7 @@ for (const width of viewports) {
       return {
         viewport: window.innerWidth,
         headerHeight: header.getBoundingClientRect().height,
-        persistenceDebug,
-        intentionallyScrollable,
+        headerTop: header.getBoundingClientRect().top,
         pageOverflow: document.documentElement.scrollWidth > window.innerWidth + 4,
         items,
         overlaps,
@@ -95,11 +78,46 @@ for (const width of viewports) {
     });
 
     fs.writeFileSync(path.join(reportDir, `header-${width}.json`), JSON.stringify(result, null, 2));
-    console.log(`\nViewport ${width}px — ${result.overlaps.length} overlap(s), ${result.overflowing.length} overflow(s), scrollable=${result.intentionallyScrollable}`);
 
     expect(result.overlaps, `Header overlap detected at ${width}px`).toEqual([]);
     expect(result.pageOverflow, `Page overflow detected at ${width}px`).toBe(false);
     expect(result.overflowing, `Header element overflow detected at ${width}px`).toEqual([]);
+
+    await page.evaluate(() => window.scrollTo({ top: Math.max(0, document.body.scrollHeight - window.innerHeight), behavior: "instant" }));
+    const afterScroll = await header.evaluate((element) => {
+      const r = element.getBoundingClientRect();
+      return { top: r.top, height: r.height, bottom: r.bottom };
+    });
+
+    expect(afterScroll.top, `Sticky header moved off-screen at ${width}px`).toBeGreaterThanOrEqual(-1);
+    expect(Math.abs(afterScroll.height - initial.height), `Header height changed while scrolling at ${width}px`).toBeLessThanOrEqual(1);
+
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+
+    if (width <= 767) {
+      const search = page.locator('input[aria-label="Search workspace navigation"]');
+      await search.focus();
+      await expect(search).toBeFocused();
+      const searchRect = await search.boundingBox();
+      expect(searchRect?.width ?? 0, `Mobile search did not expand at ${width}px`).toBeGreaterThan(100);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 4)).toBe(true);
+      await search.press("Escape").catch(() => {});
+    }
+
+    const focusTarget = page.locator("#main-content button, #main-content a").first();
+    if (await focusTarget.count()) {
+      await focusTarget.focus();
+      const focusState = await focusTarget.evaluate((element) => {
+        const rect = element.getBoundingClientRect();
+        const headerRect = document.querySelector("header")?.getBoundingClientRect();
+        return {
+          elementTop: rect.top,
+          headerBottom: headerRect?.bottom ?? 0,
+          hiddenByHeader: rect.bottom <= (headerRect?.bottom ?? 0),
+        };
+      });
+      expect(focusState.hiddenByHeader, `Focused content is obscured by header at ${width}px`).toBe(false);
+    }
   });
 }
 
@@ -112,15 +130,14 @@ test("write responsive header summary", async () => {
       overlaps: result.overlaps.length,
       headerHeight: Math.round(result.headerHeight),
       pageOverflow: result.pageOverflow,
-      intentionallyScrollable: result.intentionallyScrollable,
     };
   });
   const markdown = [
-    "| Viewport | Header height | Overlapping elements | Page overflow | Horizontal header scroll |",
-    "|---:|---:|---:|:---:|:---:|",
-    ...rows.map((row) => `| ${row.width}px | ${row.headerHeight}px | ${row.overlaps} | ${row.pageOverflow ? "yes" : "no"} | ${row.intentionallyScrollable ? "yes" : "no"} |`),
+    "| Viewport | Header height | Overlapping elements | Page overflow |",
+    "|---:|---:|---:|:---:|",
+    ...rows.map((row) => `| ${row.width}px | ${row.headerHeight}px | ${row.overlaps} | ${row.pageOverflow ? "yes" : "no"} |`),
     "",
-    "Overlap threshold: intersection area > 4px².",
+    "Contract: single-row header, no page overflow, sticky during vertical scroll, and mobile search remains usable.",
   ].join("\n");
   fs.writeFileSync(path.join(reportDir, "summary.md"), markdown);
   console.log("\n" + markdown);
