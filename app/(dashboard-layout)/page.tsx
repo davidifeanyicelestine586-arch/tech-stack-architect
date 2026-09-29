@@ -97,7 +97,7 @@ export default function WorkspacePage() {
         <div className="flex min-w-0 flex-col gap-6 sm:gap-8 lg:col-span-8">
           <section className="flex min-w-0 flex-col gap-5" id="components">
             <div>
-              <div className="flex items-center gap-2"><Badge variant="outline" className="text-xs font-bold">{workflowStepLabel("build")}</Badge><h2 className="text-lg font-bold tracking-tight text-foreground">Adjust Your Stack</h2></div>
+              <div className="flex items-center gap-2"><Badge variant="outline" className="text-xs font-bold">{workflowStepLabel("build")}</Badge><h2 className="text-lg font-bold tracking-tight text-foreground">Adjust your stack</h2></div>
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Recommendations are your starting point. Use the catalog to add, remove, and refine technologies before validation.</p>
             </div>
             {requirementAnalysis ? (
