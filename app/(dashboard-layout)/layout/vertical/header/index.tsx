@@ -21,7 +21,7 @@ const Header = () => {
         "site-header sticky top-0 z-50 border-b border-border bg-background/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/80",
       )}
     >
-      <nav className="site-header__row" aria-label="Workspace controls">
+      <div className="site-header__row" role="group" aria-label="Workspace controls">
         <div className="site-header__brand">
           <FullLogo />
         </div>
@@ -78,7 +78,7 @@ const Header = () => {
         <div className="site-header__theme">
           <LightDark />
         </div>
-      </nav>
+      </div>
     </header>
   );
 };
