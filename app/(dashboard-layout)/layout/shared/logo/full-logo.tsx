@@ -16,7 +16,7 @@ const FullLogo = () => {
       </div>
       <div className="flex flex-col leading-none">
         <span className="text-base font-bold tracking-tight text-foreground">EDICCREW</span>
-        <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Stack Architect</span>
+        <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Stack Architect</span>
       </div>
     </Link>
   );
