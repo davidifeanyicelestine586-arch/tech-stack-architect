@@ -6,12 +6,12 @@
     "category": "Frontend Framework",
     "description": "React framework optimized for server-side rendering, static generation, API routes, and modern SaaS applications.",
     "requires": [
-      "nodejs",
-      "vercel"
+      "nodejs"
     ],
     "optional": [
       "tailwindcss",
-      "typescript"
+      "typescript",
+      "vercel"
     ],
     "conflicts": [],
     "warnings": [
@@ -49,7 +49,12 @@
       "local-filesystem"
     ],
     "optional": [],
-    "conflicts": [],
+    "conflicts": [
+      {
+        "component": "vercel",
+        "reason": "SQLite requires persistent local disk storage, while Vercel serverless execution does not provide durable application-local disk across invocations."
+      }
+    ],
     "warnings": [
       "Concurrent write operations become a bottleneck under heavy traffic."
     ],
