@@ -214,10 +214,28 @@
     ],
     "pins": {
       "digital": [
-        0,1,2,3,4,5,6,7,8,9,10,11,12,13
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
       ],
       "analog": [
-        "A0","A1","A2","A3","A4","A5"
+        "A0",
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5"
       ]
     },
     "warnings": [
@@ -700,6 +718,117 @@
       "battery",
       "power",
       "pack"
+    ]
+  },
+  {
+    "id": "supabase",
+    "name": "Supabase",
+    "domain": "web-saas",
+    "category": "Backend Platform",
+    "description": "Hosted Postgres-backed platform providing authentication, database, storage, and APIs for web applications.",
+    "requires": [],
+    "optional": [
+      "nextjs",
+      "typescript"
+    ],
+    "conflicts": [],
+    "warnings": [
+      "Use Row Level Security and least-privilege policies for production data."
+    ],
+    "difficulty": "Intermediate",
+    "complexity": 3,
+    "estimatedLearningHours": 20,
+    "supports": [
+      "auth",
+      "database",
+      "storage",
+      "api",
+      "saas"
+    ],
+    "outputs": [
+      "auth",
+      "database",
+      "api"
+    ],
+    "tags": [
+      "supabase",
+      "postgres",
+      "auth",
+      "database",
+      "backend"
+    ]
+  },
+  {
+    "id": "stripe",
+    "name": "Stripe",
+    "domain": "web-saas",
+    "category": "Payments",
+    "description": "Payment platform for checkout, subscriptions, invoices, and billing workflows.",
+    "requires": [],
+    "optional": [
+      "nextjs",
+      "typescript"
+    ],
+    "conflicts": [],
+    "warnings": [
+      "Keep secret API keys server-side and verify webhook signatures."
+    ],
+    "difficulty": "Intermediate",
+    "complexity": 3,
+    "estimatedLearningHours": 16,
+    "supports": [
+      "payments",
+      "subscriptions",
+      "saas",
+      "billing"
+    ],
+    "outputs": [
+      "payments",
+      "checkout",
+      "billing"
+    ],
+    "tags": [
+      "stripe",
+      "payments",
+      "subscriptions",
+      "billing"
+    ]
+  },
+  {
+    "id": "postgresql",
+    "name": "PostgreSQL",
+    "domain": "web-saas",
+    "category": "Database",
+    "description": "Production-grade relational database for durable application data, reporting, and transactional workloads.",
+    "requires": [],
+    "optional": [
+      "nextjs",
+      "typescript"
+    ],
+    "conflicts": [],
+    "warnings": [
+      "Use managed backups, migrations, connection pooling, and least-privilege credentials in production."
+    ],
+    "difficulty": "Intermediate",
+    "complexity": 3,
+    "estimatedLearningHours": 24,
+    "supports": [
+      "database",
+      "saas",
+      "api",
+      "dashboard"
+    ],
+    "outputs": [
+      "database",
+      "schema",
+      "queries"
+    ],
+    "tags": [
+      "postgres",
+      "postgresql",
+      "database",
+      "sql",
+      "relational"
     ]
   }
 ]
