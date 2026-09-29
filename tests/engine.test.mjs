@@ -21,6 +21,17 @@ test("empty stack has a clear empty status and is not valid", () => {
   assert.deepEqual(report.dependencyReport.missing, []);
 });
 
+test("web SaaS catalog includes hosted data, authentication, and payments options", () => {
+  const ids = new Set(components.map((component) => component.id));
+
+  assert.equal(ids.has("supabase"), true);
+  assert.equal(ids.has("postgresql"), true);
+  assert.equal(ids.has("stripe"), true);
+  assert.ok(components.find((component) => component.id === "supabase")?.supports.includes("auth"));
+  assert.ok(components.find((component) => component.id === "stripe")?.supports.includes("payments"));
+  assert.ok(components.find((component) => component.id === "postgresql")?.supports.includes("database"));
+});
+
 test("fully resolved Next.js stack is valid and production ready", () => {
   const report = createArchitect().validate(["nextjs", "nodejs", "vercel"]);
 
