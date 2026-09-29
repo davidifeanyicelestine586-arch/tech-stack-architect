@@ -5,7 +5,6 @@ import {
   FileCode2,
   BookMarked,
   ClipboardList,
-  House,
   LucideIcon,
 } from "lucide-react";
 import { uniqueId } from "lodash";
@@ -55,7 +54,6 @@ const SidebarContent: MenuItem[] = [
   {
     heading: "TECH STACK ARCHITECT",
     items: [
-      { id: uniqueId("nav_"), name: route("workspace").label, icon: House, url: route("workspace").href, routeId: "workspace", mobilePrimary: true },
       { id: uniqueId("nav_"), name: route("define").label, icon: ClipboardList, url: route("define").href, routeId: "define", mobilePrimary: true },
       { id: uniqueId("nav_"), name: route("recommendations").label, icon: SearchCheck, url: route("recommendations").href, routeId: "recommendations", mobilePrimary: true },
       { id: uniqueId("nav_"), name: route("components").label, icon: Layers, url: route("components").href, routeId: "components" },
