@@ -22,7 +22,7 @@ const Header = () => {
       )}
     >
       <div role="group" aria-label="Workspace controls">
-        <div className="w-full overflow-x-auto overscroll-x-contain">
+        <div data-header-scroll className="w-full overflow-x-auto overscroll-x-contain">
           <div className="mx-auto flex min-h-12 min-w-max items-center gap-2 p-2">
             <div className="flex shrink-0 items-center gap-2">
               <div className="block" aria-label="Ediccrew Tech Stack Architect">
