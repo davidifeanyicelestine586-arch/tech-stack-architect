@@ -241,6 +241,10 @@
 }
 
 @media (max-width: 359px) {
+  .site-header__theme {
+    display: none;
+  }
+
   .site-header {
     --site-header-gap: 1px;
     --site-header-control: 40px;
