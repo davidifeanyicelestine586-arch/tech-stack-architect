@@ -5,7 +5,7 @@ import { useTechStack } from "@/hooks/use-tech-stack";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { X, Layers, Trash2, Zap, Loader2 } from "lucide-react";
+import { X, Trash2, Zap, Loader2 } from "lucide-react";
 
 type SelectedStackProps = {
   variant?: "default" | "mobile";
