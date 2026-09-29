@@ -24,7 +24,7 @@ export function NavSecondary() {
             <div className="text-[9px] text-muted-foreground">Domains</div>
           </div>
           <div>
-            <div className="font-bold text-foreground">{componentsData.length}+</div>
+            <div className="font-bold text-foreground">{componentsData.length}</div>
             <div className="text-[9px] text-muted-foreground">Nodes</div>
           </div>
           <div>
