@@ -148,14 +148,14 @@
 
   .site-header__search {
     position: relative;
-    flex: 0 0 44px;
-    width: 44px;
-    min-width: 44px;
-    max-width: 44px;
+    flex: 0 0 40px;
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
   }
 
   .site-header__search input {
-    width: 44px;
+    width: 40px;
     padding-inline: 0;
     color: transparent;
     cursor: text;
@@ -198,24 +198,34 @@
     justify-content: flex-end;
   }
 
+  .site-header__persistence {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .site-header__persistence::-webkit-scrollbar {
+    display: none;
+  }
+
   .site-header__persistence button {
-    min-width: 44px;
-    width: 44px;
-    padding-inline: 0;
+    min-width: auto;
+    width: auto;
+    padding-inline: 8px;
   }
 
   .site-header__persistence button span {
-    display: none;
+    display: inline;
   }
 
   .site-header__auth,
   .site-header__theme {
-    width: 44px;
+    width: 40px;
   }
 
   .site-header__auth button,
   .site-header__theme button {
-    width: 44px;
+    width: 40px;
+    min-width: 40px;
     padding-inline: 0;
   }
 
