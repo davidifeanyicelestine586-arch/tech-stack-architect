@@ -1,12 +1,16 @@
-/* Header layout contract: mobile-first, single row, no page-level horizontal scrolling. */
+/* Header layout contract: mobile-first, single row, stable while scrolling, no page-level horizontal scrolling. */
 .site-header {
   --site-header-height: 64px;
   --site-header-gap: 8px;
   --site-header-control: 44px;
   --site-header-focus: #2563eb;
   --site-header-surface: var(--background);
+  position: sticky;
+  top: 0;
+  z-index: 50;
   width: 100%;
   isolation: isolate;
+  scroll-margin-top: var(--site-header-height);
 }
 
 .site-header__row {
@@ -16,6 +20,7 @@
   min-height: var(--site-header-height);
   width: 100%;
   padding: 8px 12px;
+  overflow: hidden;
 }
 
 .site-header__brand {
@@ -99,9 +104,17 @@
     padding-inline: 8px;
   }
 
+  .site-header__brand span {
+    display: none;
+  }
+
   .site-header__search {
     flex-basis: 140px;
     max-width: 160px;
+  }
+
+  .site-header__persistence [aria-label^="Persistence status"] {
+    display: none;
   }
 
   .site-header__github span,
@@ -123,10 +136,6 @@
   .site-header__row {
     gap: 2px;
     padding-inline: 4px;
-  }
-
-  .site-header__brand span {
-    display: none;
   }
 
   .site-header__brand a {
@@ -186,10 +195,6 @@
     min-width: 0;
   }
 
-  .site-header__persistence [aria-label^="Persistence status"] {
-    display: none;
-  }
-
   .site-header__persistence > div {
     justify-content: flex-end;
   }
@@ -222,6 +227,51 @@
 
   .site-header__separator {
     display: none;
+  }
+}
+
+@media (max-width: 359px) {
+  .site-header {
+    --site-header-gap: 1px;
+    --site-header-control: 40px;
+  }
+
+  .site-header__row {
+    gap: 1px;
+    padding-inline: 2px;
+  }
+
+  .site-header__brand a > div:first-child {
+    width: 28px;
+    height: 28px;
+  }
+
+  .site-header__search {
+    flex-basis: 40px;
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+  }
+
+  .site-header__search input {
+    width: 40px;
+  }
+
+  .site-header__search:focus-within {
+    left: 48px;
+    right: 48px;
+  }
+
+  .site-header__persistence button,
+  .site-header__auth button,
+  .site-header__theme button {
+    width: 40px;
+    min-width: 40px;
+  }
+
+  .site-header__auth,
+  .site-header__theme {
+    width: 40px;
   }
 }
 
