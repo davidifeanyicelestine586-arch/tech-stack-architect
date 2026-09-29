@@ -2,7 +2,7 @@
 
 Tech Stack Architect is a web application for turning project requirements into a structured, explainable technology-stack proposal. It helps users compare technologies, review recommendation factors, validate a proposed stack, and produce an architecture blueprint.
 
-**Live application:**   https://tech-stack-architect.vercel.app/
+**Live application:**   https://architect.ediccrew.com/
 **Source repository:** https://github.com/davidifeanyicelestine586-arch/tech-stack-architect
 
 ## Contents
@@ -17,6 +17,8 @@ Tech Stack Architect is a web application for turning project requirements into 
 - [Validation](#validation)
 - [Documentation](#documentation)
 - [Deployment](#deployment)
+- [Sample blueprint](#sample-blueprint)
+- [Catalog contributions](#catalog-contributions)
 - [Contributing](#contributing)
 - [Support](#support)
 - [License](#license)
@@ -153,9 +155,38 @@ The [`docs/`](docs/) directory is organized around two purposes:
 
 Start with [`docs/README.md`](docs/README.md) for the documentation map.
 
+## Sample blueprint
+
+A typical output keeps the reasoning traceable from requirements to a validated architecture:
+
+```mermaid
+flowchart LR
+  A[Project requirements] --> B[Deterministic analysis]
+  B --> C[Technology recommendations]
+  C --> D[Selected stack]
+  D --> E[Dependency and conflict validation]
+  E --> F[Architecture blueprint]
+```
+
+The same flow is available in the workspace as a progressive six-step journey. Downstream stages remain locked until their prerequisites are available.
+
+## Catalog contributions
+
+Technology entries live in `data/components.json`. Each entry should provide:
+
+- a stable `id` and human-readable `name`
+- `domain` and a broad `category`
+- a concise user-facing `description`
+- explicit `requires`, `optional`, and `conflicts` metadata
+- a concrete `conflicts.reason` whenever a pairing is unsafe
+- `difficulty`, `complexity`, and estimated learning time
+- `supports`, `outputs`, and searchable `tags`
+
+When adding a compatibility rule, add a regression test under `tests/` that proves both the valid and invalid cases. Prefer capability-based rules when a constraint applies to a whole class of technologies rather than a single pair.
+
 ## Deployment
 
-The current deployment target is **Vercel**, with GitHub `main` as the production branch.
+The current production deployment target is **Vercel**, with GitHub `main` as the production branch. Vercel is an optional hosting choice for Next.js; the validator does not treat it as a framework requirement.
 
 The repository is configured as a standard Next.js application:
 
