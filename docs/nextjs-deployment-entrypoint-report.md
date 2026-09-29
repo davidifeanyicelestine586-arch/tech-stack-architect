@@ -44,7 +44,6 @@ The following repository areas and files were inspected on `origin/main` before 
 | `ui/` | Preserved legacy static frontend, including `ui/index.html`, `ui/app.js`, `ui/style.css`, and supporting files. |
 | root `index.html` | Legacy redirect to `ui/index.html`; removed on this branch. |
 | `README.md` | Documents Next.js as the primary application and `pnpm legacy:dev` as the explicitly named compatibility command. |
-| `test_links.js` | Audits legacy `ui/` links and does not depend on the root `index.html`. |
 | `next.config.ts` and deployment-related files | No Dockerfile, Procfile, Hostinger-specific config, static export config, `.nvmrc`, or `.node-version` was present. |
 
 ## 3. Files Changed
@@ -119,7 +118,6 @@ The `dev` command (`next dev`) is for development only. The `legacy:dev` command
 | Warning | Status |
 |---|---|
 | Missing `searchItems` dependency in the shared search component `useMemo` | Existing, non-blocking, unrelated to the entrypoint change. |
-| Unused caught error variable in `test_links.js` | Existing, non-blocking, unrelated to the entrypoint change. |
 
 No lint errors were introduced by this fix.
 
