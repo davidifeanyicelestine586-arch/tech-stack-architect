@@ -77,6 +77,8 @@ for (const width of viewports) {
       };
     });
 
+    fs.writeFileSync(path.join(reportDir, `header-${width}.json`), JSON.stringify(result, null, 2));
+
     expect(result.overlaps, `Header overlap detected at ${width}px`).toEqual([]);
     expect(result.pageOverflow, `Page overflow detected at ${width}px`).toBe(false);
     expect(result.overflowing, `Header element overflow detected at ${width}px`).toEqual([]);
