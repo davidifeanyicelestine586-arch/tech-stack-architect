@@ -79,6 +79,7 @@ for (const width of viewports) {
     }
 
     expect(result.overlaps, `Header overlap detected at ${width}px`).toEqual([]);
+    expect(result.pageOverflow, `Page overflow detected at ${width}px`).toBe(false);
     expect(result.overflowing, `Header element overflow detected at ${width}px`).toEqual([]);
   });
 }
