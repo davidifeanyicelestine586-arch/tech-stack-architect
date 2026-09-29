@@ -62,7 +62,7 @@ const Header = () => {
           <Button
             variant="outline"
             size="sm"
-            className="hidden h-11 shrink-0 items-center gap-1.5 px-3 text-xs font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:inline-flex xl:order-5"
+            className="h-11 shrink-0 items-center gap-1.5 px-3 text-xs font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             render={
               <Link
                 href="https://github.com/davidifeanyicelestine586-arch/tech-stack-architect"
@@ -80,7 +80,6 @@ const Header = () => {
             <LightDark />
           </div>
         </div>
-
 
 
         <Separator orientation="vertical" className="h-5 shrink-0 mx-1" />
