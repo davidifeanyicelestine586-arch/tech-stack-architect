@@ -138,7 +138,7 @@ Normal text should be verified at 4.5:1 minimum contrast under WCAG AA; large te
 ### Changed files
 
 - `app/(dashboard-layout)/layout/vertical/header/index.tsx`
-  - Replaced overflow-scrolling header structure with semantic `nav` + single flex row.
+  - Replaced overflow-scrolling header structure with semantic header group + single flex row.
   - Switched to sticky normal-flow behavior.
   - Added scoped `site-header__*` layout hooks.
 - `app/css/components/site-header.css`
@@ -158,7 +158,7 @@ Normal text should be verified at 4.5:1 minimum contrast under WCAG AA; large te
 
 ```tsx
 <header className="site-header">
-  <nav className="site-header__row" aria-label="Workspace controls">
+  <div className="site-header__row" role="group" aria-label="Workspace controls">
     <a href="/" aria-label="Ediccrew Tech Stack Architect home">…</a>
 
     <button
@@ -187,7 +187,7 @@ Normal text should be verified at 4.5:1 minimum contrast under WCAG AA; large te
     <a href="/auth">Sign in</a>
     <a href="https://github.com/…" target="_blank" rel="noreferrer">GitHub</a>
     <button type="button" aria-label="Switch to dark theme">…</button>
-  </nav>
+  </div>
 </header>
 ```
 
