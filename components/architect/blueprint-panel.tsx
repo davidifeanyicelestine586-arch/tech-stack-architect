@@ -5,7 +5,7 @@ import { useTechStack } from "@/hooks/use-tech-stack";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FileCode2, Download, Copy, Terminal, CheckCircle2, BookOpen, AlertCircle, RefreshCw, ArrowDown } from "lucide-react";
+import { Download, Copy, Terminal, CheckCircle2, BookOpen, AlertCircle, RefreshCw, ArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { workflowStepLabel } from "@/lib/navigation/workflow";
 
