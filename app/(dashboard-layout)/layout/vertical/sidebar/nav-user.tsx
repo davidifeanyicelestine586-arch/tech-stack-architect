@@ -18,8 +18,8 @@ export function NavUser() {
       icon: GitFork,
     },
     {
-      title: "Database Specification",
-      url: "/#docs",
+      title: "Detailed Documentation",
+      url: "/content-detail",
       icon: BookMarked,
     },
   ];
