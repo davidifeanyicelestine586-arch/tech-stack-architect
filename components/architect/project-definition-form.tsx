@@ -80,7 +80,7 @@ export function ProjectDefinitionForm() {
               </CardDescription>
             </div>
           </div>
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">{`Step ${workflowStepNumber("define")} of ${WORKFLOW_STEPS.length}`}</span>
+          <span className="text-[11px] font-semibold tracking-wide text-primary">{`Step ${workflowStepNumber("define")} of ${WORKFLOW_STEPS.length}`}</span>
         </div>
       </CardHeader>
 
