@@ -121,8 +121,8 @@
   }
 
   .site-header__row {
-    gap: 4px;
-    padding-inline: 6px;
+    gap: 2px;
+    padding-inline: 4px;
   }
 
   .site-header__brand span {
@@ -134,8 +134,8 @@
   }
 
   .site-header__brand a > div:first-child {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
   }
 
   .site-header__search {
