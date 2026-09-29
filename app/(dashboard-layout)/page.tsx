@@ -50,10 +50,10 @@ export default function WorkspacePage() {
             </p>
           </div>
           <div className="grid w-full shrink-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap md:w-auto md:gap-3">
-            <Button className="h-11 w-full gap-2 px-4 shadow-xs sm:w-auto sm:px-5" render={<Link href="#define" />}>
+            <Button nativeButton={false} className="h-11 w-full gap-2 px-4 shadow-xs sm:w-auto sm:px-5" render={<Link href="#define" />}>
               <SearchCheck className="size-4" aria-hidden="true" /> Analyze My Project
             </Button>
-            <Button variant="outline" className="h-11 w-full gap-2 sm:w-auto" render={<Link href="#components" />}>
+            <Button nativeButton={false} variant="outline" className="h-11 w-full gap-2 sm:w-auto" render={<Link href="#components" />}>
               <Layers className="size-4" aria-hidden="true" /> Browse Technology Catalog
             </Button>
           </div>
