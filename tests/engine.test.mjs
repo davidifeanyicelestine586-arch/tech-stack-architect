@@ -40,7 +40,7 @@ test("Next.js only requires Node.js and can use Vercel optionally", () => {
 test("missing required dependencies make a stack invalid", () => {
   const report = createArchitect().validate(["nextjs"]);
 
-  assert.deepEqual(report.dependencyReport.missing, ["nodejs", "vercel"]);
+  assert.deepEqual(report.dependencyReport.missing, ["nodejs"]);
   assert.equal(report.valid, false);
   assert.equal(report.status, "Needs Review");
 });
@@ -67,15 +67,15 @@ test("dependency engine reports required, optional, and missing dependencies", (
   const engine = new DependencyEngine(components);
   const report = engine.analyze(["nextjs"]);
 
-  assert.deepEqual(report.required, ["nodejs", "vercel"]);
-  assert.deepEqual(report.optional, ["tailwindcss", "typescript"]);
-  assert.deepEqual(report.missing, ["nodejs", "vercel"]);
+  assert.deepEqual(report.required, ["nodejs"]);
+  assert.deepEqual(report.optional, ["tailwindcss", "typescript", "vercel"]);
+  assert.deepEqual(report.missing, ["nodejs"]);
 });
 
 test("automatic dependency resolution returns the selected stack plus missing dependencies", () => {
   const selected = createArchitect().resolveMissingDependencies(["nextjs"]);
 
-  assert.deepEqual(selected, ["nextjs", "nodejs", "vercel"]);
+  assert.deepEqual(selected, ["nextjs", "nodejs"]);
 });
 
 test("recipe engine scores and recommends recipes from selected components", () => {
