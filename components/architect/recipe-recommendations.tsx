@@ -19,11 +19,11 @@ export function RecipeRecommendations() {
               <Layers className="size-4 text-muted-foreground" aria-hidden="true" />
               Stack Templates
             </h3>
-            <Badge variant="outline" className="text-[10px] font-mono">
+            <Badge variant="outline" className="text-[11px] font-mono">
               Optional
             </Badge>
           </div>
-          <Badge variant="outline" className="text-[10px] font-mono">
+          <Badge variant="outline" className="text-[11px] font-mono">
             Select a stack first
           </Badge>
         </div>
@@ -47,7 +47,7 @@ export function RecipeRecommendations() {
               <Layers className="size-4 text-muted-foreground" aria-hidden="true" />
               Stack Templates
             </h3>
-            <Badge variant="outline" className="text-[10px] font-mono">
+            <Badge variant="outline" className="text-[11px] font-mono">
               Optional
             </Badge>
           </div>
@@ -55,7 +55,7 @@ export function RecipeRecommendations() {
             Optional shortcut — start with a proven combination, then adjust it to your project.
           </p>
         </div>
-        <Badge variant="outline" className="w-fit text-[10px] font-mono">
+        <Badge variant="outline" className="w-fit text-[11px] font-mono">
           {recipeRecommendations.length} matches
         </Badge>
       </div>
@@ -65,7 +65,7 @@ export function RecipeRecommendations() {
           <Card key={recipe.id} className="group overflow-hidden transition-colors hover:border-primary/50">
             <CardHeader className="gap-2 pb-3">
               <div className="flex items-center justify-between gap-3">
-                <Badge variant="secondary" className="text-[9px] font-bold uppercase tracking-wider">
+                <Badge variant="secondary" className="text-[11px] font-bold uppercase tracking-wider">
                   {recipe.domain.replace("-", " ")}
                 </Badge>
                 <div className="shrink-0 text-xs font-semibold text-muted-foreground">
@@ -81,7 +81,7 @@ export function RecipeRecommendations() {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-3 pt-0">
-              <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+              <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <Clock className="size-3" aria-hidden="true" /> ~{recipe.estimatedHours}h
                 </span>
@@ -94,7 +94,7 @@ export function RecipeRecommendations() {
                   <span>What this template gives you</span>
                   <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform group-open/details:rotate-180" />
                 </summary>
-                <div className="border-t border-border/60 px-3 pb-3 pt-2.5 text-[10px] leading-relaxed text-muted-foreground">
+                <div className="border-t border-border/60 px-3 pb-3 pt-2.5 text-[11px] leading-relaxed text-muted-foreground">
                   A compatible starting stack for this project type, with the technologies selected as a working baseline.
                 </div>
               </details>

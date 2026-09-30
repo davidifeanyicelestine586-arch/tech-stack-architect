@@ -280,8 +280,8 @@ Houses the physical components, services, frameworks, and hardware parts. It map
   "domain": "web-saas",
   "category": "Frontend Framework",
   "description": "React framework optimized for server-side rendering, static generation, API routes, and modern SaaS applications.",
-  "requires": ["nodejs", "vercel"],
-  "optional": ["tailwindcss", "typescript"],
+  "requires": ["nodejs"],
+  "optional": ["tailwindcss", "typescript", "vercel"],
   "conflicts": [],
   "warnings": ["Avoid heavy real-time processing on the client. Use server actions, APIs, or background workers."],
   "difficulty": "Intermediate",
@@ -409,7 +409,7 @@ Curated technology bundles representing specific architectures (e.g. Bootstrappe
   "estimatedHours": 8,
   "projectTypes": ["saas", "dashboard", "mvp"],
   "components": ["nextjs", "sqlite"],
-  "recommended": ["tailwindcss", "typescript", "vercel"],
+  "recommended": ["tailwindcss", "typescript", "stripe", "supabase"],
   "learningGoals": ["Server-side rendering", "Database fundamentals", "Deployment workflow"],
   "expectedOutputs": ["architecture", "folder-structure", "starter-code", "deployment-guide"],
   "starterCommands": [
@@ -438,10 +438,11 @@ Conflicts represent architectural mismatches, structural constraints, or physica
 1. **Direct Component Incompatibilities**: Evaluates the `conflicts` array on selected component objects. If `source` has a conflict element referencing `target`, and both are selected, a conflict is registered.
 2. **Hardware Pin Collisions**: Compares arrays of physical IO pins required by selected components (`pinsRequired`). If the intersection of pins between any two modules is non-empty, a high-severity collision is flagged:
   $$\text{Collisions} = \{ p \mid \exists c_1, c_2 \in \text{Selected}, c_1 \neq c_2 \text{ s.t. } p \in \text{pinsRequired}(c_1) \cap \text{pinsRequired}(c_2) \}$$
-3. **Advanced Business Logic Rules**: The engine enforces hardcoded, cross-layer architectural validations:
+3. **Advanced Business Logic Rules**: The engine enforces cross-layer architectural validations. Registry conflicts should be preferred for reusable pairwise constraints; capability-based rules should be used for platform-wide constraints:
    - **SQLite High Concurrency Limit (Severity: Medium)**: Flagged if `sqlite` AND `nextjs` AND `mcp-server` are concurrently chosen (heavy serverless workers conflict with file locking).
    - **Insecure Token Storage (Severity: High)**: Flagged if an `mcp-server` is configured without a `secure-token-vault`.
    - **Runtime Hosting Mismatch (Severity: High)**: Flagged if `pydroid3` (local Android Python runtime) is combined with `vercel` (cloud serverless hosting).
+   - **Durability Mismatch (Severity: High)**: SQLite declares a direct conflict with Vercel because serverless execution does not provide durable application-local disk across invocations.
    - **Insufficient Motor Power Supply (Severity: High)**: Flagged if `arduino-uno` AND `l298n` (motor driver) are selected without `external-power-supply`.
 
 ---

@@ -15,24 +15,22 @@ export function WorkflowProgress() {
   const hasBlueprint = Boolean(blueprint);
 
   const completed = [
-    hasProject,
+    hasProject && hasRecommendations,
     hasRecommendations,
-    hasRecommendations,
+    hasRecommendations && hasStack,
     hasStack,
     hasStack && Boolean(validationReport),
     hasBlueprint,
   ];
   const activeIndex = hasBlueprint
     ? 5
-    : validationReport
+    : hasStack && validationReport
       ? 4
       : hasStack
         ? 3
         : hasRecommendations
           ? 2
-          : hasProject
-            ? 1
-            : 0;
+          : 0;
 
   return (
     <section aria-label="Architecture progress" className="rounded-xl border border-border bg-card p-3 shadow-xs sm:p-4">

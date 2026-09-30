@@ -21,6 +21,17 @@ test("empty stack has a clear empty status and is not valid", () => {
   assert.deepEqual(report.dependencyReport.missing, []);
 });
 
+test("web SaaS catalog includes hosted data, authentication, and payments options", () => {
+  const ids = new Set(components.map((component) => component.id));
+
+  assert.equal(ids.has("supabase"), true);
+  assert.equal(ids.has("postgresql"), true);
+  assert.equal(ids.has("stripe"), true);
+  assert.ok(components.find((component) => component.id === "supabase")?.supports.includes("auth"));
+  assert.ok(components.find((component) => component.id === "stripe")?.supports.includes("payments"));
+  assert.ok(components.find((component) => component.id === "postgresql")?.supports.includes("database"));
+});
+
 test("fully resolved Next.js stack is valid and production ready", () => {
   const report = createArchitect().validate(["nextjs", "nodejs", "vercel"]);
 
@@ -30,10 +41,17 @@ test("fully resolved Next.js stack is valid and production ready", () => {
   assert.equal(report.conflictReport.hasConflicts, false);
 });
 
+test("Next.js only requires Node.js and can use Vercel optionally", () => {
+  const report = createArchitect().validate(["nextjs", "nodejs"]);
+  assert.equal(report.valid, true);
+  assert.equal(report.status, "Production Ready");
+  assert.deepEqual(report.dependencyReport.missing, []);
+});
+
 test("missing required dependencies make a stack invalid", () => {
   const report = createArchitect().validate(["nextjs"]);
 
-  assert.deepEqual(report.dependencyReport.missing, ["nodejs", "vercel"]);
+  assert.deepEqual(report.dependencyReport.missing, ["nodejs"]);
   assert.equal(report.valid, false);
   assert.equal(report.status, "Needs Review");
 });
@@ -60,15 +78,15 @@ test("dependency engine reports required, optional, and missing dependencies", (
   const engine = new DependencyEngine(components);
   const report = engine.analyze(["nextjs"]);
 
-  assert.deepEqual(report.required, ["nodejs", "vercel"]);
-  assert.deepEqual(report.optional, ["tailwindcss", "typescript"]);
-  assert.deepEqual(report.missing, ["nodejs", "vercel"]);
+  assert.deepEqual(report.required, ["nodejs"]);
+  assert.deepEqual(report.optional, ["tailwindcss", "typescript", "vercel"]);
+  assert.deepEqual(report.missing, ["nodejs"]);
 });
 
 test("automatic dependency resolution returns the selected stack plus missing dependencies", () => {
   const selected = createArchitect().resolveMissingDependencies(["nextjs"]);
 
-  assert.deepEqual(selected, ["nextjs", "nodejs", "vercel"]);
+  assert.deepEqual(selected, ["nextjs", "nodejs"]);
 });
 
 test("recipe engine scores and recommends recipes from selected components", () => {
@@ -81,10 +99,36 @@ test("recipe engine scores and recommends recipes from selected components", () 
   assert.equal(recommendations[0].score, 100);
 });
 
+test("SQLite on Vercel is rejected because serverless disk is not durable", () => {
+  const report = createArchitect().validate([
+    "nextjs",
+    "nodejs",
+    "vercel",
+    "sqlite",
+    "local-filesystem",
+  ]);
+
+  assert.equal(report.valid, false);
+  assert.equal(report.conflictReport.hasConflicts, true);
+  assert.ok(report.conflictReport.componentConflicts.some(
+    (conflict) =>
+      (conflict.source === "sqlite" && conflict.target === "vercel") ||
+      (conflict.source === "vercel" && conflict.target === "sqlite")
+  ));
+  assert.match(
+    report.conflictReport.componentConflicts.find(
+      (conflict) =>
+        (conflict.source === "sqlite" && conflict.target === "vercel") ||
+        (conflict.source === "vercel" && conflict.target === "sqlite")
+    )?.reason ?? "",
+    /persistent local disk|durable/i
+  );
+});
+
 test("recipe application produces a blueprint and validates the selected recipe stack", () => {
   const result = createArchitect().build({
     recipe: "bootstrapped-payment-dashboard",
-    selectedComponents: ["nextjs", "sqlite", "nodejs", "vercel", "local-filesystem"],
+    selectedComponents: ["nextjs", "sqlite", "nodejs", "local-filesystem"],
   });
 
   assert.equal(result.blueprint.title, "Bootstrapped Payment Dashboard");

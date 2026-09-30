@@ -24,6 +24,7 @@ export default function ContentDetailPage() {
     <div className="flex flex-col gap-8 pb-12">
       <section className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 shadow-xs md:p-8">
         <Button
+          nativeButton={false}
           variant="ghost"
           className="w-fit gap-2 px-0 text-xs text-muted-foreground hover:bg-transparent hover:text-foreground"
           render={<Link href="/" />}
@@ -36,7 +37,7 @@ export default function ContentDetailPage() {
             <BookOpen className="size-5" aria-hidden="true" />
           </div>
           <div className="flex flex-col gap-1">
-            <Badge variant="outline" className="w-fit gap-1 text-[10px]">
+            <Badge variant="outline" className="w-fit gap-1 text-[11px]">
               <ShieldCheck className="size-3" aria-hidden="true" />
               Registry documentation
             </Badge>
@@ -62,7 +63,7 @@ export default function ContentDetailPage() {
                     <CardTitle className="text-lg">{domain.title}</CardTitle>
                     <CardDescription className="mt-1 max-w-2xl">{domain.description}</CardDescription>
                   </div>
-                  <Badge variant="secondary" className="text-[10px]">
+                  <Badge variant="secondary" className="text-[11px]">
                     {domainComponents.length} nodes
                   </Badge>
                 </div>
@@ -75,22 +76,22 @@ export default function ContentDetailPage() {
                         <h2 className="text-sm font-bold text-foreground">{component.name}</h2>
                         <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{component.description}</p>
                       </div>
-                      <Badge variant="outline" className="shrink-0 text-[9px]">{component.category}</Badge>
+                      <Badge variant="outline" className="shrink-0 text-[11px]">{component.category}</Badge>
                     </div>
 
                     <div className="flex flex-wrap gap-1.5">
-                      {component.difficulty && <Badge variant="secondary" className="text-[9px]">{component.difficulty}</Badge>}
-                      <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground"><Clock className="size-3" aria-hidden="true" />{component.estimatedLearningHours ?? 0}h learning</span>
-                      <span className="text-[10px] text-muted-foreground">Complexity {component.complexity ?? "—"}/5</span>
+                      {component.difficulty && <Badge variant="secondary" className="text-[11px]">{component.difficulty}</Badge>}
+                      <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground"><Clock className="size-3" aria-hidden="true" />{component.estimatedLearningHours ?? 0}h learning</span>
+                      <span className="text-[11px] text-muted-foreground">Complexity {component.complexity ?? "—"}/5</span>
                     </div>
 
-                    <div className="grid gap-2 text-[10px] text-muted-foreground">
+                    <div className="grid gap-2 text-[11px] text-muted-foreground">
                       <div><span className="font-semibold text-foreground">Required:</span> {component.requires?.join(", ") || "None"}</div>
                       <div><span className="font-semibold text-foreground">Outputs:</span> {component.outputs?.join(", ") || "None"}</div>
                     </div>
 
                     {component.warnings?.length ? (
-                      <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-2.5 text-[10px] leading-relaxed text-amber-700 dark:text-amber-400">
+                      <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-2.5 text-[11px] leading-relaxed text-amber-700 dark:text-amber-400">
                         <span className="font-semibold">Architectural warning:</span> {component.warnings.join(" ")}
                       </div>
                     ) : null}

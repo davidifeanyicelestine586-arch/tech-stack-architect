@@ -113,7 +113,6 @@ The following verification commands were executed on the migration branch:
 | `pnpm build` | Passed; Next.js production build completed successfully |
 | `git diff --check` | Passed |
 
-The remaining lint warnings are not migration failures: one is the existing `useMemo` dependency warning in the shared search component, and the other is an unused caught error variable in `test_links.js`.
 
 ## 10. Production Smoke Test
 

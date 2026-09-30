@@ -116,6 +116,22 @@ const TechStackContext = createContext<TechStackContextType | null>(null);
 const canonicalSnapshotSignature = (snapshot: ProjectSnapshotV1) =>
   JSON.stringify({ ...snapshot, selectedComponentIds: [...snapshot.selectedComponentIds].sort() });
 
+const CATEGORY_GROUPS: Record<string, string> = {
+  Frontend: "Frontend",
+  "Frontend Framework": "Frontend",
+  Protocol: "Integration",
+  Workflow: "AI & Automation",
+  "AI Gateway": "AI & Automation",
+  Orchestration: "AI & Automation",
+  "Operating System": "Runtime",
+  Interface: "Hardware",
+  Power: "Hardware",
+  Actuator: "Hardware",
+  Sensor: "Hardware",
+  "Motor Driver": "Hardware",
+  Microcontroller: "Hardware",
+};
+
 const toValidationSummary = (report: ValidationReport) => ({
   valid: report.valid,
   score: report.score,
@@ -170,7 +186,7 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
 
   const categories = useMemo(() => {
     const set = new Set<string>();
-    components.forEach((c) => { if (c.category) set.add(c.category); });
+    components.forEach((c) => { if (c.category) set.add(CATEGORY_GROUPS[c.category] ?? c.category); });
     return Array.from(set).sort();
   }, [components]);
   const selectedComponents = useMemo(() => {
@@ -205,7 +221,7 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
 
   const filteredComponents = useMemo(() => components.filter((comp) => {
     if (activeDomain !== "all" && comp.domain !== activeDomain) return false;
-    if (selectedCategory !== "all" && comp.category !== selectedCategory) return false;
+    if (selectedCategory !== "all" && (CATEGORY_GROUPS[comp.category] ?? comp.category) !== selectedCategory) return false;
     if (difficultyFilter !== "all" && comp.difficulty !== difficultyFilter) return false;
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();

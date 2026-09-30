@@ -39,7 +39,6 @@ The QA artifacts do not alter runtime behavior.
 |---|---|---|
 | Initial headless captures appeared unstyled because the running production process referenced a CSS asset from an older build manifest | QA environment/process issue | Stopped the stale Next.js process and restarted production from the current build; all repeated captures loaded the correct Shadcn styling. |
 | Existing ESLint warning for the shared search `useMemo` dependency | Pre-existing non-blocking warning | Not changed because it is outside the migration QA scope and does not fail lint. |
-| Existing unused caught error variable warning in `test_links.js` | Pre-existing non-blocking warning | Not changed because it is unrelated to the migration. |
 
 No genuine migration defect required a source-code correction.
 
@@ -170,7 +169,6 @@ The required verification commands were executed on the review branch:
 | `pnpm build` | Passed; Next.js production build completed successfully and generated the expected static routes. |
 | `git diff --check` | Passed. |
 
-The two lint warnings are pre-existing and non-blocking: the shared search component’s `useMemo` dependency warning and the unused caught error variable in `test_links.js`.
 
 ## 12. Production Smoke Test
 

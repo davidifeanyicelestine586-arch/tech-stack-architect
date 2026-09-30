@@ -13,7 +13,7 @@ export default function NotFound() {
       <p className="text-muted-foreground max-w-md mb-6">
         The architectural route or module you are looking for does not exist in the technology registry.
       </p>
-      <Button render={<Link href="/">Return to Workspace</Link>}>
+      <Button nativeButton={false} render={<Link href="/">Return to Workspace</Link>}>
         Return to Workspace
       </Button>
     </div>
