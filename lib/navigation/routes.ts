@@ -64,17 +64,31 @@ export const NAVIGATION_ROUTES: readonly NavigationRoute[] = [
   },
   {
     id: "docs",
-    label: "Specification Docs",
-    href: "/#docs",
-    kind: "section",
-    description: "Read generated specification documents",
-  },
-  {
-    id: "content-detail",
-    label: "Content Detail",
+    label: "Documentation",
     href: "/content-detail",
     kind: "page",
-    description: "View detailed content",
+    description: "Read the component documentation registry",
+  },
+  {
+    id: "technologies",
+    label: "Technologies",
+    href: "/technologies",
+    kind: "page",
+    description: "Browse the technology catalog",
+  },
+  {
+    id: "domains",
+    label: "Domains",
+    href: "/domains",
+    kind: "page",
+    description: "Browse project domains",
+  },
+  {
+    id: "stacks",
+    label: "Stacks",
+    href: "/stacks",
+    kind: "page",
+    description: "Browse reusable stack recipes",
   },
 ] as const;
 
