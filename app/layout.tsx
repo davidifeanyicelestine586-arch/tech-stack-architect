@@ -4,6 +4,7 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
 import { ThemeProvider } from "@/components/Themeprovider";
+import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/seo/site";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -11,23 +12,47 @@ const geist = Geist({
   variable: "--font-geist",
 });
 
-const PRODUCT_TITLE = "Ediccrew Tech Stack Architect";
-const PRODUCT_DESCRIPTION = "Design, validate, understand, and generate production-ready technology stacks.";
-
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: PRODUCT_TITLE,
-    template: `%s | ${PRODUCT_TITLE}`,
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
   },
-  description: PRODUCT_DESCRIPTION,
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  authors: [{ name: "Ediccrew" }],
+  creator: "Ediccrew",
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   openGraph: {
-    title: PRODUCT_TITLE,
-    description: PRODUCT_DESCRIPTION,
+    type: "website",
+    url: absoluteUrl("/"),
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    siteName: SITE_NAME,
+    locale: "en_US",
+    images: [
+      {
+        url: "/OG-Image.png",
+        width: 1200,
+        height: 630,
+        alt: SITE_NAME,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: PRODUCT_TITLE,
-    description: PRODUCT_DESCRIPTION,
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    images: ["/OG-Image.png"],
+  },
+  icons: {
+    icon: "/favicon.ico",
   },
 };
 
@@ -47,9 +72,6 @@ export default function RootLayout({
       data-card-shadow="false"
       className="style-lyra"
     >
-      <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-      </head>
       <body className={`${geist.className} antialiased selection:bg-primary/20`}>
         <NextTopLoader color="var(--primary)" showSpinner={false} />
         <ThemeProvider
