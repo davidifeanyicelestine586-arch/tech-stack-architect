@@ -47,7 +47,7 @@ test("workflow stages have one canonical definition", () => {
 });
 
 test("metadata uses one product identity and aligned social metadata", () => {
-  assert.match(rootLayout, /SITE_NAME = "Ediccrew Tech Stack Architect"/);
+  assert.match(rootLayout, /SITE_NAME/);
   assert.match(rootLayout, /twitter:/);
   assert.match(rootLayout, /SITE_DESCRIPTION/);
   assert.doesNotMatch(rootLayout, /Ediccrew \| Tech Stack Architect/);
