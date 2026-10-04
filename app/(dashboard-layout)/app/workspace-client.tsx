@@ -29,9 +29,6 @@ export default function WorkspacePageClient() {
   const recipes = recipesData;
   const { requirementAnalysis, selectedComponentIds, validationReport } = useTechStack();
 
-  useEffect(() => {
-    document.title = "Workspace | Ediccrew Tech Stack Architect";
-  }, []);
 
   return (
     <div className="flex flex-col gap-6 pb-12 sm:gap-8">
