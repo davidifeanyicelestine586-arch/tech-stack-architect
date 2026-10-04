@@ -1,5 +1,7 @@
 "use client";
 
+"use client";
+
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { BookOpen, FileCode2, Layers, SearchCheck, ShieldCheck } from "lucide-react";
@@ -20,9 +22,8 @@ import componentsData from "@/data/components.json";
 import domainsData from "@/data/domain.json";
 import recipesData from "@/data/recipes.json";
 import { useTechStack } from "@/hooks/use-tech-stack";
-import { useEffect } from "react";
 
-export default function WorkspacePage() {
+export default function WorkspacePageClient() {
   const domains = domainsData;
   const components = componentsData;
   const recipes = recipesData;
@@ -50,10 +51,10 @@ export default function WorkspacePage() {
             </p>
           </div>
           <div className="grid w-full shrink-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap md:w-auto md:gap-3">
-            <Button nativeButton={false} className="h-11 w-full gap-2 px-4 shadow-xs sm:w-auto sm:px-5" render={<Link href="#define" />}>
+            <Button nativeButton={false} className="h-11 w-full gap-2 px-4 shadow-xs sm:w-auto sm:px-5" render={<Link href="/app#define" />}>
               <SearchCheck className="size-4" aria-hidden="true" /> Analyze My Project
             </Button>
-            <Button nativeButton={false} variant="outline" className="h-11 w-full gap-2 sm:w-auto" render={<Link href="#components" />}>
+            <Button nativeButton={false} variant="outline" className="h-11 w-full gap-2 sm:w-auto" render={<Link href="/app#components" />}>
               <Layers className="size-4" aria-hidden="true" /> Browse Technology Catalog
             </Button>
           </div>

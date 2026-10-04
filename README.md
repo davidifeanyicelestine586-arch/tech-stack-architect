@@ -52,6 +52,18 @@ Blueprint
 5. **Validate** — check dependencies, conflicts, and registered engineering constraints.
 6. **Blueprint** — generate a structured architecture result for further implementation or export.
 
+## Public routes
+
+The public site is the indexable layer; the interactive workspace lives at `/app`.
+
+- `/` — product landing page
+- `/technologies` and `/technologies/:id` — technology catalog
+- `/domains` and `/domains/:id` — project domains
+- `/stacks` and `/stacks/:id` — reusable stack recipes
+- `/about`, `/contact`, `/privacy`, `/terms` — public company and policy pages
+- `/content-detail` — documentation registry
+- `/app` — interactive workspace; intentionally `noindex`
+
 ## Technology stack
 
 | Layer | Technology |

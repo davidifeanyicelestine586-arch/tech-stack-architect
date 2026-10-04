@@ -9,7 +9,7 @@ fs.mkdirSync(reportDir, { recursive: true });
 for (const width of viewports) {
   test(`header collision audit — ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
-    await page.goto("/", { waitUntil: "networkidle" });
+    await page.goto("/app", { waitUntil: "networkidle" });
     const header = page.locator("header");
     await header.waitFor();
 
