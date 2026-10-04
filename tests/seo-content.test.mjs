@@ -10,11 +10,16 @@ const components = JSON.parse(read("data/components.json"));
 const domains = JSON.parse(read("data/domain.json"));
 const recipes = JSON.parse(read("data/recipes.json"));
 
-test("every registry id has a generated route", () => {
+test("every registry collection has a statically generated route", () => {
+  assert.equal(components.length, 27);
+  assert.equal(domains.length, 3);
+  assert.equal(recipes.length, 5);
   assert.match(read("app/(public)/technologies/[id]/page.tsx"), /generateStaticParams/);
   assert.match(read("app/(public)/domains/[id]/page.tsx"), /generateStaticParams/);
   assert.match(read("app/(public)/stacks/[id]/page.tsx"), /generateStaticParams/);
-  for (const item of [...components, ...domains, ...recipes]) assert.match(read("lib/content/registry.ts"), new RegExp(item.id));
+  assert.match(read("lib/content/registry.ts"), /getAllComponents/);
+  assert.match(read("lib/content/registry.ts"), /getAllDomains/);
+  assert.match(read("lib/content/registry.ts"), /getAllRecipes/);
 });
 
 test("registry references resolve to real component ids", () => {
@@ -26,6 +31,16 @@ test("registry references resolve to real component ids", () => {
   ]);
   const recipeReferences = recipes.flatMap((recipe) => [...recipe.components, ...(recipe.recommended ?? [])]);
   assert.deepEqual([...new Set([...references, ...recipeReferences].filter((id) => !ids.has(id)))], []);
+});
+
+test("sitemap is wired to every registry collection", () => {
+  const sitemap = read("app/sitemap.ts");
+  assert.match(sitemap, /getAllComponents/);
+  assert.match(sitemap, /getAllDomains/);
+  assert.match(sitemap, /getAllRecipes/);
+  assert.match(sitemap, /component\.id/);
+  assert.match(sitemap, /domain\.id/);
+  assert.match(sitemap, /recipe\.id/);
 });
 
 test("content routes include canonical metadata and exactly one h1", () => {
