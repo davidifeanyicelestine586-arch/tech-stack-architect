@@ -16,28 +16,11 @@ const securityHeaders = [
 const nextConfig = {
   poweredByHeader: false,
   async headers() {
+    // Public pages are crawlable content; let Next.js/CDN caching work instead of forcing no-store.
     return [
       {
         source: "/(.*)",
         headers: securityHeaders,
-      },
-      {
-        source: "/",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "private, no-store, max-age=0, must-revalidate",
-          },
-        ],
-      },
-      {
-        source: "/content-detail",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "private, no-store, max-age=0, must-revalidate",
-          },
-        ],
       },
     ];
   },
