@@ -35,8 +35,6 @@ jobs:
           done
           cat /tmp/next.log
           exit 1
-      - name: Install Playwright test runner
-        run: pnpm add --save-dev playwright@1.55.0
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
       - name: Run header collision audit
