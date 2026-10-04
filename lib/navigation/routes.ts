@@ -9,87 +9,17 @@ export interface NavigationRoute {
   description: string;
 }
 
-/**
- * Single source of truth for destinations exposed by the application shell.
- * Keep every sidebar/header destination here so navigation cannot drift away
- * from the routes and in-page anchors that actually exist.
- */
 export const NAVIGATION_ROUTES: readonly NavigationRoute[] = [
-  {
-    id: "workspace",
-    label: "Workspace",
-    href: "/",
-    kind: "page",
-    mobilePrimary: true,
-    description: "Project workspace and overview",
-  },
-  {
-    id: "define",
-    label: "Project Definition",
-    href: "/#define",
-    kind: "section",
-    mobilePrimary: true,
-    description: "Define project requirements and constraints",
-  },
-  {
-    id: "recommendations",
-    label: "Recommended Stack",
-    href: "/#recommendations",
-    kind: "section",
-    mobilePrimary: true,
-    description: "Review recommended technologies",
-  },
-  {
-    id: "components",
-    label: "Component Library",
-    href: "/#components",
-    kind: "section",
-    description: "Browse reusable technology components",
-  },
-  {
-    id: "validation",
-    label: "Validation Engine",
-    href: "/#validation",
-    kind: "section",
-    mobilePrimary: true,
-    description: "Validate architecture and stack decisions",
-  },
-  {
-    id: "blueprint",
-    label: "Architecture Blueprint",
-    href: "/#blueprint",
-    kind: "section",
-    mobilePrimary: true,
-    description: "Generate and inspect the architecture blueprint",
-  },
-  {
-    id: "docs",
-    label: "Documentation",
-    href: "/content-detail",
-    kind: "page",
-    description: "Read the component documentation registry",
-  },
-  {
-    id: "technologies",
-    label: "Technologies",
-    href: "/technologies",
-    kind: "page",
-    description: "Browse the technology catalog",
-  },
-  {
-    id: "domains",
-    label: "Domains",
-    href: "/domains",
-    kind: "page",
-    description: "Browse project domains",
-  },
-  {
-    id: "stacks",
-    label: "Stacks",
-    href: "/stacks",
-    kind: "page",
-    description: "Browse reusable stack recipes",
-  },
+  { id: "workspace", label: "Workspace", href: "/app", kind: "page", mobilePrimary: true, description: "Project workspace and overview" },
+  { id: "define", label: "Project Definition", href: "/app#define", kind: "section", mobilePrimary: true, description: "Define project requirements and constraints" },
+  { id: "recommendations", label: "Recommended Stack", href: "/app#recommendations", kind: "section", mobilePrimary: true, description: "Review recommended technologies" },
+  { id: "components", label: "Component Library", href: "/app#components", kind: "section", description: "Browse reusable technology components" },
+  { id: "validation", label: "Validation Engine", href: "/app#validation", kind: "section", mobilePrimary: true, description: "Validate architecture and stack decisions" },
+  { id: "blueprint", label: "Architecture Blueprint", href: "/app#blueprint", kind: "section", mobilePrimary: true, description: "Generate and inspect the architecture blueprint" },
+  { id: "docs", label: "Documentation", href: "/content-detail", kind: "page", description: "Read the component documentation registry" },
+  { id: "technologies", label: "Technologies", href: "/technologies", kind: "page", description: "Browse the technology catalog" },
+  { id: "domains", label: "Domains", href: "/domains", kind: "page", description: "Browse project domains" },
+  { id: "stacks", label: "Stacks", href: "/stacks", kind: "page", description: "Browse reusable stack recipes" },
 ] as const;
 
 export const NAVIGATION_ROUTE_BY_ID = Object.fromEntries(

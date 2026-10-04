@@ -5,7 +5,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const registryPath = path.join(root, "lib/navigation/routes.ts");
-const workspacePath = path.join(root, "app/(dashboard-layout)/page.tsx");
+const workspacePath = path.join(root, "app/(dashboard-layout)/app/workspace-client.tsx");
 
 const registry = fs.readFileSync(registryPath, "utf8");
 const workspace = fs.readFileSync(workspacePath, "utf8");
@@ -43,7 +43,7 @@ test("registered section destinations map to real workspace anchors", () => {
 test("navigation registry keeps page destinations distinct from in-page sections", () => {
   const pageRoutes = routes.filter((route) => route.kind === "page");
   const sectionRoutes = routes.filter((route) => route.kind === "section");
-  assert.ok(pageRoutes.some((route) => route.href === "/"));
+  assert.ok(pageRoutes.some((route) => route.href === "/app"));
   assert.ok(pageRoutes.some((route) => route.href === "/content-detail"));
-  assert.ok(sectionRoutes.every((route) => route.href.startsWith("/#")));
+  assert.ok(sectionRoutes.every((route) => route.href.startsWith("/app#")));
 });
