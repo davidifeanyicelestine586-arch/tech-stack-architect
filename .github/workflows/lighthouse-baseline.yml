@@ -35,7 +35,7 @@ jobs:
       - name: Run Lighthouse mobile audits
         run: |
           mkdir -p /tmp/lighthouse
-          npx --yes lighthouse@latest http://127.0.0.1:3000/ --preset=mobile --only-categories=performance --chrome-flags="--headless --no-sandbox" --output=json --output-path=/tmp/lighthouse/home.json
+          npx --yes lighthouse@latest http://127.0.0.1:3000/ --preset=perf --form-factor=mobile --only-categories=performance --chrome-flags="--headless --no-sandbox" --output=json --output-path=/tmp/lighthouse/home.json
           npx --yes lighthouse@latest http://127.0.0.1:3000/technologies/nextjs --preset=mobile --only-categories=performance --chrome-flags="--headless --no-sandbox" --output=json --output-path=/tmp/lighthouse/technology-nextjs.json
           npx --yes lighthouse@latest http://127.0.0.1:3000/app --preset=mobile --only-categories=performance --chrome-flags="--headless --no-sandbox" --output=json --output-path=/tmp/lighthouse/app.json
       - name: Print baseline metrics
