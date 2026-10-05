@@ -3,10 +3,26 @@ import { SITE_NAME, absoluteUrl } from "@/lib/seo/site";
 export const CONTENT_LAST_MODIFIED = "2026-10-04";
 
 export function contentDescription(description: string): string {
-  const suffix = " Explore this entry in the Ediccrew Tech Stack Architect registry.";
-  if (description.length >= 140 && description.length <= 160) return description;
-  if (description.length > 160) return `${description.slice(0, 157).replace(/[,;:]?\\s+\\S*$/, "")}...`;
-  return `${description}${suffix}`;
+  const base = description.trim();
+  if (base.length >= 140 && base.length <= 160) return base;
+  const suffixes = [
+    " Explore this registry entry.",
+    " Explore its registered context and related links.",
+    " Explore its registered details and related stack context.",
+    " Explore its registered metadata and related stack recipes in the registry.",
+    " Explore its registered metadata, dependencies, outputs, constraints, and related stack context.",
+    " Explore its registered metadata, dependencies, constraints, outputs, and related stack recipes in the registry.",
+    " Explore its registered metadata, dependencies, constraints, outputs, learning context, and related stack recipes in the registry.",
+  ];
+  for (const suffix of suffixes) {
+    const candidate = base + suffix;
+    if (candidate.length >= 140 && candidate.length <= 160) return candidate;
+  }
+  if (base.length > 160) {
+    const truncated = base.slice(0, 157).replace(/[,;:\s]+\S*$/, "").trim();
+    return `${truncated}...`;
+  }
+  return base.slice(0, 160);
 }
 
 export function articleJsonLd(input: {

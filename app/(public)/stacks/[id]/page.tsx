@@ -62,7 +62,7 @@ export default async function StackPage({ params }: { params: Promise<{ id: stri
         </div>
         <div className="mt-10 flex flex-wrap gap-4">
           <Link href={`/domains/${domain.id}`} className="font-semibold underline-offset-4 hover:underline">Explore {domain.title}</Link>
-          <Link href="/" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 font-semibold text-primary-foreground">Use this recipe in the Architect</Link>
+          <Link href="/app" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 font-semibold text-primary-foreground">Use this recipe in the Architect</Link>
         </div>
       </article>
     </>

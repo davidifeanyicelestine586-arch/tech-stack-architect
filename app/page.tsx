@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PublicShell } from "@/components/public/public-shell";
 import { JsonLd } from "@/components/seo/json-ld";
 import { getAllComponents, getAllDomains, getAllRecipes } from "@/lib/content/registry";
 import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME } from "@/lib/seo/site";
@@ -49,7 +50,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <>
+    <PublicShell>
       {jsonLd.map((data, index) => <JsonLd key={index} data={data} />)}
       <div className="space-y-16 pb-12">
         <section className="grid gap-8 rounded-3xl border border-border bg-card p-6 shadow-xs md:p-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-center">
@@ -130,7 +131,7 @@ export default function LandingPage() {
           </div>
         </section>
       </div>
-    </>
+    </PublicShell>
   );
 }
 

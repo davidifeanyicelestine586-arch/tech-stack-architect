@@ -70,7 +70,7 @@ export default async function TechnologyPage({ params }: { params: Promise<{ id:
             {recipes.map((recipe) => <Link key={recipe.id} href={`/stacks/${recipe.id}`} className="font-semibold underline-offset-4 hover:underline">{recipe.title}</Link>)}
           </div>
         </section>
-        <Link href="/" className="mt-8 inline-flex min-h-11 items-center rounded-md bg-primary px-4 font-semibold text-primary-foreground">Add this to your stack in the Architect</Link>
+        <Link href="/app" className="mt-8 inline-flex min-h-11 items-center rounded-md bg-primary px-4 font-semibold text-primary-foreground">Add this to your stack in the Architect</Link>
       </article>
     </>
   );

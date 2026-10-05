@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PublicShell } from "@/components/public/public-shell";
 import { PublicBreadcrumb } from "@/components/public/public-breadcrumb";
 
 export const metadata: Metadata = {
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="mx-auto max-w-3xl">
+    <PublicShell>
+      <div className="mx-auto max-w-3xl">
       <PublicBreadcrumb items={[{ label: "Home", href: "/" }, { label: "About" }]} />
       <h1 className="text-4xl font-bold tracking-tight">About Tech Stack Architect</h1>
       <p className="mt-5 text-lg leading-relaxed text-muted-foreground">Tech Stack Architect is built by Ediccrew to turn project requirements into a structured, explainable technology-stack proposal.</p>
@@ -19,6 +21,7 @@ export default function AboutPage() {
         <section><h2 className="text-2xl font-semibold">What you can explore</h2><p className="mt-3 leading-relaxed text-muted-foreground">The public catalog exposes the registered technologies, three project domains, and five stack recipes as individual pages so their relationships can be explored without opening the interactive workspace.</p></section>
       </div>
       <Link href="/app" className="mt-10 inline-flex min-h-11 items-center rounded-md bg-primary px-4 font-semibold text-primary-foreground">Open the Architect workspace</Link>
-    </div>
+      </div>
+    </PublicShell>
   );
 }
