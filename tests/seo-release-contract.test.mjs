@@ -72,26 +72,7 @@ test("sitemap contains all public hubs and excludes the workspace", () => {
 
 test("security headers remain declared in the shared security header set", () => {
   const config = read("next.config.mjs");
-  for (const header of ["Strict-Transport-Security", "X-Content-Type-Options", "X-Frame-Options", "Referrer-Policy", "Permissions-Policy", "Content-Security-Policy"]) assert.match(config, new RegExp(header));
-});export function contentDescription(description) => {
-  const base = description.trim();
-  if (base.length >= 140 && base.length <= 160) return base;
-  const suffixes = [
-    " Explore this registry entry.",
-    " Explore its registered context and related links.",
-    " Explore its registered details and related stack context.",
-    " Explore its registered metadata and related stack recipes in the registry.",
-    " Explore its registered metadata, dependencies, outputs, constraints, and related stack context.",
-    " Explore its registered metadata, dependencies, constraints, outputs, and related stack recipes in the registry.",
-    " Explore its registered metadata, dependencies, constraints, outputs, learning context, and related stack recipes in the registry.",
-  ];
-  for (const suffix of suffixes) {
-    const candidate = base + suffix;
-    if (candidate.length >= 140 && candidate.length <= 160) return candidate;
+  for (const header of ["Strict-Transport-Security", "X-Content-Type-Options", "X-Frame-Options", "Referrer-Policy", "Permissions-Policy", "Content-Security-Policy"]) {
+    assert.match(config, new RegExp(header));
   }
-  if (base.length > 160) {
-    const truncated = base.slice(0, 157).replace(/[,;:\s]+\S*$/, "").trim();
-    return `${truncated}...`;
-  }
-  return base.slice(0, 160);
-}
+});
