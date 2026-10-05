@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PublicShell } from "@/components/public/public-shell";
 import { JsonLd } from "@/components/seo/json-ld";
 import { getAllComponents, getAllDomains, getAllRecipes } from "@/lib/content/registry";
 import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME } from "@/lib/seo/site";
