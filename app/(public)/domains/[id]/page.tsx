@@ -49,7 +49,7 @@ export default async function DomainPage({ params }: { params: Promise<{ id: str
             {recipes.map((recipe) => <Link key={recipe.id} href={`/stacks/${recipe.id}`} className="rounded-xl border border-border p-4 hover:bg-muted"><span className="font-semibold">{recipe.title}</span><span className="mt-1 block text-sm text-muted-foreground">{recipe.description}</span></Link>)}
           </div>
         </section>
-        <Link href="/" className="mt-10 inline-flex min-h-11 items-center rounded-md bg-primary px-4 font-semibold text-primary-foreground">Open the Architect workspace</Link>
+        <Link href="/app" className="mt-10 inline-flex min-h-11 items-center rounded-md bg-primary px-4 font-semibold text-primary-foreground">Open the Architect workspace</Link>
       </article>
     </>
   );
