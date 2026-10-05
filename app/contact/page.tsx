@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata } from "next";\nimport { PublicShell } from "@/components/public/public-shell";
 import { PublicBreadcrumb } from "@/components/public/public-breadcrumb";
 
 export const metadata: Metadata = {
