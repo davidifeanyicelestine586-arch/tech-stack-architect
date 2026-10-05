@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PublicShell } from "@/components/public/public-shell";
 import { PublicBreadcrumb } from "@/components/public/public-breadcrumb";
 
 export const metadata: Metadata = {
