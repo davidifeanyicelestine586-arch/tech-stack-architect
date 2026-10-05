@@ -49,7 +49,7 @@ test("sitemap is crawlable and every public page has complete SEO metadata", asy
     }
   }
 
-  for (const [url, edges] of graph) for (const target of edges) incoming.set(target, (incoming.get(target) || 0) + 1);
+  for (const edges of graph.values()) for (const target of edges) incoming.set(target, (incoming.get(target) || 0) + 1);
   expect(broken, broken.join("\n")).toEqual([]);
 
   const root = normalizeUrl(BASE_URL);
