@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, BookOpen, Clock, ShieldCheck } from "lucide-react";
+import { JsonLd } from "@/components/seo/json-ld";
+import { absoluteUrl } from "@/lib/seo/site";
+import { breadcrumbJsonLd } from "@/lib/seo/content";
 import componentsData from "@/data/components.json";
 import domainsData from "@/data/domain.json";
 import { Badge } from "@/components/ui/badge";
