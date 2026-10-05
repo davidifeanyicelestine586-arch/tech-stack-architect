@@ -13,7 +13,7 @@ async function sitemapUrls(request) {
   const response = await request.get(new URL("/sitemap.xml", BASE_URL).toString());
   expect(response.ok()).toBeTruthy();
   const xml = await response.text();
-  return [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => normalizeUrl(match[1]));
+  return [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => {\n    const sitemapUrl = new URL(match[1]);\n    return normalizeUrl(sitemapUrl.pathname + sitemapUrl.search);\n  });
 }
 
 test("sitemap is crawlable and every public page has complete SEO metadata", async ({ page, request }) => {
