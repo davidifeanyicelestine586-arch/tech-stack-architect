@@ -18,6 +18,8 @@ export const metadata: Metadata = {
 
 export default function ContentDetailPage() {
   return (
+    <>
+      <JsonLd data={breadcrumbJsonLd([{ name: "Home", item: absoluteUrl("/") }, { name: "Documentation", item: absoluteUrl("/content-detail") }])} />
     <div className="flex flex-col gap-8 pb-12">
       <section className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 shadow-xs md:p-8">
         <Button nativeButton={false} variant="ghost" className="w-fit gap-2 px-0 text-xs text-muted-foreground hover:bg-transparent hover:text-foreground" render={<Link href="/app" />}>
@@ -61,5 +63,6 @@ export default function ContentDetailPage() {
         })}
       </section>
     </div>
+    </>
   );
 }
