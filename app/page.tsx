@@ -50,7 +50,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <>
+    <PublicShell>
       {jsonLd.map((data, index) => <JsonLd key={index} data={data} />)}
       <div className="space-y-16 pb-12">
         <section className="grid gap-8 rounded-3xl border border-border bg-card p-6 shadow-xs md:p-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-center">
@@ -131,7 +131,7 @@ export default function LandingPage() {
           </div>
         </section>
       </div>
-    </>
+    </PublicShell>
   );
 }
 
