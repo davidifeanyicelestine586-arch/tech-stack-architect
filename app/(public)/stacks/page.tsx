@@ -20,12 +20,12 @@ export default function StacksPage() {
       <PublicBreadcrumb items={[{ label: "Home", href: "/" }, { label: "Stacks" }]} />
       <header className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">Stack Recipes</h1>
-        <p className="mt-2 max-w-3xl text-muted-foreground">Compare the registered project templates and open a recipe for its complete component and learning context.</p>
+        <p className="mt-2 max-w-3xl text-base leading-relaxed text-muted-foreground">Compare the registered project templates and open a recipe for its complete component and learning context.</p>
       </header>
       <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {recipes.map((recipe) => {
           const domain = getDomain(recipe.domain);
-          return <article key={recipe.id} className="rounded-xl border border-border p-6"><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{domain?.shortTitle ?? recipe.domain}</p><h2 className="mt-2 text-xl font-semibold"><Link href={`/stacks/${recipe.id}`} className="underline-offset-4 hover:underline">{recipe.title}</Link></h2><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{recipe.description}</p><p className="mt-4 text-xs text-muted-foreground">{recipe.difficulty} · {recipe.estimatedHours} hours</p></article>;
+          return <article key={recipe.id} className="rounded-xl border border-border p-6"><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{domain?.shortTitle ?? recipe.domain}</p><h2 className="mt-2 text-xl font-semibold"><Link href={`/stacks/${recipe.id}`} className="underline-offset-4 hover:underline">{recipe.title}</Link></h2><p className="mt-2 text-base leading-relaxed text-muted-foreground">{recipe.description}</p><p className="mt-4 text-sm leading-relaxed text-muted-foreground">{recipe.difficulty} · {recipe.estimatedHours} hours</p></article>;
         })}
       </div>
     </>
