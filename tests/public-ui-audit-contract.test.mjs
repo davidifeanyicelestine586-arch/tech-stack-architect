@@ -15,7 +15,10 @@ test("public shell renders real whitespace and exposes usable responsive navigat
   assert.ok(shell.includes("flex-wrap"));
   assert.ok(shell.includes('href="#public-main"'));
   assert.ok(shell.includes('id="public-main"'));
-  assert.ok(shell.includes("min-h-11"));\n  const button = read("components/ui/button.tsx");\n  assert.ok(button.includes("cn-button-size-default h-11"));\n  assert.ok(button.includes("cn-button-size-icon size-11"));
+  assert.ok(shell.includes("min-h-11"));
+  const button = read("components/ui/button.tsx");
+  assert.ok(button.includes("cn-button-size-default h-11"));
+  assert.ok(button.includes("cn-button-size-icon size-11"));
 });
 
 test("workflow navigation preserves the canonical six-stage order", () => {
