@@ -14,7 +14,7 @@ const severityMeta: Record<IssueSeverity, { label: string; icon: typeof AlertTri
   error: { label: "Error", icon: XCircle, className: "border-rose-500/20 bg-rose-500/5 text-rose-700 dark:text-rose-400" },
   warning: { label: "Warning", icon: AlertTriangle, className: "border-amber-500/20 bg-amber-500/5 text-amber-700 dark:text-amber-400" },
   info: { label: "Info", icon: Info, className: "border-sky-500/20 bg-sky-500/5 text-sky-700 dark:text-sky-400" },
-  suggestion: { label: "Suggestion", icon: ArrowUpRight, className: "border-blue-500/20 bg-blue-500/5 text-blue-700 dark:text-blue-400" },
+  suggestion: { label: "Suggestion", icon: ArrowUpRight, className: "border-violet-500/20 bg-violet-500/5 text-violet-700 dark:text-violet-400" },
 };
 
 export function ValidationPanel() {
