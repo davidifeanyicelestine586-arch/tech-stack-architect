@@ -56,7 +56,7 @@ test("public catalog and documentation use readable body typography", () => {
   const domains = read("app/(public)/domains/page.tsx");
   const stacks = read("app/(public)/stacks/page.tsx");
   const docs = read("app/(dashboard-layout)/content-detail/page.tsx");
-  assert.ok(shell.includes("leading-relaxed"));
+  assert.ok(shell.includes("min-h-11"));
   assert.ok(about.includes("text-lg leading-relaxed"));
   for (const source of [technologies, domains, stacks]) assert.ok(source.includes("text-base leading-relaxed text-muted-foreground"));
   assert.ok(docs.includes("text-sm leading-relaxed text-muted-foreground"));
