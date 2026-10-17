@@ -32,7 +32,7 @@ test("workflow navigation has unique stage IDs and valid registered destinations
 test("status and issue colors distinguish semantic states in light and dark themes", () => {
   const validation = read("components/architect/validation-panel.tsx");
   const selected = read("components/architect/selected-stack.tsx");
-  for (const color of ["emerald", "amber", "rose", "sky", "blue"]) {
+  for (const color of ["emerald", "amber", "rose", "sky", "violet"]) {
     assert.match(validation, new RegExp(`dark:text-${color}-[0-9]+`));
   }
   assert.match(selected, /dark:text-emerald-400/);
