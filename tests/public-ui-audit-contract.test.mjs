@@ -7,7 +7,7 @@ const read = (file) => fs.readFileSync(path.join(process.cwd(), file), "utf8");
 
 test("public shell renders real whitespace and exposes usable responsive navigation", () => {
   const shell = read("components/public/public-shell.tsx");
-  assert.doesNotMatch(shell, /\\\\n/);
+  assert.doesNotMatch(shell, /\\n/);
   for (const label of ["Technologies", "Domains", "Stacks", "Documentation", "About", "Open the Architect"]) {
     assert.match(shell, new RegExp(`<Link[^>]*min-h-11[^>]*>${label}<\\/Link>`));
   }
@@ -44,7 +44,7 @@ test("public pages use readable body typography and avoid literal escaped newlin
   const about = read("app/about/page.tsx");
   assert.match(shell, /leading-relaxed/);
   assert.match(about, /text-lg leading-relaxed/);
-  assert.doesNotMatch(shell, /\\\\n/);
+  assert.doesNotMatch(shell, /\\n/);
 });
 
 test("contact page offers a working contact route and legal pages clearly disclose review status", () => {
