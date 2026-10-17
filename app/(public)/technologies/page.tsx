@@ -22,7 +22,7 @@ export default function TechnologiesPage() {
       <PublicBreadcrumb items={[{ label: "Home", href: "/" }, { label: "Technologies" }]} />
       <header className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">Technologies</h1>
-        <p className="mt-2 max-w-3xl text-muted-foreground">Explore the registered technology components that power deterministic recommendations, validation, and architecture blueprints.</p>
+        <p className="mt-2 max-w-3xl text-base leading-relaxed text-muted-foreground">Explore the registered technology components that power deterministic recommendations, validation, and architecture blueprints.</p>
       </header>
       <div className="space-y-10">
         {domains.map((domain) => {
@@ -32,7 +32,7 @@ export default function TechnologiesPage() {
               <div className="mb-4 flex items-end justify-between gap-4">
                 <div>
                   <h2 id={`domain-${domain.id}`} className="text-xl font-semibold">{domain.title}</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">{domain.description}</p>
+                  <p className="mt-1 text-base leading-relaxed text-muted-foreground">{domain.description}</p>
                 </div>
                 <Link className="text-sm font-semibold underline-offset-4 hover:underline" href={`/domains/${domain.id}`}>View domain</Link>
               </div>
@@ -40,8 +40,8 @@ export default function TechnologiesPage() {
                 {items.map((component) => (
                   <article key={component.id} className="rounded-xl border border-border p-5">
                     <h3 className="font-semibold"><Link href={`/technologies/${component.id}`} className="underline-offset-4 hover:underline">{component.name}</Link></h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{component.description}</p>
-                    <p className="mt-3 text-xs text-muted-foreground">{component.category} · {component.difficulty ?? "Unspecified"}</p>
+                    <p className="mt-2 text-base leading-relaxed text-muted-foreground">{component.description}</p>
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{component.category} · {component.difficulty ?? "Unspecified"}</p>
                   </article>
                 ))}
               </div>
@@ -49,7 +49,7 @@ export default function TechnologiesPage() {
           );
         })}
       </div>
-      <p className="mt-8 text-sm text-muted-foreground">Catalog: {components.length} technologies across {domains.length} domains.</p>
+      <p className="mt-8 text-base leading-relaxed text-muted-foreground">Catalog: {components.length} technologies across {domains.length} domains.</p>
     </>
   );
 }
