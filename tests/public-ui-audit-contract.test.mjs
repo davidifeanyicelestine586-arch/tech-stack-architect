@@ -47,6 +47,7 @@ test("status and issue colors distinguish semantic states in light and dark them
   assert.ok(selected.includes("dark:text-emerald-400"));
   assert.ok(selected.includes("dark:text-amber-400"));
   assert.ok(read("components/architect/blueprint-panel.tsx").includes("text-emerald-600 dark:text-emerald-400"));
+  assert.ok(read("components/architect/blueprint-panel.tsx").includes("text-amber-700 dark:text-amber-400"));
 });
 
 test("public catalog and documentation use readable body typography", () => {
