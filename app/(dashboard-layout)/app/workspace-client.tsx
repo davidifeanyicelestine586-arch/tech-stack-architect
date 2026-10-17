@@ -77,7 +77,7 @@ export default function WorkspacePageClient() {
         <ProjectDefinitionForm />
       </div>
       <div id="recommendations" className="scroll-mt-24">
-        {requirementAnalysis ? <RecommendationPanel /> : <LockedSection step="2 · Analyze" title="Analyze your project to unlock recommendations" description="Complete the project definition above and Architect will reveal technology matches with their reasoning." />}
+        {requirementAnalysis ? <RecommendationPanel /> : <LockedSection step={workflowStepLabel("analyze")} title="Analyze your project to unlock recommendations" description="Complete the project definition above and Architect will reveal technology matches with their reasoning." />}
       </div>
 
       <div className="lg:hidden">
@@ -88,7 +88,7 @@ export default function WorkspacePageClient() {
           </div>
           <Badge variant="outline" className="shrink-0 text-xs">Mobile workspace</Badge>
         </div>
-        {selectedComponentIds.length > 0 ? <SelectedStack variant="mobile" /> : <LockedSection step="4 · Build" title="Your selected stack will appear here" description="Add a recommendation or browse the catalog after analysis." />}
+        {selectedComponentIds.length > 0 ? <SelectedStack variant="mobile" /> : <LockedSection step={workflowStepLabel("build")} title="Your selected stack will appear here" description="Add a recommendation or browse the catalog after analysis." />}
       </div>
 
       <div className="grid grid-cols-1 items-start gap-6 sm:gap-8 lg:grid-cols-12">
