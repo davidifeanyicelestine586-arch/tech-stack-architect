@@ -36,7 +36,7 @@ test("status and issue colors distinguish semantic states in light and dark them
     assert.match(validation, new RegExp(`dark:text-${color}-[0-9]+`));
   }
   assert.match(selected, /dark:text-emerald-400/);
-  assert.match(selected, /dark:text-amber-400/);
+  assert.match(selected, /dark:text-amber-400/);\n  assert.match(read("components/architect/blueprint-panel.tsx"), /text-emerald-600 dark:text-emerald-400/);
 });
 
 test("public pages use readable body typography and avoid literal escaped newlines", () => {
