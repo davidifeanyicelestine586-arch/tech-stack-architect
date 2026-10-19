@@ -77,7 +77,7 @@ export default function WorkspacePageClient() {
         <ProjectDefinitionForm />
       </div>
       <div id="recommendations" className="scroll-mt-24">
-        {requirementAnalysis ? <RecommendationPanel /> : <LockedSection step="2 · Analyze" title="Analyze your project to unlock recommendations" description="Complete the project definition above and Architect will reveal technology matches with their reasoning." />}
+        {requirementAnalysis ? <RecommendationPanel /> : <LockedSection step={workflowStepLabel("analyze")} title="Analyze your project to unlock recommendations" description="Complete the project definition above and Architect will reveal technology matches with their reasoning." />}
       </div>
 
       <div className="lg:hidden">
@@ -88,7 +88,7 @@ export default function WorkspacePageClient() {
           </div>
           <Badge variant="outline" className="shrink-0 text-xs">Mobile workspace</Badge>
         </div>
-        {selectedComponentIds.length > 0 ? <SelectedStack variant="mobile" /> : <LockedSection step="4 · Build" title="Your selected stack will appear here" description="Add a recommendation or browse the catalog after analysis." />}
+        {selectedComponentIds.length > 0 ? <SelectedStack variant="mobile" /> : <LockedSection step={workflowStepLabel("build")} title="Your selected stack will appear here" description="Add a recommendation or browse the catalog after analysis." />}
       </div>
 
       <div className="grid grid-cols-1 items-start gap-6 sm:gap-8 lg:grid-cols-12">
@@ -104,10 +104,10 @@ export default function WorkspacePageClient() {
                 <ComponentBrowser />
               </>
             ) : (
-              <LockedSection step="4 · Build" title="Technology catalog is locked until analysis" description="Analyze the project first so the catalog can prioritize the relevant technologies." />
+              <LockedSection step={workflowStepLabel("build")} title="Technology catalog is locked until analysis" description="Analyze the project first so the catalog can prioritize the relevant technologies." />
             )}
           </section>
-          {selectedComponentIds.length > 0 ? <RecipeRecommendations /> : <LockedSection step="3 · Review" title="Stack templates unlock after recommendations" description="Select at least one compatible technology to compare reusable stack recipes." />}
+          {selectedComponentIds.length > 0 ? <RecipeRecommendations /> : <LockedSection step={workflowStepLabel("review")} title="Stack templates unlock after recommendations" description="Select at least one compatible technology to compare reusable stack recipes." />}
         </div>
 
         <div className="flex min-w-0 flex-col gap-6 lg:sticky lg:top-24 lg:col-span-4">
@@ -115,13 +115,13 @@ export default function WorkspacePageClient() {
             <SelectedStack />
           </div>
           <div id="validation" className="scroll-mt-24">
-            {selectedComponentIds.length > 0 ? <ValidationPanel /> : <LockedSection step="5 · Validate" title="Validation unlocks after you build a stack" description="Add at least one technology, then Architect will check dependencies, conflicts, and architectural rules." />}
+            {selectedComponentIds.length > 0 ? <ValidationPanel /> : <LockedSection step={workflowStepLabel("validate")} title="Validation unlocks after you build a stack" description="Add at least one technology, then Architect will check dependencies, conflicts, and architectural rules." />}
           </div>
         </div>
       </div>
 
       <div id="blueprint" className="scroll-mt-24">
-        {validationReport.valid && selectedComponentIds.length > 0 ? <BlueprintPanel /> : <LockedSection step="6 · Blueprint" title="Blueprint generation comes after validation" description="Resolve the stack first, then turn the validated architecture into a development-ready blueprint." />}
+        {validationReport.valid && selectedComponentIds.length > 0 ? <BlueprintPanel /> : <LockedSection step={workflowStepLabel("blueprint")} title="Blueprint generation comes after validation" description="Resolve the stack first, then turn the validated architecture into a development-ready blueprint." />}
       </div>
 
       <Card id="docs" className="border-primary/20 bg-primary/5">

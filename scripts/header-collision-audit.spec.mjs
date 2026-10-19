@@ -142,3 +142,29 @@ test("write responsive header summary", async () => {
   fs.writeFileSync(path.join(reportDir, "summary.md"), markdown);
   console.log("\n" + markdown);
 });
+
+
+const publicViewports = [320, 375, 390, 768, 1280];
+for (const width of publicViewports) {
+  test(`public navigation audit — ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto("/about", { waitUntil: "networkidle" });
+    const nav = page.locator('header nav[aria-label="Primary"]');
+    await expect(nav).toBeVisible();
+
+    for (const label of ["Technologies", "Domains", "Stacks", "Documentation", "About", "Open the Architect"]) {
+      const link = nav.getByRole("link", { name: label, exact: true });
+      await expect(link, `Public navigation link missing at ${width}px: ${label}`).toBeVisible();
+      const box = await link.boundingBox();
+      expect(box?.height ?? 0, `Touch target below 44px at ${width}px: ${label}`).toBeGreaterThanOrEqual(44);
+    }
+
+    const dimensions = await page.evaluate(() => ({
+      viewport: window.innerWidth,
+      documentWidth: document.documentElement.scrollWidth,
+      navRight: document.querySelector('header nav[aria-label="Primary"]')?.getBoundingClientRect().right ?? 0,
+    }));
+    expect(dimensions.documentWidth, `Public page horizontal overflow at ${width}px`).toBeLessThanOrEqual(dimensions.viewport + 4);
+    expect(dimensions.navRight, `Public navigation extends beyond viewport at ${width}px`).toBeLessThanOrEqual(width + 4);
+  });
+}
