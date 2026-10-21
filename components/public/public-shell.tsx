@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ArrowUpRight, Boxes } from "lucide-react";
+import { Boxes } from "lucide-react";
 import Footer from "@/components/layout/footer";
 import { JsonLd } from "@/components/seo/json-ld";
 import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME } from "@/lib/seo/site";
@@ -23,7 +23,7 @@ export function PublicShell({ children }: { children: ReactNode }) {
             <Link href="/stacks" className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-2.5 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-3">Stacks</Link>
             <Link href="/content-detail" className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-2.5 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-3">Documentation</Link>
             <Link href="/about" className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-2.5 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-3">About</Link>
-            <Link href="/app" className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg bg-primary px-3.5 font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:ml-1 sm:px-4">Open the Architect <ArrowUpRight className="size-4" aria-hidden="true" /></Link>
+            <Link href="/app" className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg bg-primary px-3.5 font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:ml-1 sm:px-4">Open the Architect</Link>
           </nav>
         </div>
       </header>
