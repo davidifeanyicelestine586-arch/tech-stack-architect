@@ -20,7 +20,7 @@ test("shared primary navigation exposes an accessible mobile disclosure and acti
   const nav = read("../components/navigation/product-primary-nav.tsx");
   assert.match(nav, /aria-expanded=\{open\}/);
   assert.match(nav, /aria-controls="product-primary-navigation"/);
-  assert.match(nav, /aria-label="Primary navigation"/);
+  assert.match(nav, /aria-label="Primary"/);
   assert.match(nav, /aria-current=\{pathname === href \? "page" : undefined\}/);
   assert.match(nav, /sm:flex-row/);
   assert.match(nav, /min-h-11/);
