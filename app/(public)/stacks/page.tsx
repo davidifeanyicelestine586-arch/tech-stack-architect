@@ -25,7 +25,7 @@ export default function StacksPage() {
       <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {recipes.map((recipe) => {
           const domain = getDomain(recipe.domain);
-          return <article key={recipe.id} className="rounded-xl border border-border p-6"><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{domain?.shortTitle ?? recipe.domain}</p><h2 className="mt-2 text-xl font-semibold"><Link href={`/stacks/${recipe.id}`} className="underline-offset-4 hover:underline">{recipe.title}</Link></h2><p className="mt-2 text-base leading-relaxed text-muted-foreground">{recipe.description}</p><p className="mt-4 text-sm leading-relaxed text-muted-foreground">{recipe.difficulty} · {recipe.estimatedHours} hours</p></article>;
+          return <article key={recipe.id} className="group rounded-2xl border border-border bg-card p-6 transition duration-200 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{domain?.shortTitle ?? recipe.domain}</p><h2 className="mt-2 text-xl font-semibold"><Link href={`/stacks/${recipe.id}`} className="underline-offset-4 hover:underline">{recipe.title}</Link></h2><p className="mt-2 text-base leading-relaxed text-muted-foreground">{recipe.description}</p><p className="mt-4 text-sm leading-relaxed text-muted-foreground">{recipe.difficulty} · {recipe.estimatedHours} hours</p></article>;
         })}
       </div>
     </>
