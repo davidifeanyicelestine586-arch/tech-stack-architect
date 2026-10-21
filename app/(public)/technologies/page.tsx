@@ -38,7 +38,7 @@ export default function TechnologiesPage() {
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {items.map((component) => (
-                  <article key={component.id} className="rounded-xl border border-border p-5">
+                  <article key={component.id} className="group rounded-2xl border border-border bg-card p-5 transition duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5">
                     <h3 className="font-semibold"><Link href={`/technologies/${component.id}`} className="underline-offset-4 hover:underline">{component.name}</Link></h3>
                     <p className="mt-2 text-base leading-relaxed text-muted-foreground">{component.description}</p>
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{component.category} · {component.difficulty ?? "Unspecified"}</p>

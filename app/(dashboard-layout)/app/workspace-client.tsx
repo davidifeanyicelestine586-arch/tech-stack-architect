@@ -32,7 +32,7 @@ export default function WorkspacePageClient() {
 
   return (
     <div className="flex flex-col gap-6 pb-12 sm:gap-8">
-      <section className="relative overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-xs sm:p-6 md:p-8">
+      <section className="relative overflow-hidden rounded-3xl border border-border bg-card p-4 shadow-sm sm:p-6 md:p-8">
         <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center md:gap-6">
           <div className="flex max-w-2xl flex-col gap-2">
             <div className="flex flex-wrap items-center gap-2">
@@ -57,12 +57,12 @@ export default function WorkspacePageClient() {
           </div>
         </div>
 
-        <div className="mt-5 border-t border-border/60 pt-5 sm:mt-6 sm:pt-5">
+        <div className="mt-5 rounded-2xl border border-border/70 bg-muted/25 p-4 sm:mt-6 sm:p-5">
           <WorkflowProgress />
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs leading-relaxed text-muted-foreground"><span>Deterministic rules</span><span>Explainable matches</span><span>Validation before blueprint</span><span>Sign in when you want saved projects</span></div>
         </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4 border-t border-border/60 pt-5 sm:mt-6 sm:grid-cols-4 sm:pt-6">
+        <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4 rounded-2xl border border-border/70 bg-muted/20 p-4 sm:mt-6 sm:grid-cols-4 sm:p-5">
           <Metric label="Project Types" value={domains.length} />
           <Metric label="Technologies" value={components.length} />
           <Metric label="Stack Templates" value={recipes.length} />
