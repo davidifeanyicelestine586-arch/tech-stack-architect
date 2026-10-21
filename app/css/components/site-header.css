@@ -3,7 +3,7 @@
   --site-header-height: 64px;
   --site-header-gap: 8px;
   --site-header-control: 44px;
-  --site-header-focus: #2563eb;
+  --site-header-focus: var(--ring);
   --site-header-surface: var(--background);
   position: sticky;
   top: 0;
