@@ -5,14 +5,6 @@ import Footer from "@/components/layout/footer";
 import { JsonLd } from "@/components/seo/json-ld";
 import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME } from "@/lib/seo/site";
 
-const primaryLinks = [
-  ["Technologies", "/technologies"],
-  ["Domains", "/domains"],
-  ["Stacks", "/stacks"],
-  ["Documentation", "/content-detail"],
-  ["About", "/about"],
-] as const;
-
 export function PublicShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen overflow-x-clip bg-background text-foreground">
@@ -26,9 +18,11 @@ export function PublicShell({ children }: { children: ReactNode }) {
             <span className="min-w-0 leading-tight"><span className="block text-sm sm:text-base">Tech Stack Architect</span><span className="mt-0.5 hidden text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground sm:block">by Ediccrew</span></span>
           </Link>
           <nav aria-label="Primary" className="flex w-full min-w-0 items-center gap-1 overflow-x-auto pb-0.5 text-sm sm:w-auto sm:flex-1 sm:justify-end lg:flex-nowrap" >
-            {primaryLinks.map(([label, href]) => (
-              <Link key={href} href={href} className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-2.5 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-3">{label}</Link>
-            ))}
+            <Link href="/technologies" className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-2.5 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-3">Technologies</Link>
+            <Link href="/domains" className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-2.5 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-3">Domains</Link>
+            <Link href="/stacks" className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-2.5 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-3">Stacks</Link>
+            <Link href="/content-detail" className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-2.5 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-3">Documentation</Link>
+            <Link href="/about" className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-2.5 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-3">About</Link>
             <Link href="/app" className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg bg-primary px-3.5 font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:ml-1 sm:px-4">Open the Architect <ArrowUpRight className="size-4" aria-hidden="true" /></Link>
           </nav>
         </div>
