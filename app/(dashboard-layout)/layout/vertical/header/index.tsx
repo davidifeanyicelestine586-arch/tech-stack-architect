@@ -11,6 +11,7 @@ import LightDark from "../../shared/header/light-dark";
 import { Separator } from "@/components/ui/separator";
 import { ProjectPersistenceToolbar } from "@/components/architect/project-persistence-toolbar";
 import { AuthPanel } from "@/components/auth/auth-panel";
+import { ProductPrimaryNav } from "@/components/navigation/product-primary-nav";
 
 const Header = () => {
   const { toggleSidebar, isMobile, openMobile, open } = useSidebar();
@@ -80,6 +81,7 @@ const Header = () => {
           <LightDark />
         </div>
       </div>
+      <ProductPrimaryNav workspace />
     </header>
   );
 };
