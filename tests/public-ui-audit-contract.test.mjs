@@ -73,3 +73,21 @@ test("contact page offers a usable contact route and legal pages disclose review
   assert.ok(/review/i.test(terms));
   assert.equal(contact.includes("TODO(owner)"), false);
 });
+
+test("redesigned landing remains registry-driven and exposes the full architecture journey", () => {
+  const landing = read("app/page.tsx");
+  const tokens = read("app/globals.css");
+  for (const source of ["getAllComponents()", "getAllDomains()", "getAllRecipes()"]) {
+    assert.ok(landing.includes(source), `landing must continue using registry source: ${source}`);
+  }
+  for (const stage of ["Define", "Analyze", "Review", "Build", "Validate", "Blueprint"]) {
+    assert.ok(landing.includes(stage), `landing is missing workflow stage: ${stage}`);
+  }
+  assert.ok(landing.includes('href="/app#define"'));
+  assert.ok(landing.includes('href="/technologies"'));
+  assert.ok(landing.includes('alternates: { canonical: "/" }'));
+  assert.ok(landing.includes('"@type": "SoftwareApplication"'));
+  assert.ok(tokens.includes("--primary: oklch(0.39 0.09 163);"));
+  assert.ok(tokens.includes("--primary: oklch(0.76 0.13 158);"));
+  assert.ok(tokens.includes("@media (prefers-reduced-motion: reduce)"));
+});
