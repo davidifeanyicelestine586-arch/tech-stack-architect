@@ -39,7 +39,7 @@ export function ProductPrimaryNav({ workspace = false }: { workspace?: boolean }
         </button>
         <nav
           id="product-primary-navigation"
-          aria-label="Primary navigation"
+          aria-label="Primary"
           className={`${open ? "flex" : "hidden"} absolute left-0 right-0 top-full z-50 flex-col gap-1 border-b border-border bg-background p-3 shadow-lg sm:static sm:flex sm:flex-row sm:flex-wrap sm:items-center sm:justify-end sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none ${workspace ? "sm:justify-start" : ""}`}
         >
           {links.map(({ label, href }) => (
