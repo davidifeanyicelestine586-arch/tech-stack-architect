@@ -150,6 +150,9 @@ for (const width of publicViewports) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto("/about", { waitUntil: "networkidle" });
     const nav = page.locator('header nav[aria-label="Primary"]');
+    if (width < 640) {
+      await page.getByRole("button", { name: "Menu", exact: true }).click();
+    }
     await expect(nav).toBeVisible();
 
     for (const label of ["Technologies", "Domains", "Stacks", "Documentation", "About", "Open the Architect"]) {

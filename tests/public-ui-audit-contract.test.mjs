@@ -8,14 +8,17 @@ const escapedNewline = String.fromCharCode(92) + "n";
 
 test("public shell renders real whitespace and exposes usable responsive navigation", () => {
   const shell = read("components/public/public-shell.tsx");
+  const navigation = read("components/navigation/product-primary-nav.tsx");
   assert.equal(shell.includes(escapedNewline), false);
-  for (const label of ["Technologies", "Domains", "Stacks", "Documentation", "About", "Open the Architect"]) {
-    assert.ok(shell.includes(`>${label}</Link>`), `missing public navigation link: ${label}`);
+  for (const label of ["Technologies", "Domains", "Stacks", "Documentation", "About"]) {
+    assert.ok(navigation.includes(`label: "${label}"`), `missing shared navigation link: ${label}`);
   }
+  assert.ok(navigation.includes("Open the Architect"));
+  assert.ok(navigation.includes('href="/app"'));
   assert.ok(shell.includes("flex-wrap"));
   assert.ok(shell.includes('href="#public-main"'));
   assert.ok(shell.includes('id="public-main"'));
-  assert.ok(shell.includes("min-h-11"));
+  assert.ok(read("components/navigation/product-primary-nav.tsx").includes("min-h-11"));
   const button = read("components/ui/button.tsx");
   assert.ok(button.includes("cn-button-size-default h-11"));
   assert.ok(button.includes("cn-button-size-icon size-11"));
@@ -57,7 +60,7 @@ test("public catalog and documentation use readable body typography", () => {
   const domains = read("app/(public)/domains/page.tsx");
   const stacks = read("app/(public)/stacks/page.tsx");
   const docs = read("app/(dashboard-layout)/content-detail/page.tsx");
-  assert.ok(shell.includes("min-h-11"));
+  assert.ok(read("components/navigation/product-primary-nav.tsx").includes("min-h-11"));
   assert.ok(about.includes("text-lg leading-relaxed"));
   for (const source of [technologies, domains, stacks]) assert.ok(source.includes("text-base leading-relaxed text-muted-foreground"));
   assert.ok(docs.includes("text-sm leading-relaxed text-muted-foreground"));
