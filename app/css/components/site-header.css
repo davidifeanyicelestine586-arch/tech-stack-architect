@@ -87,6 +87,12 @@
 }
 
 @media (max-width: 1199px) {
+  /* Preserve button names while reducing visual chrome at tablet widths. */
+  .site-header__persistence button[aria-label="Open saved project"] span,
+  .site-header__persistence button[aria-label="Save current project"] span {
+    display: none;
+  }
+
   .site-header__search {
     flex-basis: 180px;
     max-width: 200px;
@@ -237,6 +243,18 @@
 
   .site-header__separator {
     display: none;
+  }
+}
+
+/* Keep the final control visible on narrow phones instead of clipping it. */
+@media (max-width: 390px) {
+  .site-header__row {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+
+  .site-header__theme {
+    margin-left: auto;
   }
 }
 
