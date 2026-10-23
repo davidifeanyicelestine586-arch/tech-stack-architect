@@ -254,7 +254,11 @@
   }
 
   .site-header__theme {
-    margin-left: auto;
+    display: flex;
+    flex: 1 0 100%;
+    justify-content: flex-end;
+    width: auto;
+    margin-left: 0;
   }
 }
 
