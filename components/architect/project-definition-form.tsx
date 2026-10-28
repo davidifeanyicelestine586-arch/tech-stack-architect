@@ -86,10 +86,10 @@ export function ProjectDefinitionForm() {
 
       <CardContent className="p-4 md:p-6">
         <form className="grid gap-6" onSubmit={handleSubmit} aria-busy={isPending}>
-          <fieldset className="grid gap-4">
+          <fieldset className="grid min-w-0 gap-4">
             <legend className="text-sm font-bold text-foreground">Project basics</legend>
-            <div className="grid gap-4 md:grid-cols-2">
-              <label htmlFor="project-name" className="grid gap-1.5 text-xs font-semibold text-foreground">
+            <div className="grid min-w-0 gap-4 md:grid-cols-2">
+              <label htmlFor="project-name" className="grid min-w-0 gap-1.5 text-xs font-semibold text-foreground">
                 Project name
                 <Input
                   id="project-name"
@@ -107,7 +107,7 @@ export function ProjectDefinitionForm() {
                 </span>
               </label>
 
-              <label htmlFor="project-domain" className="grid gap-1.5 text-xs font-semibold text-foreground">
+              <label htmlFor="project-domain" className="grid min-w-0 gap-1.5 text-xs font-semibold text-foreground">
                 Project type
                 <select
                   id="project-domain"
@@ -117,7 +117,7 @@ export function ProjectDefinitionForm() {
                   disabled={isPending}
                   aria-describedby="project-definition-error project-domain-error"
                   aria-invalid={Boolean(fieldErrors.domain)}
-                  className="h-11 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="h-11 w-full min-w-0 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {domains.map((domain) => <option key={domain.id} value={domain.id}>{domain.title}</option>)}
                 </select>
@@ -128,9 +128,9 @@ export function ProjectDefinitionForm() {
             </div>
           </fieldset>
 
-          <fieldset className="grid gap-4">
+          <fieldset className="grid min-w-0 gap-4">
             <legend className="text-sm font-bold text-foreground">What should it do?</legend>
-            <label htmlFor="project-description" className="grid gap-1.5 text-xs font-semibold text-foreground">
+            <label htmlFor="project-description" className="grid min-w-0 gap-1.5 text-xs font-semibold text-foreground">
               Describe the project
               <textarea
                 id="project-description"
@@ -140,7 +140,7 @@ export function ProjectDefinitionForm() {
                 placeholder="Example: A SaaS application where users upload PDF documents and ask questions about their contents."
                 aria-describedby="project-definition-error project-description-error"
                 aria-invalid={Boolean(fieldErrors.description)}
-                className="min-h-24 rounded-md border border-input bg-background px-3 py-2.5 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground/70 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                className="min-h-24 w-full min-w-0 rounded-md border border-input bg-background px-3 py-2.5 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground/70 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={isPending}
               />
               <span id="project-description-error" className="min-h-4 text-[11px] font-normal text-rose-600 dark:text-rose-400">
@@ -148,7 +148,7 @@ export function ProjectDefinitionForm() {
               </span>
             </label>
 
-            <label htmlFor="project-requirements" className="grid gap-1.5 text-xs font-semibold text-foreground">
+            <label htmlFor="project-requirements" className="grid min-w-0 gap-1.5 text-xs font-semibold text-foreground">
               Goals and requirements
               <textarea
                 id="project-requirements"
@@ -157,7 +157,7 @@ export function ProjectDefinitionForm() {
                 placeholder="Example: web application, document upload, PDF processing, data storage, deployment"
                 aria-describedby="project-definition-error project-requirements-error"
                 aria-invalid={false}
-                className="min-h-24 rounded-md border border-input bg-background px-3 py-2.5 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                className="min-h-24 w-full min-w-0 rounded-md border border-input bg-background px-3 py-2.5 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={isPending}
               />
               <span id="project-requirements-error" className="min-h-4 text-[11px] font-normal text-rose-600 dark:text-rose-400">
@@ -166,9 +166,9 @@ export function ProjectDefinitionForm() {
             </label>
           </fieldset>
 
-          <fieldset className="grid gap-4">
+          <fieldset className="grid min-w-0 gap-4">
             <legend className="text-sm font-bold text-foreground">How should Architect optimize?</legend>
-            <label htmlFor="project-difficulty" className="grid max-w-sm gap-1.5 text-xs font-semibold text-foreground">
+            <label htmlFor="project-difficulty" className="grid min-w-0 max-w-sm gap-1.5 text-xs font-semibold text-foreground">
               Complexity preference
               <select
                 id="project-difficulty"
@@ -177,7 +177,7 @@ export function ProjectDefinitionForm() {
                 disabled={isPending}
                 aria-describedby="project-definition-error project-difficulty-error"
                 aria-invalid={false}
-                className="h-11 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                className="h-11 w-full min-w-0 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <option value="Beginner">Beginner — prioritize simplicity</option>
                 <option value="Intermediate">Intermediate — balance simplicity and capability</option>

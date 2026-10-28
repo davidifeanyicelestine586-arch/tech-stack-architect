@@ -25,8 +25,8 @@ export function ProductPrimaryNav({ workspace = false }: { workspace?: boolean }
     }`;
 
   return (
-    <div className={workspace ? "border-t border-border/70 px-3 py-2 sm:px-4" : "w-full min-w-0 sm:w-auto sm:flex-1"}>
-      <div className={workspace ? "flex items-center justify-between gap-2" : "flex items-center justify-between gap-2 sm:justify-end"}>
+    <div className={workspace ? "border-t border-border/70 px-3 py-2 sm:px-4" : "w-auto min-w-0 shrink-0 sm:flex-1"}>
+      <div className={workspace ? "flex items-center justify-between gap-2" : "flex items-center justify-end gap-2"}>
         <button
           type="button"
           className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg border border-border px-3 text-sm font-medium text-foreground sm:hidden"

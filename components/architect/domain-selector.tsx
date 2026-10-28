@@ -35,7 +35,7 @@ export function DomainSelector() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4" role="group" aria-label="Project type">
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4" role="group" aria-label="Project type">
         <button
           type="button"
           onClick={() => setActiveDomain("all")}
