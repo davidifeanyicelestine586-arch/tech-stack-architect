@@ -15,7 +15,8 @@ test("public shell renders real whitespace and exposes usable responsive navigat
   }
   assert.ok(navigation.includes("Open the Architect"));
   assert.ok(navigation.includes('href="/app"'));
-  assert.ok(shell.includes("flex-wrap"));
+  assert.ok(shell.includes("flex-nowrap"), "public header keeps the brand and menu on one row");
+  assert.ok(navigation.includes("flex items-center justify-end gap-2"), "mobile menu is aligned to the right");
   assert.ok(shell.includes('href="#public-main"'));
   assert.ok(shell.includes('id="public-main"'));
   assert.ok(read("components/navigation/product-primary-nav.tsx").includes("min-h-11"));

@@ -39,12 +39,12 @@ export function ValidationPanel() {
   return (
     <Card className={cn("overflow-hidden", isReady && "border-emerald-500/30")}>
       <CardHeader className="border-b border-border/50 pb-3">
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
               {isReady ? <CheckCircle2 aria-hidden="true" className="size-4 text-emerald-600 dark:text-emerald-400" /> : <ShieldCheck aria-hidden="true" className="size-4 text-primary" />}
               <Badge variant="outline" className="shrink-0 text-xs font-bold">{workflowStepLabel("validate")}</Badge>
-              <CardTitle className="text-sm font-bold">Compatibility Check</CardTitle>
+              <CardTitle className="min-w-0 text-sm font-bold">Compatibility Check</CardTitle>
             </div>
             <CardDescription className="pt-1 text-xs">{isReady ? "Your selected technologies work together." : `${status}. Review these items before generating your blueprint.`}</CardDescription>
           </div>
