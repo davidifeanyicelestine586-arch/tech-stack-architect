@@ -109,7 +109,7 @@ export function AuthPanel() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button variant="outline" size="sm" className="h-11 gap-1.5 px-2 text-xs">
+          <Button variant="outline" size="sm" aria-label="Sign in" className="h-11 gap-1.5 px-2 text-xs">
             <UserRound className="size-3.5" aria-hidden="true" />
             <span>Sign in</span>
           </Button>
