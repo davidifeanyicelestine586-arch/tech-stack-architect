@@ -25,6 +25,14 @@ test("public shell renders real whitespace and exposes usable responsive navigat
   assert.ok(button.includes("cn-button-size-icon size-11"));
 });
 
+test("account trigger retains an accessible name when its label is hidden responsively", () => {
+  const auth = read("components/auth/auth-panel.tsx");
+  const headerStyles = read("app/css/components/site-header.css");
+  assert.match(auth, /<Button\b[^>]*aria-label="Sign in"[^>]*>/);
+  assert.match(auth, /<span>Sign in<\/span>/);
+  assert.match(headerStyles, /\.site-header__auth span\s*\{\s*display:\s*none;/);
+});
+
 test("workflow navigation preserves the canonical six-stage order", () => {
   const workflow = read("lib/navigation/workflow.ts");
   const routes = read("lib/navigation/routes.ts");
