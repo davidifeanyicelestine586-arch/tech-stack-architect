@@ -5,6 +5,7 @@
 - [Current project state](current-project-state.md) — the current architecture and operational state.
 - [Vercel deployment](vercel-deployment.md) — active deployment and environment guidance.
 - [Accessibility acceptance](ACCESSIBILITY_ACCEPTANCE.md) — accessibility expectations and acceptance criteria.
+- [Accessibility regression testing](accessibility-regression-testing.md) — CI coverage, local audit commands, and artifacts.
 
 ## Historical
 
