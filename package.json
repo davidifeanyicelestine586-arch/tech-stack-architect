@@ -12,6 +12,7 @@
     "lint": "eslint",
     "check": "tsc --noEmit",
     "test": "node --test",
+    "audit:a11y": "node scripts/accessibility-remaining-audit.mjs",
     "legacy:dev": "node node_modules/http-server/bin/http-server ./ -p 5000 -c-1"
   },
   "dependencies": {
@@ -42,6 +43,7 @@
     "@types/node": "^25",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "axe-core": "4.12.0",
     "eslint": "^9.39.5",
     "eslint-config-next": "16.3.3",
     "http-server": "^14.1.1",
