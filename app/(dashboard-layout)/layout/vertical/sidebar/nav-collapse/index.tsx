@@ -93,6 +93,7 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
                 <Link
                   key={itemIndex}
                   href={isLocked(item.routeId) ? lockedTarget(item.routeId) : item.url || "#"}
+                  aria-label={item.name}
                   target={item.external ? "_blank" : undefined}
                   aria-current={currentValue(item)}
                   aria-disabled={isLocked(item.routeId) || undefined}
@@ -132,6 +133,7 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
                       <Link
                         key={subIndex}
                         href={isLocked(sub.routeId) ? lockedTarget(sub.routeId) : sub.url || "#"}
+                        aria-label={sub.name}
                         target={sub.external ? "_blank" : undefined}
                         aria-current={currentValue(sub)}
                         aria-disabled={isLocked(sub.routeId) || undefined}

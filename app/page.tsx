@@ -81,11 +81,11 @@ export default function LandingPage() {
               <div className="mt-3 flex flex-wrap items-center justify-between gap-2 px-1 text-[11px] text-muted-foreground"><span>Designed for engineering decisions</span><span>{components.length} registered technologies</span></div>
             </div>
           </div>
-          <div className="grid grid-cols-3 border-t border-border bg-muted/30">
+          <dl className="grid grid-cols-3 border-t border-border bg-muted/30">
             <Metric label="Technologies" value={components.length} />
             <Metric label="Project domains" value={domains.length} />
             <Metric label="Stack recipes" value={recipes.length} />
-          </div>
+          </dl>
         </section>
 
         <section aria-labelledby="principles-heading">

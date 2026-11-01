@@ -71,7 +71,7 @@ function Search() {
         <Input
           type="search"
           aria-label="Search workspace navigation"
-          aria-controls="workspace-search-results"
+          aria-controls={query ? "workspace-search-results" : undefined}
           placeholder="Search architecture, domains..."
           className="h-8.5 rounded-lg border-border bg-muted/40 pl-9 text-xs focus-visible:bg-background focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary"
           value={query}

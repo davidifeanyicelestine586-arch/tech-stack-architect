@@ -33,10 +33,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
 
       <SidebarFooter className="p-4">
-        <div className="hide-menu flex flex-col gap-2">
+        <aside aria-label="Workspace status and account" className="hide-menu flex flex-col gap-2">
           <NavSecondary />
           <NavUser />
-        </div>
+        </aside>
       </SidebarFooter>
     </Sidebar>
   );
