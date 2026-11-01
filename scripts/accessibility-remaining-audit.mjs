@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { chromium } from "playwright";
+import { formatAuditReportHeading } from "./accessibility-report-heading.mjs";
 
 const require = createRequire(import.meta.url);
 let axePath;
@@ -12,6 +13,7 @@ try {
 }
 const baseUrl = process.env.A11Y_AUDIT_BASE_URL ?? "http://127.0.0.1:3007";
 const outputRoot = path.resolve(process.env.A11Y_AUDIT_OUTPUT_ROOT ?? "playwright-report/application-accessibility/current/remaining");
+const reportLabel = process.env.A11Y_AUDIT_LABEL;
 const viewports = [
   { width: 375, height: 568 },
   { width: 390, height: 700 },
@@ -165,7 +167,7 @@ try {
     results,
   };
   await fs.writeFile(path.join(outputRoot, "remaining-audit.json"), JSON.stringify(summary, null, 2));
-  const lines = ["# Remaining pages and shared UI baseline audit", "", `Audited ${results.length} route/state/viewport combinations.`, "", "| Route / state | Width | HTTP | Axe violations | Intersections | Document overflow |", "|---|---:|---:|---:|---:|---:|"];
+  const lines = [formatAuditReportHeading(reportLabel), "", `Audited ${results.length} route/state/viewport combinations.`, "", "| Route / state | Width | HTTP | Axe violations | Intersections | Document overflow |", "|---|---:|---:|---:|---:|---:|"];
   for (const r of results) lines.push(`| ${r.route} · ${r.state} | ${r.width} | ${r.httpStatus} | ${r.axe.violations.length} | ${r.geometry.intersections.length} | ${r.geometry.document.scrollWidth>r.geometry.document.clientWidth ? "yes" : "no"} |`);
   lines.push("", `Unique axe issues: ${[...new Set(summary.violations.map((v)=>v.id))].join(", ") || "none"}.`, `Axe incomplete checks: ${summary.incomplete.length}.`, `Geometry findings: ${summary.geometryFindings.length}.`, "", "The open primary menu and open authentication dialog were treated as intentional overlay states. This is an automated/manual audit snapshot, not formal WCAG certification.");
   await fs.writeFile(path.join(outputRoot, "remaining-audit.md"), lines.join("\n"));
