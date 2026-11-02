@@ -21,6 +21,7 @@ const viewports = [
 ];
 const pages = [
   { id: "contact", route: "/contact" },
+  { id: "documentation", route: "/content-detail" },
   { id: "privacy", route: "/privacy" },
   { id: "terms", route: "/terms" },
 ];

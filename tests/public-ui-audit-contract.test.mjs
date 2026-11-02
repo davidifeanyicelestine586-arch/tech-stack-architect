@@ -8,6 +8,7 @@ const escapedNewline = String.fromCharCode(92) + "n";
 
 test("public shell renders real whitespace and exposes usable responsive navigation", () => {
   const shell = read("components/public/public-shell.tsx");
+  const sharedHeader = read("components/navigation/product-shell-header.tsx");
   const navigation = read("components/navigation/product-primary-nav.tsx");
   assert.equal(shell.includes(escapedNewline), false);
   for (const label of ["Technologies", "Domains", "Stacks", "Documentation", "About"]) {
@@ -15,8 +16,10 @@ test("public shell renders real whitespace and exposes usable responsive navigat
   }
   assert.ok(navigation.includes("Open the Architect"));
   assert.ok(navigation.includes('href="/app"'));
-  assert.ok(shell.includes("flex-nowrap"), "public header keeps the brand and menu on one row");
+  assert.ok(shell.includes("<ProductShellHeader />"), "public shell uses the shared product header");
+  assert.ok(sharedHeader.includes("flex-nowrap"), "brand and primary navigation stay on one row");
   assert.ok(navigation.includes("flex items-center justify-end gap-2"), "mobile menu is aligned to the right");
+  assert.ok(navigation.includes("lg:hidden"), "compact menu remains active through tablet widths");
   assert.ok(shell.includes('href="#public-main"'));
   assert.ok(shell.includes('id="public-main"'));
   assert.ok(read("components/navigation/product-primary-nav.tsx").includes("min-h-11"));
@@ -68,12 +71,21 @@ test("public catalog and documentation use readable body typography", () => {
   const technologies = read("app/(public)/technologies/page.tsx");
   const domains = read("app/(public)/domains/page.tsx");
   const stacks = read("app/(public)/stacks/page.tsx");
-  const docs = read("app/(dashboard-layout)/content-detail/page.tsx");
+  const docs = read("app/(public)/content-detail/page.tsx");
   assert.ok(read("components/navigation/product-primary-nav.tsx").includes("min-h-11"));
   assert.ok(about.includes("text-lg leading-relaxed"));
   for (const source of [technologies, domains, stacks]) assert.ok(source.includes("text-base leading-relaxed text-muted-foreground"));
   assert.ok(docs.includes("text-sm leading-relaxed text-muted-foreground"));
   assert.equal(shell.includes(escapedNewline), false);
+});
+
+test("documentation stays at its public canonical URL and inherits the public shell", () => {
+  const publicLayout = read("app/(public)/layout.tsx");
+  const docs = read("app/(public)/content-detail/page.tsx");
+  assert.match(publicLayout, /<PublicShell>\{children\}<\/PublicShell>/);
+  assert.match(docs, /alternates: \{ canonical: "\/content-detail" \}/);
+  assert.match(docs, /breadcrumbJsonLd/);
+  assert.match(docs, /href="\/app"/);
 });
 
 test("contact page offers a usable contact route and legal pages disclose review status", () => {

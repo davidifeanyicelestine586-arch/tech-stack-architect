@@ -103,7 +103,7 @@ try {
     await record(page, width, "baseline");
     await page.close();
 
-    if (width < 640) {
+    if (width < 1024) {
       page = await freshPage(width);
       const menuButton = page.locator('button[aria-controls="product-primary-navigation"]');
       await menuButton.click();
