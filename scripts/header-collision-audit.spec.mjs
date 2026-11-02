@@ -137,7 +137,7 @@ test("write responsive header summary", async () => {
     "|---:|---:|---:|:---:|",
     ...rows.map((row) => `| ${row.width}px | ${row.headerHeight}px | ${row.overlaps} | ${row.pageOverflow ? "yes" : "no"} |`),
     "",
-    "Contract: single-row header, no page overflow, sticky during vertical scroll, and mobile search remains usable.",
+    "Contract: shared brand and primary-navigation row; workspace-only actions remain separate; no page overflow; sticky header; usable mobile search.",
   ].join("\n");
   fs.writeFileSync(path.join(reportDir, "summary.md"), markdown);
   console.log("\n" + markdown);
@@ -150,8 +150,24 @@ for (const width of publicViewports) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto("/about", { waitUntil: "networkidle" });
     const nav = page.locator('header nav[aria-label="Primary"]');
-    if (width < 640) {
-      await page.getByRole("button", { name: "Menu", exact: true }).click();
+    const brand = page.getByRole("link", { name: "Ediccrew Tech Stack Architect home" });
+    if (width < 1024) {
+      const menu = page.getByRole("button", { name: "Menu", exact: true });
+      const [brandBox, menuBox] = await Promise.all([brand.boundingBox(), menu.boundingBox()]);
+      expect(brandBox && menuBox, `Brand and menu should be visible at ${width}px`).toBeTruthy();
+      expect(brandBox.x + brandBox.width, `Menu should remain to the right of the brand at ${width}px`).toBeLessThan(menuBox.x);
+      const brandCenterY = brandBox.y + brandBox.height / 2;
+      const menuCenterY = menuBox.y + menuBox.height / 2;
+      expect(Math.abs(brandCenterY - menuCenterY), `Menu should share the brand row at ${width}px`).toBeLessThan(20);
+      await menu.click();
+      if (width === 375) {
+        await page.keyboard.press("Tab");
+        await expect(nav.getByRole("link", { name: "Technologies", exact: true })).toBeFocused();
+        await page.keyboard.press("Escape");
+        await expect(nav).toBeHidden();
+        await expect(menu).toBeFocused();
+        await menu.click();
+      }
     }
     await expect(nav).toBeVisible();
 
@@ -171,3 +187,35 @@ for (const width of publicViewports) {
     expect(dimensions.navRight, `Public navigation extends beyond viewport at ${width}px`).toBeLessThanOrEqual(width + 4);
   });
 }
+
+test("shared product navigation connects the landing, public documentation, and workspace shells", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/", { waitUntil: "networkidle" });
+
+  const header = page.locator("header.site-header");
+  const nav = header.getByRole("navigation", { name: "Primary" });
+  const brand = header.getByRole("link", { name: "Ediccrew Tech Stack Architect home" });
+  const workspaceSearch = page.locator('input[aria-label="Search workspace navigation"]');
+
+  await expect(header).toBeVisible();
+  await expect(nav).toBeVisible();
+  await expect(brand).toBeVisible();
+  await expect(workspaceSearch).toHaveCount(0);
+
+  await nav.getByRole("link", { name: "Documentation", exact: true }).click();
+  await expect(page).toHaveURL(/\/content-detail\/?$/);
+  await expect(nav.getByRole("link", { name: "Documentation", exact: true })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("heading", { name: "Documentation", exact: true })).toBeVisible();
+  await expect(page.locator("#workspace-navigation")).toHaveCount(0);
+  await expect(workspaceSearch).toHaveCount(0);
+
+  await nav.getByRole("link", { name: "Open the Architect", exact: true }).click();
+  await expect(page).toHaveURL(/\/app\/?$/);
+  await expect(nav.getByRole("link", { name: "Workspace", exact: true })).toHaveAttribute("aria-current", "page");
+  await expect(workspaceSearch).toBeVisible();
+  await expect(page.getByRole("button", { name: "Create new project" })).toBeVisible();
+
+  await brand.click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(workspaceSearch).toHaveCount(0);
+});

@@ -64,6 +64,8 @@ The public site is the indexable layer; the interactive workspace lives at `/app
 - `/content-detail` — documentation registry
 - `/app` — interactive workspace; intentionally `noindex`
 
+The landing, catalog, and documentation routes share one product brand and primary-navigation header. `/app` uses the same header and adds a separate workspace-controls row and workflow sidebar; those workspace actions are not rendered on public pages.
+
 ## Technology stack
 
 | Layer | Technology |

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, BookOpen, Clock, ShieldCheck } from "lucide-react";
+import { ArrowRight, BookOpen, Clock, ShieldCheck } from "lucide-react";
 import { JsonLd } from "@/components/seo/json-ld";
 import { absoluteUrl } from "@/lib/seo/site";
 import { breadcrumbJsonLd } from "@/lib/seo/content";
@@ -23,7 +23,7 @@ export default function ContentDetailPage() {
     <div className="flex flex-col gap-8 pb-12">
       <section className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 shadow-xs md:p-8">
         <Button nativeButton={false} variant="ghost" className="w-fit gap-2 px-0 text-xs text-muted-foreground hover:bg-transparent hover:text-foreground" render={<Link href="/app" />}>
-          <ArrowLeft className="size-3.5" aria-hidden="true" /> Back to Workspace
+          <ArrowRight className="size-3.5" aria-hidden="true" /> Open the Architect
         </Button>
         <div className="flex items-start gap-3">
           <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"><BookOpen className="size-5" aria-hidden="true" /></div>
