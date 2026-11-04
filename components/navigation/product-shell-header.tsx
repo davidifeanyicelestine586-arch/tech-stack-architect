@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { Boxes } from "lucide-react";
+import Image from "next/image";
 import { ProductPrimaryNav } from "./product-primary-nav";
 
 type ProductShellHeaderProps = {
@@ -18,15 +18,24 @@ export function ProductShellHeader({ workspaceControls }: ProductShellHeaderProp
           className="group flex min-w-0 shrink-0 items-center gap-2.5 rounded-md font-bold tracking-tight outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label="Ediccrew Tech Stack Architect home"
         >
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-            <Boxes className="size-5" aria-hidden="true" />
-          </span>
-          <span className="min-w-0 leading-tight">
-            <span className="block text-sm sm:text-base">Tech Stack Architect</span>
-            <span className="mt-0.5 hidden text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground sm:block">
-              by Ediccrew
-            </span>
-          </span>
+          <Image
+            src="/brand/logo-full-light.png"
+            alt=""
+            width={940}
+            height={320}
+            sizes="(min-width: 640px) 150px, 124px"
+            priority
+            className="h-auto w-[124px] sm:w-[150px] dark:hidden"
+          />
+          <Image
+            src="/brand/logo-full-dark.png"
+            alt=""
+            width={525}
+            height={195}
+            sizes="(min-width: 640px) 150px, 124px"
+            priority
+            className="hidden h-auto w-[124px] sm:w-[150px] dark:block"
+          />
         </Link>
         <ProductPrimaryNav />
       </div>

@@ -17,9 +17,12 @@ test("SEO foundation exposes crawlability files", () => {
 test("root metadata defines canonical, site base, social image, and favicon", () => {
   const layout = read("app/layout.tsx");
   assert.match(layout, /metadataBase: new URL\(SITE_URL\)/);
-  assert.match(layout, /canonical: \"\/\"/);
+  assert.match(layout, /canonical: "\/"/);
   assert.match(layout, /OG-Image\.png/);
   assert.match(layout, /favicon\.ico/);
+  assert.match(layout, /brand\/favicon-32\.png/);
+  assert.match(layout, /apple: "\/brand\/app-icon\.png"/);
+  assert.match(read("app/manifest.ts"), /src: "\/brand\/app-icon\.png"/);
   assert.match(layout, /twitter:/);
   assert.doesNotMatch(layout, /<head>/);
   assert.doesNotMatch(layout, /<link rel=\"icon\"/);
