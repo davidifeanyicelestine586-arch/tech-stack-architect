@@ -12,13 +12,14 @@ const header = read("app/(dashboard-layout)/layout/vertical/header/index.tsx");
 const workspaceHeaderControls = read("app/(dashboard-layout)/layout/vertical/header/workspace-header-controls.tsx");
 const dashboardClientShell = read("app/(dashboard-layout)/dashboard-client-shell.tsx");
 const sidebarUi = read("components/ui/sidebar.tsx");
+const navigationAudit = read("scripts/navigation-sidebar-audit.mjs");
 const workflow = read("lib/navigation/workflow.ts");
 const workflowProgress = read("components/architect/workflow-progress.tsx");
 const workspace = read("app/(dashboard-layout)/app/workspace-client.tsx");
 const rootLayout = read("app/layout.tsx");
 const projectDefinition = read("components/architect/project-definition-form.tsx");
 
- test("responsive navigation uses one NavCollapse tree", () => {
+test("responsive navigation uses one NavCollapse tree", () => {
   assert.equal((sidebar.match(/<NavCollapse\b/g) ?? []).length, 1);
   assert.match(navCollapse, /!item\.mobilePrimary && "max-lg:hidden"/);
 });
@@ -31,6 +32,7 @@ test("mobile navigation trigger exposes disclosure state and target", () => {
   assert.match(workspaceHeaderControls, /aria-expanded=\{isMobile \? openMobile : open\}/);
   assert.match(workspaceHeaderControls, /aria-controls="workspace-navigation"/);
   assert.match(sidebarUi, /id="workspace-navigation"/);
+  assert.ok(navigationAudit.includes("workspace-header-controls.tsx + app/css/components/site-header.css"));
 });
 
 test("application shell provides a skip link and main content target", () => {

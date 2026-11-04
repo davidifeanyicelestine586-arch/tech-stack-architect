@@ -21,7 +21,7 @@ const targetSelector = [
 
 const sourceFor = (selector) => {
   if (selector.includes("product-primary-navigation")) return "components/navigation/product-primary-nav.tsx";
-  if (selector.includes("site-header__sidebar-trigger")) return "app/(dashboard-layout)/layout/vertical/header/index.tsx + app/css/components/site-header.css";
+  if (selector.includes("site-header__sidebar-trigger")) return "app/(dashboard-layout)/layout/vertical/header/workspace-header-controls.tsx + app/css/components/site-header.css";
   if (selector.includes("workspace-navigation")) return "app/(dashboard-layout)/layout/vertical/sidebar/app-sidebar.tsx + components/ui/sidebar.tsx";
   return "app/(dashboard-layout)/layout/vertical/sidebar/nav-collapse/index.tsx";
 };
