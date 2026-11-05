@@ -263,7 +263,7 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
     setActiveRecipeId(recipeId); if (recipe.domain) setActiveDomain(recipe.domain);
     const mergedIds = Array.from(new Set([...selectedComponentIds, ...(recipe.components || [])])); setSelectedComponentIds(mergedIds);
     const result = architect.build({ recipe: recipeId, selectedComponents: mergedIds });
-    if (result.blueprint) setBlueprint({ ...(result.blueprint as Blueprint), project: projectDefinition.name.trim() || projectDefinition.description.trim() ? projectDefinition : undefined, validation: toValidationSummary(result.report) });
+    if (result.blueprint) setBlueprint({ ...result.blueprint, project: projectDefinition.name.trim() || projectDefinition.description.trim() ? projectDefinition : undefined, validation: toValidationSummary(result.report) });
   }, [recipes, selectedComponentIds, architect, projectDefinition]);
   const toggleComponent = useCallback((id: string) => setSelectedComponentIds((prev) => prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]), []);
   const selectComponents = useCallback((ids: string[]) => setSelectedComponentIds(Array.from(new Set(ids))), []);
