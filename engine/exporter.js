@@ -72,7 +72,7 @@ export default class Exporter {
 
         if (report.domain) {
 
-            md += `## Domain`;
+            md += `## Domain\n`;
             md += `${report.domain}\n\n`;
 
         }

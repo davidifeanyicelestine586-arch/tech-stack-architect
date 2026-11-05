@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { ShieldCheck, AlertTriangle, CheckCircle2, Info, ArrowUpRight, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { workflowStepLabel } from "@/lib/navigation/workflow";
 
 type IssueSeverity = "error" | "warning" | "info" | "suggestion";
 
@@ -13,7 +14,7 @@ const severityMeta: Record<IssueSeverity, { label: string; icon: typeof AlertTri
   error: { label: "Error", icon: XCircle, className: "border-rose-500/20 bg-rose-500/5 text-rose-700 dark:text-rose-400" },
   warning: { label: "Warning", icon: AlertTriangle, className: "border-amber-500/20 bg-amber-500/5 text-amber-700 dark:text-amber-400" },
   info: { label: "Info", icon: Info, className: "border-sky-500/20 bg-sky-500/5 text-sky-700 dark:text-sky-400" },
-  suggestion: { label: "Suggestion", icon: ArrowUpRight, className: "border-blue-500/20 bg-blue-500/5 text-blue-700 dark:text-blue-400" },
+  suggestion: { label: "Suggestion", icon: ArrowUpRight, className: "border-violet-500/20 bg-violet-500/5 text-violet-700 dark:text-violet-400" },
 };
 
 export function ValidationPanel() {
@@ -38,12 +39,12 @@ export function ValidationPanel() {
   return (
     <Card className={cn("overflow-hidden", isReady && "border-emerald-500/30")}>
       <CardHeader className="border-b border-border/50 pb-3">
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
               {isReady ? <CheckCircle2 aria-hidden="true" className="size-4 text-emerald-600 dark:text-emerald-400" /> : <ShieldCheck aria-hidden="true" className="size-4 text-primary" />}
-              <Badge variant="outline" className="shrink-0 text-xs font-bold">Step 5</Badge>
-              <CardTitle className="text-sm font-bold">Compatibility Check</CardTitle>
+              <Badge variant="outline" className="shrink-0 text-xs font-bold">{workflowStepLabel("validate")}</Badge>
+              <CardTitle className="min-w-0 text-sm font-bold">Compatibility Check</CardTitle>
             </div>
             <CardDescription className="pt-1 text-xs">{isReady ? "Your selected technologies work together." : `${status}. Review these items before generating your blueprint.`}</CardDescription>
           </div>

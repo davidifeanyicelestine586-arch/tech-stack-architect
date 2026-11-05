@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSidebar } from "@/components/ui/sidebar";
+import { useTechStack } from "@/hooks/use-tech-stack";
 import { MenuItem, ChildItem } from "../sidebaritems";
 
 interface NavCollapseProps {
@@ -18,6 +19,34 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
   const { state } = useSidebar();
   const isCollapse = state === "collapsed";
   const [hash, setHash] = useState("");
+  const { requirementAnalysis, selectedComponentIds, validationReport } = useTechStack();
+
+  const isLocked = (routeId?: string) => {
+    if (routeId === "recommendations") return !requirementAnalysis;
+    if (routeId === "validation") return selectedComponentIds.length === 0;
+    if (routeId === "blueprint") return selectedComponentIds.length === 0 || !validationReport;
+    return false;
+  };
+
+  const lockedTarget = (routeId?: string) => {
+    if (routeId === "recommendations") return "#define";
+    if (routeId === "validation") return "#components";
+    if (routeId === "blueprint") return "#validation";
+    return "#define";
+  };
+
+  const lockedReason = (routeId?: string) => {
+    if (routeId === "recommendations") return "Complete Project Definition and Analyze first.";
+    if (routeId === "validation") return "Build a stack before validating it.";
+    if (routeId === "blueprint") return "Build and validate a stack before generating a blueprint.";
+    return "";
+  };
+
+  const handleLockedNavigation = (event: React.MouseEvent<HTMLAnchorElement>, routeId?: string) => {
+    if (!isLocked(routeId)) return;
+    event.preventDefault();
+    document.querySelector(lockedTarget(routeId))?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   useEffect(() => {
     const syncHash = () => setHash(window.location.hash);
@@ -63,10 +92,16 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
               return (
                 <Link
                   key={itemIndex}
-                  href={item.url || "#"}
+                  href={isLocked(item.routeId) ? lockedTarget(item.routeId) : item.url || "#"}
+                  aria-label={item.name}
                   target={item.external ? "_blank" : undefined}
                   aria-current={currentValue(item)}
+                  aria-disabled={isLocked(item.routeId) || undefined}
+                  title={isLocked(item.routeId) ? lockedReason(item.routeId) : undefined}
+                  onClick={(event) => handleLockedNavigation(event, item.routeId)}
+                  data-mobile-primary={item.mobilePrimary ? "true" : "false"}
                   className={cn(
+                    !item.mobilePrimary && "max-lg:hidden",
                     "block rounded-md outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                     className,
                   )}
@@ -77,7 +112,12 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
             }
 
             return (
-              <details key={itemIndex} className="group/nav" open={active || item.isActive}>
+              <details
+                key={itemIndex}
+                className={cn("group/nav", !item.mobilePrimary && "max-lg:hidden")}
+                data-mobile-primary={item.mobilePrimary ? "true" : "false"}
+                open={active || item.isActive}
+              >
                 <summary
                   className="cursor-pointer list-none rounded-md outline-none transition-all duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden"
                   aria-label={`${item.name} menu`}
@@ -92,10 +132,14 @@ export default function NavCollapse({ menu, className }: NavCollapseProps) {
                     ) : (
                       <Link
                         key={subIndex}
-                        href={sub.url || "#"}
+                        href={isLocked(sub.routeId) ? lockedTarget(sub.routeId) : sub.url || "#"}
+                        aria-label={sub.name}
                         target={sub.external ? "_blank" : undefined}
                         aria-current={currentValue(sub)}
-                        className="block rounded-md outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                        aria-disabled={isLocked(sub.routeId) || undefined}
+                        title={isLocked(sub.routeId) ? lockedReason(sub.routeId) : undefined}
+                        onClick={(event) => handleLockedNavigation(event, sub.routeId)}
+                        className={cn("block rounded-md outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary", isLocked(sub.routeId) && "opacity-60")}
                       >
                         <NavItem
                           item={sub}

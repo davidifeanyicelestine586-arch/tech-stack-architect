@@ -1,0 +1,292 @@
+/* Header layout contract: mobile-first, single row, stable while scrolling, no page-level horizontal scrolling. */
+.site-header {
+  --site-header-height: 64px;
+  --site-header-gap: 8px;
+  --site-header-control: 44px;
+  --site-header-focus: var(--ring);
+  --site-header-surface: var(--background);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  width: 100%;
+  isolation: isolate;
+  scroll-margin-top: var(--site-header-height);
+}
+
+.site-header__row {
+  display: flex;
+  align-items: center;
+  gap: var(--site-header-gap);
+  min-height: var(--site-header-height);
+  width: 100%;
+  padding: 8px 12px;
+}
+
+.site-header__sidebar-trigger,
+.site-header__github,
+.site-header__theme button,
+.site-header__auth button,
+.site-header__persistence button {
+  min-height: var(--site-header-control);
+}
+
+.site-header__sidebar-trigger {
+  flex: 0 0 var(--site-header-control);
+  width: var(--site-header-control);
+}
+
+.site-header__separator {
+  flex: 0 0 auto;
+  height: 24px;
+}
+
+.site-header__search {
+  flex: 1 1 220px;
+  min-width: 120px;
+  max-width: 280px;
+}
+
+.site-header__persistence {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.site-header__persistence > div {
+  min-width: 0;
+}
+
+.site-header__auth,
+.site-header__github,
+.site-header__theme {
+  flex: 0 0 auto;
+}
+
+.site-header__github {
+  gap: 6px;
+  padding-inline: 12px;
+}
+
+.site-header button:focus-visible,
+.site-header a:focus-visible,
+.site-header input:focus-visible {
+  outline: 2px solid var(--site-header-focus);
+  outline-offset: 2px;
+}
+
+.site-header__search input {
+  min-height: 44px;
+}
+
+@media (max-width: 1199px) {
+  /* Preserve button names while reducing visual chrome at tablet widths. */
+  .site-header__persistence button[aria-label="Open saved project"] span,
+  .site-header__persistence button[aria-label="Save current project"] span {
+    display: none;
+  }
+
+  .site-header__search {
+    flex-basis: 180px;
+    max-width: 200px;
+  }
+
+  .site-header__persistence [data-header-project-name] {
+    display: none;
+  }
+}
+
+@media (max-width: 991px) {
+  .site-header__row {
+    gap: 6px;
+    padding-inline: 8px;
+  }
+
+  .site-header__search {
+    flex-basis: 140px;
+    max-width: 160px;
+  }
+
+  .site-header__persistence [aria-label^="Persistence status"] {
+    display: none;
+  }
+
+  .site-header__github span,
+  .site-header__auth span {
+    display: none;
+  }
+
+  .site-header__github {
+    width: var(--site-header-control);
+    padding-inline: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .site-header {
+    --site-header-height: 60px;
+  }
+
+  .site-header__row {
+    gap: 2px;
+    padding-inline: 4px;
+  }
+
+  .site-header__search {
+    position: relative;
+    flex: 0 0 40px;
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+  }
+
+  .site-header__search input {
+    width: 40px;
+    padding-inline: 0;
+    color: transparent;
+    cursor: text;
+  }
+
+  .site-header__search input::placeholder {
+    color: transparent;
+  }
+
+  .site-header__search:focus-within {
+    position: absolute;
+    left: 54px;
+    right: 54px;
+    z-index: 20;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    padding: 4px;
+    border-radius: 10px;
+    background: var(--site-header-surface);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--foreground) 16%, transparent);
+  }
+
+  .site-header__search:focus-within input {
+    width: 100%;
+    padding-inline-start: 36px;
+    color: var(--foreground);
+  }
+
+  .site-header__search:focus-within input::placeholder {
+    color: var(--muted-foreground);
+  }
+
+  .site-header__persistence {
+    flex: 0 0 auto;
+    min-width: 0;
+  }
+
+  .site-header__persistence > div {
+    justify-content: flex-start;
+  }
+
+  .site-header__persistence button {
+    min-width: 40px;
+    width: 40px;
+    padding-inline: 0;
+  }
+
+  .site-header__persistence button:first-of-type {
+    width: auto;
+    min-width: 69px;
+    padding-inline: 8px;
+  }
+
+  .site-header__persistence button span {
+    display: none;
+  }
+
+  .site-header__persistence button:first-of-type span {
+    display: inline;
+  }
+
+  .site-header__auth,
+  .site-header__theme {
+    width: 40px;
+  }
+
+  .site-header__auth button,
+  .site-header__theme button {
+    width: 40px;
+    min-width: 40px;
+    padding-inline: 0;
+  }
+
+  .site-header__github,
+  .site-header__optional-separator {
+    display: none;
+  }
+
+  .site-header__separator {
+    display: none;
+  }
+}
+
+/* Keep the final control visible on narrow phones instead of clipping it. */
+@media (max-width: 390px) {
+  .site-header__row {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+
+  .site-header__theme {
+    display: flex;
+    flex: 1 0 100%;
+    justify-content: flex-end;
+    width: auto;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 359px) {
+  .site-header {
+    --site-header-gap: 1px;
+    --site-header-control: 40px;
+  }
+
+  .site-header__row {
+    gap: 1px;
+    padding-inline: 2px;
+  }
+
+  .site-header__search {
+    flex-basis: 40px;
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+  }
+
+  .site-header__search input {
+    width: 40px;
+  }
+
+  .site-header__search:focus-within {
+    left: 48px;
+    right: 48px;
+  }
+
+  .site-header__persistence button,
+  .site-header__auth button,
+  .site-header__theme button {
+    width: 40px;
+    min-width: 40px;
+  }
+
+  .site-header__auth,
+  .site-header__theme {
+    width: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header *,
+  .site-header *::before,
+  .site-header *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

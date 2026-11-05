@@ -1,37 +1,16 @@
-"use client";
-
-import React from "react";
-import Header from "./layout/vertical/header";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import type { ReactNode } from "react";
 import Footer from "@/components/layout/footer";
-import { AppSidebar } from "./layout/vertical/sidebar/app-sidebar";
-import { TechStackProvider } from "@/context/tech-stack-context";
-import { cn } from "@/lib/utils";
+import { DashboardClientShell } from "./dashboard-client-shell";
+import Header from "./layout/vertical/header";
 
 export default function DashboardLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
-    <TechStackProvider>
-      <SidebarProvider
-        defaultOpen={true}
-        style={{ "--sidebar-width-icon": "52px" } as React.CSSProperties}
-      >
-        <AppSidebar />
-        <SidebarInset className="m-2 min-h-[calc(100svh-1rem)] min-w-0 overflow-x-hidden rounded-none! outline outline-border">
-          <Header />
-          <div className="flex flex-1 flex-col gap-4 p-4 max-lg:pt-16">
-            <div className={cn("mx-auto w-full", "container")}>
-              <div className="min-h-[calc(100vh-140px)]">{children}</div>
-              <div className="pt-6">
-                <Footer />
-              </div>
-            </div>
-          </div>
-        </SidebarInset>
-      </SidebarProvider>
-    </TechStackProvider>
+    <DashboardClientShell header={<Header />} footer={<Footer />}>
+      {children}
+    </DashboardClientShell>
   );
 }

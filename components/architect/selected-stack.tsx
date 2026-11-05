@@ -5,7 +5,7 @@ import { useTechStack } from "@/hooks/use-tech-stack";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { X, Layers, Trash2, Zap, Loader2 } from "lucide-react";
+import { X, Trash2, Zap, Loader2 } from "lucide-react";
 
 type SelectedStackProps = {
   variant?: "default" | "mobile";
@@ -64,7 +64,7 @@ export function SelectedStack({ variant = "default" }: SelectedStackProps) {
         </div>
         <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground" role="status" aria-live="polite">
           <span className={isValidated ? "font-semibold text-emerald-600 dark:text-emerald-400" : ""}>
-            {isValidated ? "✓ Compatibility checked" : "Ready for a compatibility check"}
+            {isValidated ? "✓ Compatibility checked" : "Compatibility check needs attention"}
           </span>
           {missingCount > 0 && (
             <span className="font-medium text-amber-700 dark:text-amber-400">

@@ -1,0 +1,79 @@
+name: Accessibility Regression
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  accessibility-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:9
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: playwright-audit-placeholder
+      A11Y_AUDIT_BASE_URL: http://127.0.0.1:3000
+      A11Y_AUDIT_OUTPUT_ROOT: playwright-report/application-accessibility/ci
+      A11Y_AUDIT_LABEL: CI
+      A11Y_AUDIT_FAIL_ON_FINDINGS: "true"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.23.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build production app
+        run: pnpm build
+
+      - name: Start Next.js
+        run: pnpm start > /tmp/next.log 2>&1 &
+
+      - name: Wait for app
+        run: |
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent --output /dev/null "$A11Y_AUDIT_BASE_URL/"; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/next.log
+          exit 1
+
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run accessibility regression audit
+        run: pnpm audit:a11y
+
+      - name: Save app startup log
+        if: always()
+        run: |
+          mkdir -p "$A11Y_AUDIT_OUTPUT_ROOT"
+          if [ -f /tmp/next.log ]; then
+            cp /tmp/next.log "$A11Y_AUDIT_OUTPUT_ROOT/next.log"
+          fi
+
+      - name: Upload accessibility report and evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: accessibility-regression-report
+          path: playwright-report/application-accessibility/ci/
+          if-no-files-found: warn
+          retention-days: 14

@@ -98,7 +98,7 @@ export interface TechStackContextType {
   isInspectorOpen: boolean;
   setIsInspectorOpen: (open: boolean) => void;
   exportBlueprint: (format: "json" | "markdown") => string;
-  downloadBlueprint: (format: "json" | "markdown", filename?: string) => void;
+  downloadBlueprint: (format: "json" | "markdown", filename?: string) => boolean;
   copyBlueprint: (format: "json" | "markdown") => Promise<boolean>;
   currentProjectId: string | null;
   currentProjectRevision: number | null;
@@ -115,6 +115,22 @@ const TechStackContext = createContext<TechStackContextType | null>(null);
 
 const canonicalSnapshotSignature = (snapshot: ProjectSnapshotV1) =>
   JSON.stringify({ ...snapshot, selectedComponentIds: [...snapshot.selectedComponentIds].sort() });
+
+const CATEGORY_GROUPS: Record<string, string> = {
+  Frontend: "Frontend",
+  "Frontend Framework": "Frontend",
+  Protocol: "Integration",
+  Workflow: "AI & Automation",
+  "AI Gateway": "AI & Automation",
+  Orchestration: "AI & Automation",
+  "Operating System": "Runtime",
+  Interface: "Hardware",
+  Power: "Hardware",
+  Actuator: "Hardware",
+  Sensor: "Hardware",
+  "Motor Driver": "Hardware",
+  Microcontroller: "Hardware",
+};
 
 const toValidationSummary = (report: ValidationReport) => ({
   valid: report.valid,
@@ -159,6 +175,8 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
     if (key === "domain" && typeof value === "string") {
       setActiveDomain(value);
     }
+    setRequirementAnalysis(null);
+    setBlueprint(null);
     setPersistenceError(null);
     setPersistenceStatus((status) => (status === "error" ? "idle" : status));
   }, []);
@@ -168,7 +186,7 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
 
   const categories = useMemo(() => {
     const set = new Set<string>();
-    components.forEach((c) => { if (c.category) set.add(c.category); });
+    components.forEach((c) => { if (c.category) set.add(CATEGORY_GROUPS[c.category] ?? c.category); });
     return Array.from(set).sort();
   }, [components]);
   const selectedComponents = useMemo(() => {
@@ -203,7 +221,7 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
 
   const filteredComponents = useMemo(() => components.filter((comp) => {
     if (activeDomain !== "all" && comp.domain !== activeDomain) return false;
-    if (selectedCategory !== "all" && comp.category !== selectedCategory) return false;
+    if (selectedCategory !== "all" && (CATEGORY_GROUPS[comp.category] ?? comp.category) !== selectedCategory) return false;
     if (difficultyFilter !== "all" && comp.difficulty !== difficultyFilter) return false;
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
@@ -244,7 +262,7 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
     const recipe = recipes.find((r) => r.id === recipeId); if (!recipe) return;
     setActiveRecipeId(recipeId); if (recipe.domain) setActiveDomain(recipe.domain);
     const mergedIds = Array.from(new Set([...selectedComponentIds, ...(recipe.components || [])])); setSelectedComponentIds(mergedIds);
-    const result: { blueprint: Blueprint | null; report: ValidationReport } = architect.build({ recipe: recipeId, selectedComponents: mergedIds });
+    const result = architect.build({ recipe: recipeId, selectedComponents: mergedIds });
     if (result.blueprint) setBlueprint({ ...result.blueprint, project: projectDefinition.name.trim() || projectDefinition.description.trim() ? projectDefinition : undefined, validation: toValidationSummary(result.report) });
   }, [recipes, selectedComponentIds, architect, projectDefinition]);
   const toggleComponent = useCallback((id: string) => setSelectedComponentIds((prev) => prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]), []);
@@ -262,7 +280,7 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
     return { title: projectDefinition.name.trim() || bp.title || "Technology Stack Blueprint", score: report.score, status: report.status, domain: bp.domain || domainTitle, components: selectedComponents, warnings: combinedWarnings, suggestions: report.suggestions || [], starterCommands: bp.starterCommands || [], learningGoals: bp.learningGoals || [], outputs: bp.outputs || [], project: projectDefinition.name.trim() || projectDefinition.description.trim() ? projectDefinition : undefined, validation: toValidationSummary(report) };
   }, [validationReport, blueprint, domains, activeDomain, selectedComponents, projectDefinition]);
   const exportBlueprint = useCallback((format: "json" | "markdown"): string => { try { return architect.export(format, mergedReport); } catch { return format === "json" ? JSON.stringify(mergedReport, null, 2) : `# ${mergedReport.title}\nScore: ${mergedReport.score}`; } }, [architect, mergedReport]);
-  const downloadBlueprint = useCallback((format: "json" | "markdown", customFilename?: string) => { const sanitizedTitle = (mergedReport.title || "tech-stack-blueprint").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""); architect.download(format, customFilename || `${sanitizedTitle}.${format === "json" ? "json" : "md"}`, mergedReport); }, [architect, mergedReport]);
+  const downloadBlueprint = useCallback((format: "json" | "markdown", customFilename?: string): boolean => { try { const sanitizedTitle = (mergedReport.title || "tech-stack-blueprint").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""); architect.download(format, customFilename || `${sanitizedTitle}.${format === "json" ? "json" : "md"}`, mergedReport); return true; } catch (err) { console.error("Blueprint download failed:", err); return false; } }, [architect, mergedReport]);
   const copyBlueprint = useCallback(async (format: "json" | "markdown"): Promise<boolean> => { try { await navigator.clipboard.writeText(exportBlueprint(format)); return true; } catch (err) { console.error("Clipboard copy failed:", err); return false; } }, [exportBlueprint]);
   const resetProject = useCallback(() => { const nextProjectDefinition: ProjectDefinition = { name: "", description: "", domain: domains[0]?.id || "web-saas", difficulty: "Intermediate", requirements: "" }; setProjectDefinition(nextProjectDefinition); setLastPersistedSnapshotSignature(null); setActiveDomain(nextProjectDefinition.domain); setRequirementAnalysis(null); setIgnoredRecommendationIds([]); setSelectedComponentIds([]); setActiveRecipeId(null); setBlueprint(null); setSearchQuery(""); setSelectedCategory("all"); setDifficultyFilter("all"); setCurrentProjectId(null); setCurrentProjectRevision(null); setPersistenceStatus("idle"); setPersistenceError(null); }, [domains]);
   const applyLoadedProject = useCallback(({ record, snapshot }: { record: { id: string; revision: number }; snapshot: ProjectSnapshotV1 }) => { setProjectDefinition(snapshot.projectDefinition); setLastPersistedSnapshotSignature(canonicalSnapshotSignature(snapshot)); setSelectedComponentIds(snapshot.selectedComponentIds); setActiveRecipeId(snapshot.activeRecipeId); setActiveDomain(snapshot.projectDefinition.domain); setRequirementAnalysis(architect.analyzeRequirements(snapshot.projectDefinition)); setIgnoredRecommendationIds([]); setBlueprint(null); setCurrentProjectId(record.id); setCurrentProjectRevision(record.revision); }, [architect]);

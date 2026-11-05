@@ -4,7 +4,7 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
 import { ThemeProvider } from "@/components/Themeprovider";
-import { AuthPanel } from "@/components/auth/auth-panel";
+import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/seo/site";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -13,13 +13,53 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Ediccrew | Tech Stack Architect",
-  description:
-    "Interactive technology stack validation, conflict arbitration, recipe matching, and blueprint generation platform.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  authors: [{ name: "Ediccrew" }],
+  creator: "Ediccrew",
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   openGraph: {
-    title: "Ediccrew | Tech Stack Architect",
-    description:
-      "Design, validate, understand, and generate technology stacks.",
+    type: "website",
+    url: absoluteUrl("/"),
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    siteName: SITE_NAME,
+    locale: "en_US",
+    images: [
+      {
+        url: "/OG-Image.png",
+        width: 1200,
+        height: 630,
+        alt: SITE_NAME,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    images: ["/OG-Image.png"],
+  },
+  icons: {
+    icon: [
+      "/favicon.ico",
+      "/brand/favicon-32.png",
+      "/brand/favicon-16.png",
+      "/brand/favicon-8.png",
+    ],
+    shortcut: "/brand/favicon-32.png",
+    apple: "/brand/app-icon.png",
   },
 };
 
@@ -39,9 +79,6 @@ export default function RootLayout({
       data-card-shadow="false"
       className="style-lyra"
     >
-      <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-      </head>
       <body className={`${geist.className} antialiased selection:bg-primary/20`}>
         <NextTopLoader color="var(--primary)" showSpinner={false} />
         <ThemeProvider
@@ -49,11 +86,6 @@ export default function RootLayout({
           defaultTheme="light"
           enableSystem={false}
         >
-          <div className="pointer-events-none fixed right-3 top-3 z-50">
-            <div className="pointer-events-auto rounded-lg border border-border/70 bg-background/95 p-1 shadow-lg backdrop-blur">
-              <AuthPanel />
-            </div>
-          </div>
           {children}
         </ThemeProvider>
       </body>

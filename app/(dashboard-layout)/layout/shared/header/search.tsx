@@ -19,41 +19,41 @@ type SearchResult = {
   icon?: MenuItem["icon"];
 };
 
+const searchItems = (
+  items: SearchableItem[],
+  q: string,
+  parentPath = "",
+): SearchResult[] => {
+  const results: SearchResult[] = [];
+
+  items.forEach((item) => {
+    const currentPath = parentPath
+      ? `${parentPath} → ${item.name ?? ""}`
+      : item.name ?? "";
+
+    if (
+      item.name &&
+      item.url &&
+      item.name.toLowerCase().includes(q.toLowerCase())
+    ) {
+      results.push({
+        name: item.name,
+        url: item.url,
+        path: currentPath,
+        icon: item.icon,
+      });
+    }
+
+    if (item.items) {
+      results.push(...searchItems(item.items, q, currentPath));
+    }
+  });
+
+  return results;
+};
+
 function Search() {
   const [query, setQuery] = useState("");
-
-  const searchItems = (
-    items: SearchableItem[],
-    q: string,
-    parentPath = "",
-  ): SearchResult[] => {
-    const results: SearchResult[] = [];
-
-    items.forEach((item) => {
-      const currentPath = parentPath
-        ? `${parentPath} → ${item.name ?? ""}`
-        : item.name ?? "";
-
-      if (
-        item.name &&
-        item.url &&
-        item.name.toLowerCase().includes(q.toLowerCase())
-      ) {
-        results.push({
-          name: item.name,
-          url: item.url,
-          path: currentPath,
-          icon: item.icon,
-        });
-      }
-
-      if (item.items) {
-        results.push(...searchItems(item.items, q, currentPath));
-      }
-    });
-
-    return results;
-  };
 
   const results = useMemo(() => {
     if (!query.trim()) return [];
@@ -71,7 +71,7 @@ function Search() {
         <Input
           type="search"
           aria-label="Search workspace navigation"
-          aria-controls="workspace-search-results"
+          aria-controls={query ? "workspace-search-results" : undefined}
           placeholder="Search architecture, domains..."
           className="h-8.5 rounded-lg border-border bg-muted/40 pl-9 text-xs focus-visible:bg-background focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary"
           value={query}

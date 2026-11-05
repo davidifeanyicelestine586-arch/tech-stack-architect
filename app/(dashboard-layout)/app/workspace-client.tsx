@@ -1,0 +1,164 @@
+"use client";
+
+"use client";
+
+import type { ReactNode } from "react";
+import Link from "next/link";
+import { BookOpen, FileCode2, Layers, SearchCheck, ShieldCheck } from "lucide-react";
+import { ComponentBrowser } from "@/components/architect/component-browser";
+import { DomainSelector } from "@/components/architect/domain-selector";
+import { SelectedStack } from "@/components/architect/selected-stack";
+import { ValidationPanel } from "@/components/architect/validation-panel";
+import { RecipeRecommendations } from "@/components/architect/recipe-recommendations";
+import { workflowStepLabel } from "@/lib/navigation/workflow";
+import { BlueprintPanel } from "@/components/architect/blueprint-panel";
+import { ProjectDefinitionForm } from "@/components/architect/project-definition-form";
+import { RecommendationPanel } from "@/components/architect/recommendation-panel";
+import { WorkflowProgress } from "@/components/architect/workflow-progress";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import componentsData from "@/data/components.json";
+import domainsData from "@/data/domain.json";
+import recipesData from "@/data/recipes.json";
+import { useTechStack } from "@/hooks/use-tech-stack";
+
+export default function WorkspacePageClient() {
+  const domains = domainsData;
+  const components = componentsData;
+  const recipes = recipesData;
+  const { requirementAnalysis, selectedComponentIds, validationReport } = useTechStack();
+
+
+  return (
+    <div className="flex flex-col gap-6 pb-12 sm:gap-8">
+      <section className="relative overflow-hidden rounded-3xl border border-border bg-card p-4 shadow-sm sm:p-6 md:p-8">
+        <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center md:gap-6">
+          <div className="flex max-w-2xl flex-col gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="outline" className="gap-1 px-2.5 py-1 text-xs font-semibold">
+                <SearchCheck className="size-3" aria-hidden="true" />
+                Guided architecture workspace
+              </Badge>
+              <Badge variant="secondary" className="px-2.5 py-1 text-xs">v2.0 Architecture</Badge>
+            </div>
+            <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl md:text-3xl">Ediccrew Tech Stack Architect</h1>
+            <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
+              Describe what you are building and let Architect guide you from project definition to a validated technology stack and architecture blueprint. The engine is deterministic and explainable: every recommendation and compatibility result comes from the registered rules and technology metadata.
+            </p>
+          </div>
+          <div className="grid w-full shrink-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap md:w-auto md:gap-3">
+            <Button nativeButton={false} className="h-11 w-full gap-2 px-4 shadow-xs sm:w-auto sm:px-5" render={<Link href="/app#define" />}>
+              <SearchCheck className="size-4" aria-hidden="true" /> Analyze My Project
+            </Button>
+            <Button nativeButton={false} variant="outline" className="h-11 w-full gap-2 sm:w-auto" render={<Link href="/app#components" />}>
+              <Layers className="size-4" aria-hidden="true" /> Browse Technology Catalog
+            </Button>
+          </div>
+        </div>
+
+        <div className="mt-5 rounded-2xl border border-border/70 bg-muted/25 p-4 sm:mt-6 sm:p-5">
+          <WorkflowProgress />
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs leading-relaxed text-muted-foreground"><span>Deterministic rules</span><span>Explainable matches</span><span>Validation before blueprint</span><span>Sign in when you want saved projects</span></div>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4 rounded-2xl border border-border/70 bg-muted/20 p-4 sm:mt-6 sm:grid-cols-4 sm:p-5">
+          <Metric label="Project Types" value={domains.length} />
+          <Metric label="Technologies" value={components.length} />
+          <Metric label="Stack Templates" value={recipes.length} />
+          <div className="flex min-w-0 flex-col">
+            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Compatibility Check</span>
+            <span className="text-sm font-bold text-muted-foreground sm:text-base">Not checked yet</span>
+          </div>
+        </div>
+      </section>
+
+      <div id="define" className="scroll-mt-24">
+        <ProjectDefinitionForm />
+      </div>
+      <div id="recommendations" className="scroll-mt-24">
+        {requirementAnalysis ? <RecommendationPanel /> : <LockedSection step={workflowStepLabel("analyze")} title="Analyze your project to unlock recommendations" description="Complete the project definition above and Architect will reveal technology matches with their reasoning." />}
+      </div>
+
+      <div className="lg:hidden">
+        <div className="mb-3 flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-xs font-bold uppercase tracking-wider text-primary">{workflowStepLabel("build")}</p>
+            <h2 className="text-base font-bold tracking-tight text-foreground">Keep your stack in view</h2>
+          </div>
+          <Badge variant="outline" className="shrink-0 text-xs">Mobile workspace</Badge>
+        </div>
+        {selectedComponentIds.length > 0 ? <SelectedStack variant="mobile" /> : <LockedSection step={workflowStepLabel("build")} title="Your selected stack will appear here" description="Add a recommendation or browse the catalog after analysis." />}
+      </div>
+
+      <div className="grid grid-cols-1 items-start gap-6 sm:gap-8 lg:grid-cols-12">
+        <div className="flex min-w-0 flex-col gap-6 sm:gap-8 lg:col-span-8">
+          <section className="flex min-w-0 flex-col gap-5" id="components">
+            <div>
+              <div className="flex items-center gap-2"><Badge variant="outline" className="text-xs font-bold">{workflowStepLabel("build")}</Badge><h2 className="text-lg font-bold tracking-tight text-foreground">Adjust your stack</h2></div>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Recommendations are your starting point. Use the catalog to add, remove, and refine technologies before validation.</p>
+            </div>
+            {requirementAnalysis ? (
+              <>
+                <DomainSelector />
+                <ComponentBrowser />
+              </>
+            ) : (
+              <LockedSection step={workflowStepLabel("build")} title="Technology catalog is locked until analysis" description="Analyze the project first so the catalog can prioritize the relevant technologies." />
+            )}
+          </section>
+          {selectedComponentIds.length > 0 ? <RecipeRecommendations /> : <LockedSection step={workflowStepLabel("review")} title="Stack templates unlock after recommendations" description="Select at least one compatible technology to compare reusable stack recipes." />}
+        </div>
+
+        <div className="flex min-w-0 flex-col gap-6 lg:sticky lg:top-24 lg:col-span-4">
+          <div className="hidden lg:block">
+            <SelectedStack />
+          </div>
+          <div id="validation" className="scroll-mt-24">
+            {selectedComponentIds.length > 0 ? <ValidationPanel /> : <LockedSection step={workflowStepLabel("validate")} title="Validation unlocks after you build a stack" description="Add at least one technology, then Architect will check dependencies, conflicts, and architectural rules." />}
+          </div>
+        </div>
+      </div>
+
+      <div id="blueprint" className="scroll-mt-24">
+        {validationReport.valid && selectedComponentIds.length > 0 ? <BlueprintPanel /> : <LockedSection step={workflowStepLabel("blueprint")} title="Blueprint generation comes after validation" description="Resolve the stack first, then turn the validated architecture into a development-ready blueprint." />}
+      </div>
+
+      <Card id="docs" className="border-primary/20 bg-primary/5">
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-1.5 text-sm font-bold text-primary"><BookOpen className="size-4" aria-hidden="true" /> Need deeper technical detail?</CardTitle>
+          <CardDescription className="text-xs leading-relaxed">Explore full specifications and integration guides after you have your architecture blueprint.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button variant="link" className="h-11 p-0 text-sm font-bold text-primary underline" render={<Link href="/content-detail" />}>Browse detailed documentation</Button>
+        </CardContent>
+      </Card>
+
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <FeatureCard icon={<ShieldCheck className="size-4" aria-hidden="true" />} iconClassName="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" title="Deterministic Validation" description="Checks dependencies, hardware conflicts, and architectural rules before you treat a stack as ready." />
+        <FeatureCard icon={<SearchCheck className="size-4" aria-hidden="true" />} iconClassName="bg-primary/10 text-primary" title="Explainable Recommendations" description="Recommendations are matched against your project requirements so you can understand why a technology fits." />
+        <FeatureCard icon={<FileCode2 className="size-4" aria-hidden="true" />} iconClassName="bg-sky-500/10 text-sky-600 dark:text-sky-400" title="Architecture Blueprint" description="Turn a validated stack into an engineering blueprint, starter commands, and exportable documentation." />
+      </section>
+    </div>
+  );
+}
+
+function Metric({ label, value }: { label: string; value: string | number }) {
+  return <div className="flex min-w-0 flex-col"><span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</span><span className="text-lg font-bold text-foreground sm:text-xl">{value}</span></div>;
+}
+
+function LockedSection({ step, title, description }: { step: string; title: string; description: string }) {
+  return (
+    <Card className="border-dashed border-border bg-muted/20">
+      <CardContent className="flex min-h-32 flex-col items-start justify-center gap-1.5 p-5">
+        <Badge variant="outline" className="text-[10px] font-semibold">{step}</Badge>
+        <h2 className="text-sm font-bold text-foreground">{title}</h2>
+        <p className="max-w-2xl text-xs leading-relaxed text-muted-foreground">{description}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+function FeatureCard({ icon, iconClassName, title, description }: { icon: ReactNode; iconClassName: string; title: string; description: string }) {
+  return <Card className="bg-card"><CardHeader className="pb-2"><div className={`mb-2 flex size-8 items-center justify-center rounded-lg ${iconClassName}`}>{icon}</div><CardTitle className="text-sm font-semibold">{title}</CardTitle><CardDescription className="text-xs leading-relaxed">{description}</CardDescription></CardHeader></Card>;
+}

@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useState, useTransition } from "react";
+import { WORKFLOW_STEPS, workflowStepNumber } from "@/lib/navigation/workflow";
+import { FormEvent, useRef, useState, useTransition } from "react";
 import { ClipboardList, Loader2, SearchCheck } from "lucide-react";
 import { useTechStack } from "@/hooks/use-tech-stack";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +16,9 @@ export function ProjectDefinitionForm() {
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [isPending, startTransition] = useTransition();
+  const nameRef = useRef<HTMLInputElement>(null);
+  const domainRef = useRef<HTMLSelectElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   const updateDraft = <Key extends keyof ProjectDefinition>(key: Key, value: ProjectDefinition[Key]) => {
     updateProjectDefinition(key, value);
@@ -41,6 +45,11 @@ export function ProjectDefinitionForm() {
       });
       setFieldErrors(nextFieldErrors);
       setError(validation.errors.join(" "));
+      requestAnimationFrame(() => {
+        if (nextFieldErrors.name) nameRef.current?.focus();
+        else if (nextFieldErrors.description) descriptionRef.current?.focus();
+        else if (nextFieldErrors.domain) domainRef.current?.focus();
+      });
       return;
     }
 
@@ -71,23 +80,24 @@ export function ProjectDefinitionForm() {
               </CardDescription>
             </div>
           </div>
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">Step 1 of 6</span>
+          <span className="text-[11px] font-semibold tracking-wide text-primary">{`Step ${workflowStepNumber("define")} of ${WORKFLOW_STEPS.length}`}</span>
         </div>
       </CardHeader>
 
       <CardContent className="p-4 md:p-6">
         <form className="grid gap-6" onSubmit={handleSubmit} aria-busy={isPending}>
-          <fieldset className="grid gap-4">
+          <fieldset className="grid min-w-0 gap-4">
             <legend className="text-sm font-bold text-foreground">Project basics</legend>
-            <div className="grid gap-4 md:grid-cols-2">
-              <label htmlFor="project-name" className="grid gap-1.5 text-xs font-semibold text-foreground">
+            <div className="grid min-w-0 gap-4 md:grid-cols-2">
+              <label htmlFor="project-name" className="grid min-w-0 gap-1.5 text-xs font-semibold text-foreground">
                 Project name
                 <Input
                   id="project-name"
+                  ref={nameRef}
                   className="h-11 text-sm"
                   value={projectDefinition.name}
                   onChange={(event) => updateDraft("name", event.target.value)}
-                  placeholder="AI Document Q&A Platform"
+                  placeholder="Example: AI Document Q&A Platform"
                   aria-describedby="project-definition-error project-name-error"
                   aria-invalid={Boolean(fieldErrors.name)}
                   disabled={isPending}
@@ -97,16 +107,17 @@ export function ProjectDefinitionForm() {
                 </span>
               </label>
 
-              <label htmlFor="project-domain" className="grid gap-1.5 text-xs font-semibold text-foreground">
+              <label htmlFor="project-domain" className="grid min-w-0 gap-1.5 text-xs font-semibold text-foreground">
                 Project type
                 <select
                   id="project-domain"
+                  ref={domainRef}
                   value={projectDefinition.domain}
                   onChange={(event) => updateDraft("domain", event.target.value)}
                   disabled={isPending}
                   aria-describedby="project-definition-error project-domain-error"
                   aria-invalid={Boolean(fieldErrors.domain)}
-                  className="h-11 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="h-11 w-full min-w-0 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {domains.map((domain) => <option key={domain.id} value={domain.id}>{domain.title}</option>)}
                 </select>
@@ -117,18 +128,19 @@ export function ProjectDefinitionForm() {
             </div>
           </fieldset>
 
-          <fieldset className="grid gap-4">
+          <fieldset className="grid min-w-0 gap-4">
             <legend className="text-sm font-bold text-foreground">What should it do?</legend>
-            <label htmlFor="project-description" className="grid gap-1.5 text-xs font-semibold text-foreground">
+            <label htmlFor="project-description" className="grid min-w-0 gap-1.5 text-xs font-semibold text-foreground">
               Describe the project
               <textarea
                 id="project-description"
+                ref={descriptionRef}
                 value={projectDefinition.description}
                 onChange={(event) => updateDraft("description", event.target.value)}
-                placeholder="A SaaS application where users upload PDF documents and ask questions about their contents."
+                placeholder="Example: A SaaS application where users upload PDF documents and ask questions about their contents."
                 aria-describedby="project-definition-error project-description-error"
                 aria-invalid={Boolean(fieldErrors.description)}
-                className="min-h-24 rounded-md border border-input bg-background px-3 py-2.5 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                className="min-h-24 w-full min-w-0 rounded-md border border-input bg-background px-3 py-2.5 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground/70 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={isPending}
               />
               <span id="project-description-error" className="min-h-4 text-[11px] font-normal text-rose-600 dark:text-rose-400">
@@ -136,16 +148,16 @@ export function ProjectDefinitionForm() {
               </span>
             </label>
 
-            <label htmlFor="project-requirements" className="grid gap-1.5 text-xs font-semibold text-foreground">
+            <label htmlFor="project-requirements" className="grid min-w-0 gap-1.5 text-xs font-semibold text-foreground">
               Goals and requirements
               <textarea
                 id="project-requirements"
                 value={projectDefinition.requirements}
                 onChange={(event) => updateDraft("requirements", event.target.value)}
-                placeholder="web application, document upload, PDF processing, data storage, deployment"
+                placeholder="Example: web application, document upload, PDF processing, data storage, deployment"
                 aria-describedby="project-definition-error project-requirements-error"
                 aria-invalid={false}
-                className="min-h-24 rounded-md border border-input bg-background px-3 py-2.5 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                className="min-h-24 w-full min-w-0 rounded-md border border-input bg-background px-3 py-2.5 text-sm leading-relaxed text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={isPending}
               />
               <span id="project-requirements-error" className="min-h-4 text-[11px] font-normal text-rose-600 dark:text-rose-400">
@@ -154,9 +166,9 @@ export function ProjectDefinitionForm() {
             </label>
           </fieldset>
 
-          <fieldset className="grid gap-4">
+          <fieldset className="grid min-w-0 gap-4">
             <legend className="text-sm font-bold text-foreground">How should Architect optimize?</legend>
-            <label htmlFor="project-difficulty" className="grid max-w-sm gap-1.5 text-xs font-semibold text-foreground">
+            <label htmlFor="project-difficulty" className="grid min-w-0 max-w-sm gap-1.5 text-xs font-semibold text-foreground">
               Complexity preference
               <select
                 id="project-difficulty"
@@ -165,7 +177,7 @@ export function ProjectDefinitionForm() {
                 disabled={isPending}
                 aria-describedby="project-definition-error project-difficulty-error"
                 aria-invalid={false}
-                className="h-11 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                className="h-11 w-full min-w-0 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <option value="Beginner">Beginner — prioritize simplicity</option>
                 <option value="Intermediate">Intermediate — balance simplicity and capability</option>

@@ -145,8 +145,8 @@ export function ProjectPersistenceToolbar() {
   };
 
   return (
-    <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5" aria-label="Project persistence controls">
-      <div className="hidden max-w-44 items-center gap-1.5 truncate lg:flex" title={projectDefinition.name || "New project"}>
+    <div role="group" aria-label="Project persistence controls" className="flex min-w-0 flex-nowrap items-center justify-end gap-1.5">
+      <div data-header-project-name className="hidden max-w-44 items-center gap-1.5 truncate lg:flex" title={projectDefinition.name || "New project"}>
         <span className="size-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />
         <span className="truncate text-xs font-semibold text-foreground">
           {projectDefinition.name.trim() || "New project"}
@@ -290,22 +290,24 @@ export function ProjectPersistenceToolbar() {
         </DialogContent>
       </Dialog>
       <Button
-        variant="default"
+        variant={saveButtonState.disabled ? "outline" : "default"}
         size="sm"
-        className="h-11 min-w-11 gap-1.5 px-2 text-xs shadow-xs"
+        className="h-11 min-w-11 gap-1.5 px-2 text-xs shadow-xs disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100"
         onClick={() => void handleSave()}
         disabled={saveButtonState.disabled}
         aria-label="Save current project"
-        title="Save current project"
+        title={saveButtonState.disabled ? "Analyze a project to enable Save" : "Save current project"}
         aria-busy={persistenceStatus === "saving"}
+        aria-describedby={saveButtonState.disabled ? "save-project-hint" : undefined}
       >
         {persistenceStatus === "saving" ? (
           <Loader2 className="size-4 animate-spin" aria-hidden="true" />
         ) : (
           <Save className="size-4" aria-hidden="true" />
         )}
-        <span>{saveButtonState.label}</span>
+        <span>{saveButtonState.disabled ? "Save after analysis" : saveButtonState.label}</span>
       </Button>
+      {saveButtonState.disabled && !isBusy && !persistenceError && <span id="save-project-hint" className="hidden text-[10px] leading-tight text-muted-foreground xl:inline">Analyze a project to save</span>}
       {persistenceError && (
         <div className="basis-full pt-1 sm:basis-auto sm:pt-0" role="alert">
           <div className="flex flex-wrap items-center gap-2 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">

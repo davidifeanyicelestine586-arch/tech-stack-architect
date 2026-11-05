@@ -28,14 +28,14 @@ export function ComponentCard({ component }: ComponentCardProps) {
   return (
     <>
       <Card className={cn(
-        "group relative flex flex-col justify-between transition-all duration-200",
+        "group relative flex min-w-0 min-h-[15rem] flex-col justify-between overflow-hidden transition-all duration-200",
         "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
         isSelected
           ? "border-primary bg-primary/[0.03] shadow-xs ring-1 ring-primary/40"
           : "border-border bg-card hover:border-border/80 hover:shadow-md"
       )}>
         <CardHeader className="p-4 pb-2">
-          <div className="mb-1.5 flex items-start justify-between gap-3">
+          <div className="mb-1.5 flex min-w-0 items-start justify-between gap-3">
             <div className="flex min-w-0 flex-wrap items-center gap-1.5">
               <Badge variant="outline" className="bg-muted/30 px-2 py-0 font-mono text-xs uppercase">
                 {component.category}
@@ -60,7 +60,7 @@ export function ComponentCard({ component }: ComponentCardProps) {
             </button>
           </div>
 
-          <CardTitle className="text-sm font-bold text-foreground transition-colors group-hover:text-primary">
+          <CardTitle className="min-w-0 text-sm font-bold text-foreground transition-colors group-hover:text-primary">
             {component.name}
           </CardTitle>
           <p className="line-clamp-2 pt-1 text-xs leading-relaxed text-muted-foreground">
