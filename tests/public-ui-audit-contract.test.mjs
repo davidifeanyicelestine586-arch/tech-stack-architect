@@ -79,6 +79,15 @@ test("public catalog and documentation use readable body typography", () => {
   assert.equal(shell.includes(escapedNewline), false);
 });
 
+test("landing hero uses a preloaded font with no late font swap", () => {
+  const layout = read("app/layout.tsx");
+  const landing = read("app/page.tsx");
+  assert.match(layout, /display: "optional"/);
+  assert.match(layout, /preload: true/);
+  assert.match(layout, /className=\{`\$\{geist\.className\}/);
+  assert.ok(landing.includes('className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8"'));
+});
+
 test("documentation stays at its public canonical URL and inherits the public shell", () => {
   const publicLayout = read("app/(public)/layout.tsx");
   const docs = read("app/(public)/content-detail/page.tsx");

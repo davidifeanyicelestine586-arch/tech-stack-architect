@@ -8,7 +8,8 @@ import { absoluteUrl, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/seo/si
 
 const geist = Geist({
   subsets: ["latin"],
-  display: "swap",
+  display: "optional",
+  preload: true,
   variable: "--font-geist",
 });
 
