@@ -44,6 +44,24 @@ const requireSelectedComponents = (selectedComponents) => {
   }
 };
 
+export const getArchitectureSourceSignature = (project, selectedComponents, answers = {}) =>
+  JSON.stringify({
+    project: {
+      name: project?.name || "",
+      description: project?.description || "",
+      domain: project?.domain || "",
+      difficulty: project?.difficulty || "",
+      requirements: project?.requirements || "",
+    },
+    selectedComponentIds: (selectedComponents || []).map((item) => typeof item === "string" ? item : item?.id).filter(Boolean).sort(),
+    answers: {
+      architectureStyle: answers.architectureStyle || "modular-monolith",
+      deploymentModel: answers.deploymentModel || "single-deployment",
+      dataFlowReviewed: Boolean(answers.dataFlowReviewed),
+      securityReviewed: Boolean(answers.securityReviewed),
+    },
+  });
+
 export const generateArchitecture = ({
   project,
   selectedComponents,
@@ -144,6 +162,7 @@ export const generateArchitecture = ({
 
   return {
     schemaVersion: 1,
+    sourceSignature: getArchitectureSourceSignature(project, selectedComponents, answers),
     components,
     relationships,
     decisions,
