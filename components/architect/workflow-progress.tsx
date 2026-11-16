@@ -16,14 +16,16 @@ export function WorkflowProgress() {
     architecture,
     architectureValidation,
     developmentPlan,
+    isArchitectureStale,
+    isDevelopmentPlanStale,
   } = useTechStack();
   const hasProject = Boolean(projectDefinition.name.trim() || projectDefinition.description.trim() || projectDefinition.requirements.trim());
   const hasRecommendations = Boolean(requirementAnalysis);
   const hasStack = selectedComponentIds.length > 0;
-  const hasArchitecture = Boolean(architecture);
+  const hasArchitecture = Boolean(architecture && !isArchitectureStale);
   const hasValidation = Boolean(hasArchitecture && architectureValidation && architectureValidation.valid && validationReport.valid);
-  const hasPlan = Boolean(developmentPlan);
-  const hasBlueprint = Boolean(blueprint);
+  const hasPlan = Boolean(developmentPlan && !isDevelopmentPlanStale);
+  const hasBlueprint = Boolean(blueprint && hasPlan);
 
   const completed = [
     hasProject,
