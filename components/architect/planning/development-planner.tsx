@@ -50,6 +50,10 @@ export function DevelopmentPlanner() {
         <Card className="border-dashed bg-muted/20"><CardContent className="flex min-h-24 items-center gap-3 p-5"><ListTodo className="size-5 text-muted-foreground" aria-hidden="true" /><div><p className="text-sm font-semibold text-foreground">Architecture is required first</p><p className="mt-1 text-xs text-muted-foreground">Generate and review an architecture before creating development tasks.</p></div></CardContent></Card>
       ) : isArchitectureStale ? (
         <div role="status" className="flex items-start gap-2 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 text-sm text-foreground"><AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-600" aria-hidden="true" /><span>Your architecture is out of date. Regenerate or review it before creating a development plan.</span></div>
+      ) : !validationReport.valid ? (
+        <div role="status" className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-xs text-foreground">Resolve the stack compatibility findings before generating development tasks.</div>
+      ) : architectureValidation && !architectureValidation.valid ? (
+        <div role="status" className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-xs text-foreground">Resolve architecture validation errors before generating development tasks.</div>
       ) : null}
 
       {error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}
