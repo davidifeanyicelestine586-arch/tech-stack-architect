@@ -131,6 +131,20 @@ export const generateArchitecture = ({
         .map((item) => item.label)
         .filter((label) => label !== DEPLOYMENT_MODELS[deployment].label),
     },
+    ...(answers.dataFlowReviewed ? [{
+      id: "decision-data-flow-review",
+      title: "Data flow review",
+      decision: "Reviewed by the project owner",
+      rationale: "The project owner confirmed that data flow and persistence boundaries have been reviewed.",
+      alternatives: [],
+    }] : []),
+    ...(answers.securityReviewed ? [{
+      id: "decision-security-review",
+      title: "Security boundary review",
+      decision: "Reviewed by the project owner",
+      rationale: "The project owner confirmed that identity, authorization, secrets, and trust boundaries have been reviewed.",
+      alternatives: [],
+    }] : []),
     ...selectedComponents.map((technology) => ({
       id: `decision-technology-${technology.id}`,
       title: `Technology assignment: ${technology.name}`,
