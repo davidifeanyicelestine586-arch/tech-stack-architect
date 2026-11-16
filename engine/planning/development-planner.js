@@ -136,6 +136,28 @@ export const generateDevelopmentPlan = ({ project, architecture, validation }) =
   }
 
   const verificationPhaseId = "verification";
+  const validationFindings = Array.isArray(validation?.findings) ? validation.findings : [];
+  const validationTaskIds = [];
+  for (const item of validationFindings.filter((finding) => finding.severity === "error" || finding.severity === "warning")) {
+    const taskId = `task-address-${slug(item.code)}`;
+    validationTaskIds.push(taskId);
+    const matchingComponent = components.find((component) => component.name === item.location);
+    tasks.push(task({
+      id: taskId,
+      title: `Address: ${item.title}`,
+      description: item.explanation,
+      phaseId: verificationPhaseId,
+      componentIds: matchingComponent ? [matchingComponent.id] : [],
+      dependsOn: [...new Set(previousTaskIds)],
+      acceptanceCriteria: [
+        item.recommendation,
+        "Repeat architecture validation and confirm the finding is resolved or explicitly accepted.",
+      ],
+      deliverables: [`Resolution record for ${item.code}`],
+      suggestedTests: ["Add or update a test that covers the affected architecture rule."],
+      learningResources: ["Review the evidence and recommendation in the architecture validation report."],
+    }));
+  }
   const verificationTaskId = "task-integrated-verification";
   const verificationMilestoneId = "milestone-verification";
   tasks.push(task({
@@ -144,7 +166,7 @@ export const generateDevelopmentPlan = ({ project, architecture, validation }) =
     description: "Verify that the implemented components work together and that architecture findings have been reviewed.",
     phaseId: verificationPhaseId,
     componentIds: components.map((item) => item.id),
-    dependsOn: [...new Set(previousTaskIds)],
+    dependsOn: [...new Set([...previousTaskIds, ...validationTaskIds])],
     acceptanceCriteria: [
       "The selected architecture components are integrated.",
       "Critical user journeys pass their end-to-end checks.",
@@ -173,10 +195,9 @@ export const generateDevelopmentPlan = ({ project, architecture, validation }) =
     deliverables: ["Integrated application verification report"],
     dependsOn: [...previousPhaseIds],
     milestoneIds: [verificationMilestoneId],
-    taskIds: [verificationTaskId],
+    taskIds: [...validationTaskIds, verificationTaskId],
   });
 
-  const validationFindings = Array.isArray(validation?.findings) ? validation.findings : [];
   if (validationFindings.some((item) => item.severity === "error")) {
     const reviewTask = tasks.find((item) => item.id === verificationTaskId);
     reviewTask.description += ` Blocking architecture findings remain: ${validationFindings.filter((item) => item.severity === "error").map((item) => item.title).join("; ")}.`;
