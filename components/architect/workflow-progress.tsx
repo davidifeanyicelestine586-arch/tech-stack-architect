@@ -25,7 +25,7 @@ export function WorkflowProgress() {
   const hasArchitecture = Boolean(architecture && !isArchitectureStale);
   const hasValidation = Boolean(hasArchitecture && architectureValidation && architectureValidation.valid && validationReport.valid);
   const hasPlan = Boolean(developmentPlan && !isDevelopmentPlanStale);
-  const hasBlueprint = Boolean(blueprint && hasPlan);
+  const hasBlueprint = Boolean(blueprint && hasPlan && JSON.stringify(blueprint.architecture ?? null) === JSON.stringify(architecture ?? null) && JSON.stringify(blueprint.developmentPlan ?? null) === JSON.stringify(developmentPlan ?? null));
 
   const completed = [
     hasProject,
