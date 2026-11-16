@@ -102,3 +102,16 @@ test("source signatures detect upstream project, stack, and architecture changes
   };
   assert.notEqual(planSignature, getDevelopmentPlanSourceSignature(project, editedArchitecture));
 });
+
+test("user review confirmations are retained as explicit architecture decisions", () => {
+  const architecture = generateArchitecture({
+    project,
+    selectedComponents,
+    answers: { dataFlowReviewed: true, securityReviewed: true },
+  });
+
+  assert.ok(architecture.decisions.some((decision) => decision.id === "decision-data-flow-review"));
+  assert.ok(architecture.decisions.some((decision) => decision.id === "decision-security-review"));
+  assert.ok(!architecture.unresolvedQuestions.some((question) => question.includes("data flow")));
+  assert.ok(!architecture.unresolvedQuestions.some((question) => question.includes("identity")));
+});
