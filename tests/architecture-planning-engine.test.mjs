@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { generateArchitecture } from "../engine/architecture/architecture-generator.js";
+import { generateArchitecture, getArchitectureSourceSignature } from "../engine/architecture/architecture-generator.js";
 import { validateArchitecture } from "../engine/architecture/architecture-validator.js";
-import { generateDevelopmentPlan } from "../engine/planning/development-planner.js";
+import { generateDevelopmentPlan, getDevelopmentPlanSourceSignature } from "../engine/planning/development-planner.js";
 import Exporter from "../engine/exporter.js";
 
 const project = {
@@ -85,4 +85,20 @@ test("Markdown blueprint export includes architecture findings and development t
   assert.match(markdown, /## Architecture Validation/);
   assert.match(markdown, /## Development Roadmap/);
   assert.match(markdown, /Implement Next.js/);
+});
+
+test("source signatures detect upstream project, stack, and architecture changes", () => {
+  const signature = getArchitectureSourceSignature(project, selectedComponents);
+  assert.equal(signature, getArchitectureSourceSignature(project, [...selectedComponents].reverse()));
+  assert.notEqual(signature, getArchitectureSourceSignature({ ...project, requirements: "different requirements" }, selectedComponents));
+
+  const architecture = generateArchitecture({ project, selectedComponents });
+  const planSignature = getDevelopmentPlanSourceSignature(project, architecture);
+  const editedArchitecture = {
+    ...architecture,
+    components: architecture.components.map((component) => component.id === "technology-nextjs"
+      ? { ...component, responsibility: "Edited responsibility." }
+      : component),
+  };
+  assert.notEqual(planSignature, getDevelopmentPlanSourceSignature(project, editedArchitecture));
 });
