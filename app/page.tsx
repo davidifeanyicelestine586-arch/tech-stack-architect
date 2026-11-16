@@ -99,7 +99,7 @@ export default function LandingPage() {
 
         <section aria-labelledby="workflow-heading">
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">The workflow</p><h2 id="workflow-heading" className="mt-3 text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">From first idea to build-ready blueprint.</h2></div><p className="max-w-md text-sm leading-6 text-muted-foreground">Each stage builds on the last: from explainable technology choices to a reviewed architecture, actionable plan, and engineering handoff.</p></div>
-          <ol className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <ol className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {WORKFLOW.map(([number, title, description], index) => <li key={title} className="relative rounded-2xl border border-border bg-card p-5 sm:p-6"><div className="flex items-center justify-between"><span className="font-mono text-xs font-semibold text-primary">{number}</span>{index < WORKFLOW.length - 1 ? <ArrowUpRight className="size-4 text-muted-foreground/70" aria-hidden="true" /> : <Check className="size-4 text-primary" aria-hidden="true" />}</div><h3 className="mt-5 text-lg font-semibold">{title}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p></li>)}
           </ol>
         </section>
