@@ -153,6 +153,21 @@ export const validateArchitecture = ({ project, architecture, selectedComponents
     }
   }
 
+  const proposedDecisions = Array.isArray(architecture?.decisions)
+    ? architecture.decisions.filter((decision) => decision?.status !== "approved")
+    : [];
+  if (proposedDecisions.length > 0) {
+    findings.push(finding(
+      "warning",
+      "UNAPPROVED_ARCHITECTURE_DECISIONS",
+      "Architecture decisions still need approval",
+      "Architecture decisions",
+      `${proposedDecisions.length} decision(s) are still proposals and have not been explicitly approved.`,
+      proposedDecisions.map((decision) => decision.title),
+      "Review each proposed decision and approve it or revise the architecture before implementation."
+    ));
+  }
+
   const requirements = `${project?.name || ""} ${project?.description || ""} ${project?.requirements || ""}`;
   const categories = categorySet(selected);
   if (/(store|database|persist|upload|file|record|document)/i.test(requirements) &&
