@@ -50,7 +50,7 @@ test("valid snapshot serialization emits only canonical persisted fields", () =>
   const serialized = serializeProjectSnapshot(baseSnapshot(), registries);
 
   assert.deepEqual(serialized, {
-    schema_version: 1,
+    schema_version: 2,
     name: "AI Document Q&A Platform",
     description: "A SaaS application for document questions.",
     domain_id: "web-saas",
@@ -58,6 +58,8 @@ test("valid snapshot serialization emits only canonical persisted fields", () =>
     requirements: "upload PDFs, ask questions, deploy",
     selected_component_ids: ["nextjs", "nodejs", "vercel"],
     active_recipe_id: "bootstrapped-payment-dashboard",
+    architecture: null,
+    development_plan: null,
   });
 });
 
@@ -66,12 +68,12 @@ test("valid persisted records deserialize to saved metadata plus a canonical sna
 
   assert.deepEqual(record, {
     id: "3a7f6dd5-6517-4b74-b4d4-8c3e4a5db19e",
-    schemaVersion: 1,
+    schemaVersion: 2,
     revision: 3,
     createdAt: "2026-08-24T12:00:00.000Z",
     updatedAt: "2026-08-24T12:05:00.000Z",
     snapshot: {
-      schemaVersion: 1,
+      schemaVersion: 2,
       projectDefinition: {
         name: "AI Document Q&A Platform",
         description: "A SaaS application for document questions.",
@@ -81,6 +83,8 @@ test("valid persisted records deserialize to saved metadata plus a canonical sna
       },
       selectedComponentIds: ["nextjs", "nodejs", "vercel"],
       activeRecipeId: "bootstrapped-payment-dashboard",
+      architecture: null,
+      developmentPlan: null,
     },
   });
 });
@@ -98,6 +102,8 @@ test("snapshot serialization and deserialization preserve the canonical state", 
       selected_component_ids: serialized.selected_component_ids,
       active_recipe_id: serialized.active_recipe_id,
       schema_version: serialized.schema_version,
+      architecture: serialized.architecture,
+      development_plan: serialized.development_plan,
     },
     registries
   );
@@ -206,7 +212,7 @@ test("unknown recipe IDs are rejected", () => {
 
 test("unsupported schema versions are rejected", () => {
   assert.throws(
-    () => deserializeProjectRecord({ ...baseRecord(), schema_version: 2 }, registries),
+    () => deserializeProjectRecord({ ...baseRecord(), schema_version: 3 }, registries),
     (error) =>
       error instanceof PersistenceError &&
       error.code === "UNSUPPORTED_SCHEMA_VERSION"
@@ -228,6 +234,8 @@ test("derived state is excluded from serialized output", () => {
 
   assert.deepEqual(Object.keys(serialized).sort(), [
     "active_recipe_id",
+    "architecture",
+    "development_plan",
     "description",
     "difficulty",
     "domain_id",
