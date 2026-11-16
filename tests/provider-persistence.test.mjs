@@ -28,6 +28,8 @@ const baseSnapshot = () => ({
   },
   selectedComponentIds: ["nextjs", "nodejs", "vercel"],
   activeRecipeId: "bootstrapped-payment-dashboard",
+  architecture: null,
+  developmentPlan: null,
 });
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
