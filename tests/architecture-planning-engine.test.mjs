@@ -112,6 +112,17 @@ test("user review confirmations are retained as explicit architecture decisions"
 
   assert.ok(architecture.decisions.some((decision) => decision.id === "decision-data-flow-review"));
   assert.ok(architecture.decisions.some((decision) => decision.id === "decision-security-review"));
+  assert.equal(architecture.decisions.find((decision) => decision.id === "decision-architecture-style")?.status, "proposed");
   assert.ok(!architecture.unresolvedQuestions.some((question) => question.includes("data flow")));
   assert.ok(!architecture.unresolvedQuestions.some((question) => question.includes("identity")));
+});
+
+test("architecture style and deployment decisions require explicit approval", () => {
+  const architecture = generateArchitecture({
+    project,
+    selectedComponents,
+    answers: { architectureStyleApproved: true, deploymentModelApproved: true },
+  });
+  assert.equal(architecture.decisions.find((decision) => decision.id === "decision-architecture-style")?.status, "approved");
+  assert.equal(architecture.decisions.find((decision) => decision.id === "decision-deployment-model")?.status, "approved");
 });
