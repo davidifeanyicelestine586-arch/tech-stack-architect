@@ -5,6 +5,7 @@ import {
   FileCode2,
   BookMarked,
   ClipboardList,
+  Network,
   LucideIcon,
 } from "lucide-react";
 import { uniqueId } from "lodash";
@@ -57,7 +58,9 @@ const SidebarContent: MenuItem[] = [
       { id: uniqueId("nav_"), name: route("define").label, icon: ClipboardList, url: route("define").href, routeId: "define", mobilePrimary: true },
       { id: uniqueId("nav_"), name: route("recommendations").label, icon: SearchCheck, url: route("recommendations").href, routeId: "recommendations", mobilePrimary: true },
       { id: uniqueId("nav_"), name: route("components").label, icon: Layers, url: route("components").href, routeId: "components" },
+      { id: uniqueId("nav_"), name: route("architect").label, icon: Network, url: route("architect").href, routeId: "architect" },
       { id: uniqueId("nav_"), name: route("validation").label, icon: ShieldCheck, url: route("validation").href, routeId: "validation", mobilePrimary: true },
+      { id: uniqueId("nav_"), name: route("plan").label, icon: ClipboardList, url: route("plan").href, routeId: "plan" },
       { id: uniqueId("nav_"), name: route("blueprint").label, icon: FileCode2, url: route("blueprint").href, routeId: "blueprint", mobilePrimary: true },
       { id: uniqueId("nav_"), name: route("docs").label, icon: BookMarked, url: route("docs").href, routeId: "docs" },
     ],
