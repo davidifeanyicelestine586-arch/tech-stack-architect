@@ -70,3 +70,11 @@ A P0 item is not considered closed because the implementation looks correct. The
 6. any remaining limitation.
 
 Unknown behavior must be recorded as `Missing Specification` until verified.
+
+## Interpreting automated axe results
+
+- **Violations** are confirmed automated failures and must be fixed before the relevant release gate can pass.
+- **Incomplete** results are cases axe cannot determine automatically. They are not violations and must not be silently treated as passes.
+- Review incomplete results in their actual route, viewport, and interaction state. Record the affected selector, manual outcome, evidence, and any remediation.
+- Give particular attention to contrast, focusable descendants of hidden containers, and ARIA attribute usage. Do not globally suppress an axe rule to reduce the incomplete count.
+- An automated report with zero violations is useful evidence, but it does not replace the keyboard and assistive-technology checks in the manual pass above.
