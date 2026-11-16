@@ -83,3 +83,16 @@ test("workflow Define progress requires the required project name and descriptio
   assert.match(progress, /projectDefinition\.name\.trim\(\)\s*&&\s*projectDefinition\.description\.trim\(\)/);
   assert.doesNotMatch(progress, /name\.trim\(\)\s*\|\|\s*projectDefinition\.description\.trim\(\)\s*\|\|\s*projectDefinition\.requirements\.trim\(\)/);
 });
+
+test("workspace onboarding offers a dismissible, resumable contextual checklist", () => {
+  const onboarding = read("components/architect/workspace-onboarding.tsx");
+  const workspace = read("app/(dashboard-layout)/app/workspace-client.tsx");
+  assert.match(workspace, /<WorkspaceOnboarding\s*\/>/);
+  assert.match(onboarding, /localStorage\.getItem/);
+  assert.match(onboarding, /localStorage\.setItem/);
+  for (const target of ["#define", "#recommendations", "#components", "#architect", "#validation", "#plan", "#blueprint"]) {
+    assert.ok(onboarding.includes(target), `onboarding checklist includes ${target}`);
+  }
+  assert.match(onboarding, /aria-label="Getting started"/);
+  assert.match(onboarding, /Show getting-started guide/);
+});
