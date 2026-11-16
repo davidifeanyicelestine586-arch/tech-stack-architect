@@ -39,7 +39,7 @@ const architecture = {
     { id: "web-api", sourceId: "web", targetId: "api", relationshipType: "https", description: "The client calls the application API." },
   ],
   decisions: [
-    { id: "api-boundary", title: "API boundary", decision: "Use a dedicated API layer.", rationale: "Keep transport concerns separate from business logic.", alternatives: ["Server actions"] },
+    { id: "api-boundary", title: "API boundary", decision: "Use a dedicated API layer.", rationale: "Keep transport concerns separate from business logic.", status: "proposed", alternatives: ["Server actions"] },
   ],
   assumptions: ["The first release is a single-owner application."],
   unresolvedQuestions: ["Which external identity provider will be used?"],
