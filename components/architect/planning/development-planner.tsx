@@ -15,10 +15,12 @@ export function DevelopmentPlanner() {
     developmentPlan,
     setDevelopmentPlan,
     generateDevelopmentPlan,
+    architectureValidation,
+    validationReport,
     isArchitectureStale,
     isDevelopmentPlanStale,
   } = useTechStack();
-  const canGenerate = Boolean(architecture && !isArchitectureStale);
+  const canGenerate = Boolean(architecture && !isArchitectureStale && architectureValidation?.valid && validationReport.valid);
   const updateTask = (taskId: string, patch: Partial<DevelopmentTask>) => {
     if (!developmentPlan) return;
     setDevelopmentPlan({
