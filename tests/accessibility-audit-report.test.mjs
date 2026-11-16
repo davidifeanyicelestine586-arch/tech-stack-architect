@@ -53,5 +53,6 @@ test("remaining-page accessibility audit covers public catalog and detail routes
     assert.ok(audit.includes(`route: "${route}"`), `missing accessibility route coverage for ${route}`);
   }
   assert.match(audit, /type:"http-status"/);
-  assert.equal([...audit.matchAll(/\\{ id: "[^"]+", route: "\\/[^\"]+" \\}/g)].length, 11);
+  const routeBlock = audit.split("const pages = [")[1]?.split("];")[0] ?? "";
+  assert.equal((routeBlock.match(/route: "/g) ?? []).length, 11);
 });
