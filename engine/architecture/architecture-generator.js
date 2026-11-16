@@ -118,7 +118,7 @@ export const generateArchitecture = ({
       title: "Architecture style",
       decision: ARCHITECTURE_STYLES[style].label,
       rationale: ARCHITECTURE_STYLES[style].rationale,
-      status: "proposed",
+      status: answers.architectureStyleApproved ? "approved" : "proposed",
       alternatives: Object.values(ARCHITECTURE_STYLES)
         .map((item) => item.label)
         .filter((label) => label !== ARCHITECTURE_STYLES[style].label),
@@ -128,7 +128,7 @@ export const generateArchitecture = ({
       title: "Deployment model",
       decision: DEPLOYMENT_MODELS[deployment].label,
       rationale: DEPLOYMENT_MODELS[deployment].rationale,
-      status: "proposed",
+      status: answers.deploymentModelApproved ? "approved" : "proposed",
       alternatives: Object.values(DEPLOYMENT_MODELS)
         .map((item) => item.label)
         .filter((label) => label !== DEPLOYMENT_MODELS[deployment].label),
