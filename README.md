@@ -184,8 +184,10 @@ flowchart LR
   A[Project requirements] --> B[Deterministic analysis]
   B --> C[Technology recommendations]
   C --> D[Selected stack]
-  D --> E[Dependency and conflict validation]
-  E --> F[Architecture blueprint]
+  D --> E[Guided architecture]
+  E --> F[Stack and architecture validation]
+  F --> G[Development roadmap]
+  G --> H[Unified blueprint]
 ```
 
 The same flow is available in the workspace as a progressive eight-step journey. Architecture and planning are generated from the selected catalog entries and remain editable; upstream project or stack changes mark dependent outputs stale rather than silently discarding user work. The planner avoids fabricated dates and effort estimates.
