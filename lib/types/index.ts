@@ -7,3 +7,4 @@ export * from "./plugin";
 export * from "./project";
 export * from "./architecture";
 export * from "./development-plan";
+export * from "./architecture-validation";
