@@ -30,3 +30,11 @@ export interface ArchitectureSpecification {
   assumptions: string[];
   unresolvedQuestions: string[];
 }
+
+export interface ArchitectureGenerationAnswers {
+  architectureStyle?: "modular-monolith" | "service-oriented" | "serverless";
+  deploymentModel?: "single-deployment" | "distributed" | "serverless";
+  dataFlowReviewed?: boolean;
+  securityReviewed?: boolean;
+  assumptions?: string[];
+}
