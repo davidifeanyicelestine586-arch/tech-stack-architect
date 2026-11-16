@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { workflowStepLabel } from "@/lib/navigation/workflow";
 
 export function BlueprintPanel() {
-  const { blueprint, projectDefinition, generateCustomBlueprint, selectedComponents, copyBlueprint, downloadBlueprint } = useTechStack();
+  const { blueprint, projectDefinition, architecture, developmentPlan, isArchitectureStale, isDevelopmentPlanStale, generateCustomBlueprint, selectedComponents, copyBlueprint, downloadBlueprint } = useTechStack();
   const [copiedJson, setCopiedJson] = React.useState(false);
   const [copiedMd, setCopiedMd] = React.useState(false);
   const [isGenerating, setIsGenerating] = React.useState(false);
@@ -23,7 +23,11 @@ export function BlueprintPanel() {
   const currentProjectSignature = JSON.stringify({ name: projectDefinition.name.trim(), description: projectDefinition.description.trim(), domain: projectDefinition.domain, difficulty: projectDefinition.difficulty, requirements: projectDefinition.requirements.trim() });
   const blueprintProject = blueprint?.project;
   const blueprintProjectSignature = JSON.stringify(blueprintProject ? { name: blueprintProject.name?.trim() ?? "", description: blueprintProject.description?.trim() ?? "", domain: blueprintProject.domain ?? blueprint?.domain ?? "", difficulty: blueprintProject.difficulty ?? projectDefinition.difficulty, requirements: blueprintProject.requirements?.trim() ?? "" } : hasProjectContent ? { missingProject: true } : { name: "", description: "", domain: projectDefinition.domain, difficulty: projectDefinition.difficulty, requirements: "" });
-  const blueprintIsStale = Boolean(blueprint && (selectedComponentSignature !== blueprintComponentSignature || currentProjectSignature !== blueprintProjectSignature));
+  const blueprintArchitectureSignature = JSON.stringify(blueprint?.architecture ?? null);
+  const currentArchitectureSignature = JSON.stringify(architecture ?? null);
+  const blueprintPlanSignature = JSON.stringify(blueprint?.developmentPlan ?? null);
+  const currentPlanSignature = JSON.stringify(developmentPlan ?? null);
+  const blueprintIsStale = Boolean(blueprint && (selectedComponentSignature !== blueprintComponentSignature || currentProjectSignature !== blueprintProjectSignature || isArchitectureStale || isDevelopmentPlanStale || blueprintArchitectureSignature !== currentArchitectureSignature || blueprintPlanSignature !== currentPlanSignature));
 
   const handleGenerate = async () => {
     if (isGenerating || selectedComponents.length === 0) return;
