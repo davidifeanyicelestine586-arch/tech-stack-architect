@@ -30,6 +30,7 @@ export interface DevelopmentTask {
 
 export interface DevelopmentPlan {
   schemaVersion: 1;
+  sourceSignature: string;
   milestones: DevelopmentMilestone[];
   phases: DevelopmentPhase[];
   tasks: DevelopmentTask[];
