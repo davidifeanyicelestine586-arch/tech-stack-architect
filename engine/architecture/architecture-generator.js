@@ -54,12 +54,6 @@ export const getArchitectureSourceSignature = (project, selectedComponents, answ
       requirements: project?.requirements || "",
     },
     selectedComponentIds: (selectedComponents || []).map((item) => typeof item === "string" ? item : item?.id).filter(Boolean).sort(),
-    answers: {
-      architectureStyle: answers.architectureStyle || "modular-monolith",
-      deploymentModel: answers.deploymentModel || "single-deployment",
-      dataFlowReviewed: Boolean(answers.dataFlowReviewed),
-      securityReviewed: Boolean(answers.securityReviewed),
-    },
   });
 
 export const generateArchitecture = ({
