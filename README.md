@@ -1,6 +1,6 @@
 # Tech Stack Architect
 
-Tech Stack Architect is a web application for turning project requirements into a structured, explainable technology-stack proposal. It helps users compare technologies, review recommendation factors, validate a proposed stack, and produce an architecture blueprint.
+Tech Stack Architect is a guided software architecture and development planning platform. It helps users define a project, choose technologies with explainable trade-offs, generate and review a structured architecture, validate engineering decisions, and turn the result into an actionable development roadmap and engineering blueprint.
 
 **Live application:**   https://architect.ediccrew.com/
 **Source repository:** https://github.com/davidifeanyicelestine586-arch/tech-stack-architect
@@ -40,7 +40,11 @@ Review
   ↓
 Build
   ↓
+Architect
+  ↓
 Validate
+  ↓
+Plan
   ↓
 Blueprint
 ```
@@ -49,8 +53,10 @@ Blueprint
 2. **Analyze** — evaluate the project context against the technology catalog.
 3. **Review** — inspect explainable recommendation factors and candidate technologies.
 4. **Build** — assemble and refine the selected stack.
-5. **Validate** — check dependencies, conflicts, and registered engineering constraints.
-6. **Blueprint** — generate a structured architecture result for further implementation or export.
+5. **Architect** — generate and review a component architecture from selected technologies and declared dependencies.
+6. **Validate** — check stack compatibility, architecture relationships, and requirement coverage using registered rules.
+7. **Plan** — generate dependency-ordered phases, milestones, tasks, deliverables, and acceptance criteria.
+8. **Blueprint** — consolidate project requirements, stack decisions, architecture, validation findings, and the development plan for Markdown or JSON export.
 
 ## Public routes
 
@@ -182,7 +188,7 @@ flowchart LR
   E --> F[Architecture blueprint]
 ```
 
-The same flow is available in the workspace as a progressive six-step journey. Downstream stages remain locked until their prerequisites are available.
+The same flow is available in the workspace as a progressive eight-step journey. Architecture and planning are generated from the selected catalog entries and remain editable; upstream project or stack changes mark dependent outputs stale rather than silently discarding user work. The planner avoids fabricated dates and effort estimates.
 
 ## Catalog contributions
 
