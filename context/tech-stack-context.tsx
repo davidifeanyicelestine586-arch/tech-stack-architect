@@ -25,6 +25,8 @@ import type {
   RecipeMatch,
   ProjectDefinition,
   RequirementAnalysis,
+  ArchitectureSpecification,
+  DevelopmentPlan,
 } from "@/lib/types";
 
 export type PersistenceStatus = "idle" | "saving" | "saved" | "loading" | "error";
@@ -69,6 +71,10 @@ export interface TechStackContextType {
   difficultyFilter: string;
   setDifficultyFilter: (difficulty: string) => void;
   projectDefinition: ProjectDefinition;
+  architecture: ArchitectureSpecification | null;
+  setArchitecture: (architecture: ArchitectureSpecification | null) => void;
+  developmentPlan: DevelopmentPlan | null;
+  setDevelopmentPlan: (plan: DevelopmentPlan | null) => void;
   updateProjectDefinition: <Key extends keyof ProjectDefinition>(key: Key, value: ProjectDefinition[Key]) => void;
   persistenceDirty: boolean;
   analyzeProject: (project: ProjectDefinition) => RequirementAnalysis;
@@ -151,7 +157,8 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
   const architect = useMemo(() => new TechStackArchitect({ domains, components, recipes }), [domains, components, recipes]);
   const persistenceClient = useMemo(() => createProjectPersistenceClient(), []);
   const [activeDomain, setActiveDomain] = useState<string>("all");
-  const [projectDefinition, setProjectDefinition] = useState<ProjectDefinition>({ name: "", description: "", domain: domains[0]?.id || "web-saas", difficulty: "Intermediate", requirements: "" });\n  const [architecture, setArchitecture] = useState<ArchitectureSpecification | null>(null);\n  const [developmentPlan, setDevelopmentPlan] = useState<DevelopmentPlan | null>(null);
+  const [projectDefinition, setProjectDefinition] = useState<ProjectDefinition>({ name: "", description: "", domain: domains[0]?.id || "web-saas", difficulty: "Intermediate", requirements: "" });
+  const [architecture, setArchitecture] = useState<ArchitectureSpecification | null>(null);\n  const [developmentPlan, setDevelopmentPlan] = useState<DevelopmentPlan | null>(null);
   const [lastPersistedSnapshotSignature, setLastPersistedSnapshotSignature] = useState<string | null>(null);
   const [requirementAnalysis, setRequirementAnalysis] = useState<RequirementAnalysis | null>(null);
   const [ignoredRecommendationIds, setIgnoredRecommendationIds] = useState<string[]>([]);
