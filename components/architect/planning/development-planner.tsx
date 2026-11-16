@@ -25,6 +25,7 @@ export function DevelopmentPlanner() {
     });
   };
   const handleGenerate = () => {
+    if (developmentPlan && !window.confirm("Regenerating replaces the current roadmap and any task edits. Continue?")) return;
     try {
       generateDevelopmentPlan();
     } catch {
