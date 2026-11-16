@@ -235,8 +235,8 @@ test("derived state is excluded from serialized output", () => {
   assert.deepEqual(Object.keys(serialized).sort(), [
     "active_recipe_id",
     "architecture",
-    "development_plan",
     "description",
+    "development_plan",
     "difficulty",
     "domain_id",
     "name",
