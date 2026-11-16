@@ -275,6 +275,7 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
   }), [components, activeDomain, selectedCategory, difficultyFilter, searchQuery]);
 
   const generateCustomBlueprint = useCallback(() => {
+    if (!architecture || !developmentPlan || isArchitectureStale || isDevelopmentPlanStale) { setBlueprint(null); return; }
     const selectedObjects = selectedComponentIds.map((id) => components.find((c) => c.id === id)).filter(Boolean) as Component[];
     if (selectedObjects.length === 0) { setBlueprint(null); return; }
     const totalHours = selectedObjects.reduce((sum, c) => sum + (c.estimatedLearningHours || 0), 0);
@@ -299,8 +300,9 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
       estimatedHours: totalHours || 12, components: selectedObjects, learningGoals: allLearningGoals.length > 0 ? allLearningGoals : ["Architect custom domain integrations"],
       outputs: allOutputs.length > 0 ? allOutputs : ["architecture-diagram", "starter-code"], starterCommands: commands, warnings: currentWarnings,
       project: projectDefinition.name.trim() || projectDefinition.description.trim() ? projectDefinition : undefined, validation: toValidationSummary(validationReport),
+      architecture, architectureValidation: architectureValidation || undefined, developmentPlan,
     });
-  }, [selectedComponentIds, components, activeDomain, projectDefinition, validationReport]);
+  }, [selectedComponentIds, components, activeDomain, projectDefinition, validationReport, architecture, architectureValidation, developmentPlan, isArchitectureStale, isDevelopmentPlanStale]);
 
   const loadRecipe = useCallback((recipeId: string) => {
     const recipe = recipes.find((r) => r.id === recipeId); if (!recipe) return;
@@ -321,8 +323,8 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
     const domainObj = domains.find((d) => d.id === activeDomain); const domainTitle = domainObj ? domainObj.title : "Custom Tech Stack";
     const combinedWarnings = [...(report.warnings || [])];
     if (bp.warnings && Array.isArray(bp.warnings)) bp.warnings.forEach((w) => { const msg = typeof w === "string" ? w : w; if (!combinedWarnings.some((cw) => cw.message === msg)) combinedWarnings.push({ component: "Blueprint", severity: "warning", message: typeof msg === "string" ? msg : JSON.stringify(msg) }); });
-    return { title: projectDefinition.name.trim() || bp.title || "Technology Stack Blueprint", score: report.score, status: report.status, domain: bp.domain || domainTitle, components: selectedComponents, warnings: combinedWarnings, suggestions: report.suggestions || [], starterCommands: bp.starterCommands || [], learningGoals: bp.learningGoals || [], outputs: bp.outputs || [], project: projectDefinition.name.trim() || projectDefinition.description.trim() ? projectDefinition : undefined, validation: toValidationSummary(report) };
-  }, [validationReport, blueprint, domains, activeDomain, selectedComponents, projectDefinition]);
+    return { title: projectDefinition.name.trim() || bp.title || "Technology Stack Blueprint", score: report.score, status: report.status, domain: bp.domain || domainTitle, components: selectedComponents, warnings: combinedWarnings, suggestions: report.suggestions || [], starterCommands: bp.starterCommands || [], learningGoals: bp.learningGoals || [], outputs: bp.outputs || [], project: projectDefinition.name.trim() || projectDefinition.description.trim() ? projectDefinition : undefined, validation: toValidationSummary(report), architecture: architecture || undefined, architectureValidation: architectureValidation || undefined, developmentPlan: developmentPlan || undefined };
+  }, [validationReport, blueprint, domains, activeDomain, selectedComponents, projectDefinition, architecture, architectureValidation, developmentPlan]);
   const exportBlueprint = useCallback((format: "json" | "markdown"): string => { try { return architect.export(format, mergedReport); } catch { return format === "json" ? JSON.stringify(mergedReport, null, 2) : `# ${mergedReport.title}\nScore: ${mergedReport.score}`; } }, [architect, mergedReport]);
   const downloadBlueprint = useCallback((format: "json" | "markdown", customFilename?: string): boolean => { try { const sanitizedTitle = (mergedReport.title || "tech-stack-blueprint").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""); architect.download(format, customFilename || `${sanitizedTitle}.${format === "json" ? "json" : "md"}`, mergedReport); return true; } catch (err) { console.error("Blueprint download failed:", err); return false; } }, [architect, mergedReport]);
   const copyBlueprint = useCallback(async (format: "json" | "markdown"): Promise<boolean> => { try { await navigator.clipboard.writeText(exportBlueprint(format)); return true; } catch (err) { console.error("Clipboard copy failed:", err); return false; } }, [exportBlueprint]);
