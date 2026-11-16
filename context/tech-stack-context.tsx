@@ -223,7 +223,7 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
     developmentPlan && (
       !architecture ||
       isArchitectureStale ||
-      developmentPlan.sourceSignature !== getDevelopmentPlanSourceSignature(projectDefinition, architecture)
+      developmentPlan.sourceSignature !== getDevelopmentPlanSourceSignature(projectDefinition, architecture, architectureValidation)
     )
   );
   const generateArchitectureForProject = useCallback((answers: ArchitectureGenerationAnswers = {}) => {
