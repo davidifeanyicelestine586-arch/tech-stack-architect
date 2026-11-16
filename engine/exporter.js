@@ -76,7 +76,7 @@ export default class Exporter {
             if (report.architecture.decisions?.length) {
                 md += `### Architecture Decisions\n`;
                 report.architecture.decisions.forEach(decision => {
-                    md += `- **${decision.title}:** ${decision.decision} — ${decision.rationale}\n`;
+                    md += `- [${decision.status.toUpperCase()}] **${decision.title}:** ${decision.decision} — ${decision.rationale}\n`;
                 });
                 md += `\n`;
             }
