@@ -3,6 +3,7 @@ name: Header Responsive Collision Audit
 on:
   push:
     branches:
+      - main
       - fix/header-responsive-collision
   pull_request:
   workflow_dispatch:
