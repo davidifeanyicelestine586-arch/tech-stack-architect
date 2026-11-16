@@ -66,7 +66,7 @@ export function ArchitectureWizard() {
         <CardContent className="grid gap-4 md:grid-cols-2">
           <label className="text-sm font-medium text-foreground" htmlFor="architecture-style">
             Architecture style
-            <select id="architecture-style" className={selectClassName} value={architectureStyle} onChange={(event) => setArchitectureStyle(event.target.value)}>
+            <select id="architecture-style" className={selectClassName} value={architectureStyle} onChange={(event) => setArchitectureStyle(event.target.value as typeof architectureStyle)}>
               <option value="modular-monolith">Modular monolith</option>
               <option value="service-oriented">Service-oriented</option>
               <option value="serverless">Serverless</option>
@@ -74,7 +74,7 @@ export function ArchitectureWizard() {
           </label>
           <label className="text-sm font-medium text-foreground" htmlFor="deployment-model">
             Deployment model
-            <select id="deployment-model" className={selectClassName} value={deploymentModel} onChange={(event) => setDeploymentModel(event.target.value)}>
+            <select id="deployment-model" className={selectClassName} value={deploymentModel} onChange={(event) => setDeploymentModel(event.target.value as typeof deploymentModel)}>
               <option value="single-deployment">Single deployment</option>
               <option value="distributed">Distributed deployment</option>
               <option value="serverless">Managed serverless deployment</option>
