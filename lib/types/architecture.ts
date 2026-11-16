@@ -19,6 +19,7 @@ export interface ArchitectureDecision {
   title: string;
   decision: string;
   rationale: string;
+  status: "proposed" | "approved";
   alternatives: string[];
 }
 
