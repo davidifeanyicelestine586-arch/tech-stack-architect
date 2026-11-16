@@ -101,6 +101,12 @@ test("source signatures detect upstream project, stack, and architecture changes
       : component),
   };
   assert.notEqual(planSignature, getDevelopmentPlanSourceSignature(project, editedArchitecture));
+  const validation = validateArchitecture({ project, architecture, selectedComponents });
+  const validatedSignature = getDevelopmentPlanSourceSignature(project, architecture, validation);
+  assert.notEqual(validatedSignature, getDevelopmentPlanSourceSignature(project, architecture, {
+    ...validation,
+    findings: [...validation.findings, { code: "NEW_RULE", severity: "warning", location: "API", recommendation: "Review API boundaries." }],
+  }));
 });
 
 test("user review confirmations are retained as explicit architecture decisions", () => {
