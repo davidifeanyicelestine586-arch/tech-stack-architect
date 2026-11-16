@@ -36,6 +36,8 @@ export interface ArchitectureSpecification {
 export interface ArchitectureGenerationAnswers {
   architectureStyle?: "modular-monolith" | "service-oriented" | "serverless";
   deploymentModel?: "single-deployment" | "distributed" | "serverless";
+  architectureStyleApproved?: boolean;
+  deploymentModelApproved?: boolean;
   dataFlowReviewed?: boolean;
   securityReviewed?: boolean;
   assumptions?: string[];
