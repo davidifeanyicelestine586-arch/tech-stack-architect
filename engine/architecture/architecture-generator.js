@@ -118,6 +118,7 @@ export const generateArchitecture = ({
       title: "Architecture style",
       decision: ARCHITECTURE_STYLES[style].label,
       rationale: ARCHITECTURE_STYLES[style].rationale,
+      status: "proposed",
       alternatives: Object.values(ARCHITECTURE_STYLES)
         .map((item) => item.label)
         .filter((label) => label !== ARCHITECTURE_STYLES[style].label),
@@ -127,6 +128,7 @@ export const generateArchitecture = ({
       title: "Deployment model",
       decision: DEPLOYMENT_MODELS[deployment].label,
       rationale: DEPLOYMENT_MODELS[deployment].rationale,
+      status: "proposed",
       alternatives: Object.values(DEPLOYMENT_MODELS)
         .map((item) => item.label)
         .filter((label) => label !== DEPLOYMENT_MODELS[deployment].label),
@@ -136,6 +138,7 @@ export const generateArchitecture = ({
       title: "Data flow review",
       decision: "Reviewed by the project owner",
       rationale: "The project owner confirmed that data flow and persistence boundaries have been reviewed.",
+      status: "approved",
       alternatives: [],
     }] : []),
     ...(answers.securityReviewed ? [{
@@ -143,6 +146,7 @@ export const generateArchitecture = ({
       title: "Security boundary review",
       decision: "Reviewed by the project owner",
       rationale: "The project owner confirmed that identity, authorization, secrets, and trust boundaries have been reviewed.",
+      status: "approved",
       alternatives: [],
     }] : []),
     ...selectedComponents.map((technology) => ({
@@ -150,6 +154,7 @@ export const generateArchitecture = ({
       title: `Technology assignment: ${technology.name}`,
       decision: `Assign ${technology.name} to the ${technology.category || "technology"} responsibility.`,
       rationale: technology.description || "Selected from the registered technology catalog.",
+      status: "approved",
       alternatives: [],
     })),
   ];
