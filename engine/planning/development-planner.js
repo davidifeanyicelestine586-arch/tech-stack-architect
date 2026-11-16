@@ -34,7 +34,7 @@ const task = ({ id, title, description, phaseId, componentIds = [], dependsOn = 
   learningResources,
 });
 
-export const getDevelopmentPlanSourceSignature = (project, architecture) =>
+export const getDevelopmentPlanSourceSignature = (project, architecture, validation) =>
   JSON.stringify({
     project: {
       name: project?.name || "",
@@ -44,6 +44,10 @@ export const getDevelopmentPlanSourceSignature = (project, architecture) =>
       requirements: project?.requirements || "",
     },
     architecture,
+    validation: validation ? {
+      valid: validation.valid,
+      findings: (validation.findings || []).map((item) => ({ code: item.code, severity: item.severity, location: item.location, recommendation: item.recommendation })),
+    } : null,
   });
 
 export const generateDevelopmentPlan = ({ project, architecture, validation }) => {
@@ -203,5 +207,5 @@ export const generateDevelopmentPlan = ({ project, architecture, validation }) =
     reviewTask.description += ` Blocking architecture findings remain: ${validationFindings.filter((item) => item.severity === "error").map((item) => item.title).join("; ")}.`;
   }
 
-  return { schemaVersion: 1, sourceSignature: getDevelopmentPlanSourceSignature(project, architecture), milestones, phases, tasks };
+  return { schemaVersion: 1, sourceSignature: getDevelopmentPlanSourceSignature(project, architecture, validation), milestones, phases, tasks };
 };
