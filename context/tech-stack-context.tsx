@@ -158,7 +158,8 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
   const persistenceClient = useMemo(() => createProjectPersistenceClient(), []);
   const [activeDomain, setActiveDomain] = useState<string>("all");
   const [projectDefinition, setProjectDefinition] = useState<ProjectDefinition>({ name: "", description: "", domain: domains[0]?.id || "web-saas", difficulty: "Intermediate", requirements: "" });
-  const [architecture, setArchitecture] = useState<ArchitectureSpecification | null>(null);\n  const [developmentPlan, setDevelopmentPlan] = useState<DevelopmentPlan | null>(null);
+  const [architecture, setArchitecture] = useState<ArchitectureSpecification | null>(null);
+  const [developmentPlan, setDevelopmentPlan] = useState<DevelopmentPlan | null>(null);
   const [lastPersistedSnapshotSignature, setLastPersistedSnapshotSignature] = useState<string | null>(null);
   const [requirementAnalysis, setRequirementAnalysis] = useState<RequirementAnalysis | null>(null);
   const [ignoredRecommendationIds, setIgnoredRecommendationIds] = useState<string[]>([]);
