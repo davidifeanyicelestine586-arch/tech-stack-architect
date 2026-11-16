@@ -4,10 +4,12 @@ import { AlertTriangle, CalendarClock, CheckCircle2, ListTodo } from "lucide-rea
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
 import { useTechStack } from "@/hooks/use-tech-stack";
 import type { DevelopmentTask } from "@/lib/types";
 
 export function DevelopmentPlanner() {
+  const [error, setError] = useState("");
   const {
     architecture,
     developmentPlan,
@@ -27,9 +29,10 @@ export function DevelopmentPlanner() {
   const handleGenerate = () => {
     if (developmentPlan && !window.confirm("Regenerating replaces the current roadmap and any task edits. Continue?")) return;
     try {
+      setError("");
       generateDevelopmentPlan();
-    } catch {
-      // The disabled state and inline guidance explain the prerequisite.
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "The development plan could not be generated.");
     }
   };
 
@@ -47,6 +50,7 @@ export function DevelopmentPlanner() {
         <div role="status" className="flex items-start gap-2 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 text-sm text-foreground"><AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-600" aria-hidden="true" /><span>Your architecture is out of date. Regenerate or review it before creating a development plan.</span></div>
       ) : null}
 
+      {error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-3">
         <div className="flex items-center gap-2 text-xs text-muted-foreground"><CalendarClock className="size-4" aria-hidden="true" /> Dependency-ordered plan · no fabricated schedule</div>
         <Button type="button" onClick={handleGenerate} disabled={!canGenerate}>
