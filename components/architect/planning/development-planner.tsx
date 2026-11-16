@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTechStack } from "@/hooks/use-tech-stack";
+import type { DevelopmentTask } from "@/lib/types";
 
 export function DevelopmentPlanner() {
   const {
@@ -16,7 +17,7 @@ export function DevelopmentPlanner() {
     isDevelopmentPlanStale,
   } = useTechStack();
   const canGenerate = Boolean(architecture && !isArchitectureStale);
-  const updateTask = (taskId: string, patch: Record<string, unknown>) => {
+  const updateTask = (taskId: string, patch: Partial<DevelopmentTask>) => {
     if (!developmentPlan) return;
     setDevelopmentPlan({
       ...developmentPlan,
