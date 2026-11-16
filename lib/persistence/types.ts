@@ -2,21 +2,34 @@ import type { Component, DifficultyLevel } from "@/lib/types/component";
 import type { Domain } from "@/lib/types/domain";
 import type { Recipe } from "@/lib/types/recipe";
 import type { ProjectDefinition } from "@/lib/types/project";
+import type { ArchitectureSpecification } from "@/lib/types/architecture";
+import type { DevelopmentPlan } from "@/lib/types/development-plan";
 
-export const PROJECT_SNAPSHOT_VERSION = 1 as const;
+export const PROJECT_SNAPSHOT_VERSION = 2 as const;
 export type ProjectSnapshotVersion = typeof PROJECT_SNAPSHOT_VERSION;
 
-/**
- * The only editable product state that Phase 3A.1 permits to be persisted.
- * Analysis, validation, recipes, blueprints, exports, and UI state are
- * intentionally absent.
- */
+/** Legacy persisted shape accepted only for migration and compatibility. */
 export interface ProjectSnapshotV1 {
-  schemaVersion: ProjectSnapshotVersion;
+  schemaVersion: 1;
   projectDefinition: ProjectDefinition;
   selectedComponentIds: string[];
   activeRecipeId: string | null;
 }
+
+/**
+ * Canonical editable project state. Derived recommendations, validation,
+ * generated previews, exports, and transient UI state remain excluded.
+ */
+export interface ProjectSnapshotV2 {
+  schemaVersion: ProjectSnapshotVersion;
+  projectDefinition: ProjectDefinition;
+  selectedComponentIds: string[];
+  activeRecipeId: string | null;
+  architecture: ArchitectureSpecification | null;
+  developmentPlan: DevelopmentPlan | null;
+}
+
+export type ProjectSnapshot = ProjectSnapshotV1 | ProjectSnapshotV2;
 
 /**
  * Server-owned metadata returned with a saved record. These fields are never
@@ -31,14 +44,11 @@ export interface SavedRecordMetadata {
 }
 
 export interface ProjectRecord extends SavedRecordMetadata {
-  snapshot: ProjectSnapshotV1;
+  snapshot: ProjectSnapshotV2;
 }
 
-/**
- * Write DTO containing canonical state only. It deliberately has no ID,
- * timestamps, revision, ownership, or other server-controlled metadata.
- */
-export type ProjectPersistenceDTO = Omit<ProjectSnapshotV1, "schemaVersion">;
+/** Write DTO containing canonical state only. */
+export type ProjectPersistenceDTO = Omit<ProjectSnapshotV2, "schemaVersion">;
 
 /** Database-shaped payload emitted by serialization. */
 export interface SerializedProjectSnapshot {
@@ -50,6 +60,8 @@ export interface SerializedProjectSnapshot {
   requirements: string;
   selected_component_ids: string[];
   active_recipe_id: string | null;
+  architecture: ArchitectureSpecification | null;
+  development_plan: DevelopmentPlan | null;
 }
 
 /** Minimal registry shape required to validate persisted references. */
@@ -98,6 +110,8 @@ export interface ProjectPersistenceRecord {
   requirements: string;
   selected_component_ids: string[];
   active_recipe_id: string | null;
+  architecture: ArchitectureSpecification | null;
+  development_plan: DevelopmentPlan | null;
   schema_version: number;
   revision: number;
   created_at: string;
