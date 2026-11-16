@@ -1,5 +1,5 @@
 const categorySet = (selectedComponents) =>
-  new Set(selectedComponents.map((component) => component.category).filter(Boolean));
+  new Set(selectedComponents.filter((component) => component && typeof component === "object").map((component) => component.category).filter(Boolean));
 
 const hasCategory = (categories, names) =>
   names.some((name) => categories.has(name));
@@ -17,11 +17,11 @@ const finding = (severity, code, title, location, explanation, evidence, recomme
 
 export const validateArchitecture = ({ project, architecture, selectedComponents }) => {
   const findings = [];
-  const selected = Array.isArray(selectedComponents) ? selectedComponents : [];
-  const selectedById = new Map(selected.map((component) => [component.id, component]));
+  const selected = Array.isArray(selectedComponents) ? selectedComponents.filter((component) => component && typeof component === "object") : [];
+  const selectedById = new Map(selected.filter((component) => typeof component.id === "string").map((component) => [component.id, component]));
   const architectureComponents = Array.isArray(architecture?.components) ? architecture.components : [];
   const relationships = Array.isArray(architecture?.relationships) ? architecture.relationships : [];
-  const componentById = new Map(architectureComponents.map((component) => [component.id, component]));
+  const componentById = new Map(architectureComponents.filter((component) => component && typeof component === "object" && typeof component.id === "string").map((component) => [component.id, component]));
   const technologyToArchitectureId = new Map();
 
   if (!architecture || !Array.isArray(architecture.components) || !Array.isArray(architecture.relationships)) {
