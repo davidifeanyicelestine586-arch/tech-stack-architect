@@ -26,6 +26,7 @@ export function ArchitectureWizard() {
   const [error, setError] = useState("");
 
   const handleGenerate = () => {
+    if (architecture && !window.confirm("Regenerating replaces the current architecture proposal, including responsibility edits. Continue?")) return;
     try {
       setError("");
       generateArchitecture({ architectureStyle, deploymentModel, dataFlowReviewed, securityReviewed });
