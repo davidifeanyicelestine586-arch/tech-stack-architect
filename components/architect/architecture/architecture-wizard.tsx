@@ -21,6 +21,8 @@ export function ArchitectureWizard() {
   } = useTechStack();
   const [architectureStyle, setArchitectureStyle] = useState<"modular-monolith" | "service-oriented" | "serverless">("modular-monolith");
   const [deploymentModel, setDeploymentModel] = useState<"single-deployment" | "distributed" | "serverless">("single-deployment");
+  const [architectureStyleApproved, setArchitectureStyleApproved] = useState(false);
+  const [deploymentModelApproved, setDeploymentModelApproved] = useState(false);
   const [dataFlowReviewed, setDataFlowReviewed] = useState(false);
   const [securityReviewed, setSecurityReviewed] = useState(false);
   const [error, setError] = useState("");
@@ -29,7 +31,7 @@ export function ArchitectureWizard() {
     if (architecture && !window.confirm("Regenerating replaces the current architecture proposal, including responsibility edits. Continue?")) return;
     try {
       setError("");
-      generateArchitecture({ architectureStyle, deploymentModel, dataFlowReviewed, securityReviewed });
+      generateArchitecture({ architectureStyle, deploymentModel, architectureStyleApproved, deploymentModelApproved, dataFlowReviewed, securityReviewed });
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Architecture could not be generated.");
     }
@@ -79,6 +81,14 @@ export function ArchitectureWizard() {
             </select>
           </label>
           <div className="flex flex-col gap-3 md:col-span-2">
+            <label className="flex items-start gap-2 text-sm text-foreground">
+              <input className="mt-0.5 size-4 accent-primary" type="checkbox" checked={architectureStyleApproved} onChange={(event) => setArchitectureStyleApproved(event.target.checked)} />
+              <span><span className="font-medium">I approve the selected architecture style.</span><span className="block text-xs text-muted-foreground">Otherwise the generated style decision remains a proposal.</span></span>
+            </label>
+            <label className="flex items-start gap-2 text-sm text-foreground">
+              <input className="mt-0.5 size-4 accent-primary" type="checkbox" checked={deploymentModelApproved} onChange={(event) => setDeploymentModelApproved(event.target.checked)} />
+              <span><span className="font-medium">I approve the selected deployment model.</span><span className="block text-xs text-muted-foreground">Otherwise the deployment decision remains a proposal.</span></span>
+            </label>
             <label className="flex items-start gap-2 text-sm text-foreground">
               <input className="mt-0.5 size-4 accent-primary" type="checkbox" checked={dataFlowReviewed} onChange={(event) => setDataFlowReviewed(event.target.checked)} />
               <span><span className="font-medium">I have reviewed the data flow.</span><span className="block text-xs text-muted-foreground">This records your review; it does not automatically verify data ownership or access paths.</span></span>
