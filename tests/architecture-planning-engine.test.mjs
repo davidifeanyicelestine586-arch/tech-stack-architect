@@ -3,6 +3,7 @@ import test from "node:test";
 import { generateArchitecture } from "../engine/architecture/architecture-generator.js";
 import { validateArchitecture } from "../engine/architecture/architecture-validator.js";
 import { generateDevelopmentPlan } from "../engine/planning/development-planner.js";
+import Exporter from "../engine/exporter.js";
 
 const project = {
   name: "Document Q&A",
@@ -59,4 +60,29 @@ test("development planning derives phases, tasks, acceptance criteria and delive
   assert.ok(plan.tasks.every((task) => task.acceptanceCriteria.length > 0));
   assert.ok(plan.tasks.every((task) => task.deliverables.length > 0));
   assert.ok(plan.phases.every((phase) => phase.taskIds.every((id) => plan.tasks.some((task) => task.id === id))));
+});
+
+test("Markdown blueprint export includes architecture findings and development tasks", () => {
+  const architecture = generateArchitecture({ project, selectedComponents });
+  const validation = validateArchitecture({ project, architecture, selectedComponents });
+  const plan = generateDevelopmentPlan({ project, architecture, validation });
+  const markdown = new Exporter().exportMarkdown({
+    title: project.name,
+    domain: project.domain,
+    components: selectedComponents,
+    warnings: [],
+    suggestions: [],
+    starterCommands: [],
+    learningGoals: [],
+    outputs: [],
+    project,
+    architecture,
+    architectureValidation: validation,
+    developmentPlan: plan,
+  });
+
+  assert.match(markdown, /## Architecture Specification/);
+  assert.match(markdown, /## Architecture Validation/);
+  assert.match(markdown, /## Development Roadmap/);
+  assert.match(markdown, /Implement Next.js/);
 });
