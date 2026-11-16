@@ -6,31 +6,50 @@ import { useTechStack } from "@/hooks/use-tech-stack";
 import { Badge } from "@/components/ui/badge";
 import { WORKFLOW_STEPS, workflowStepHref } from "@/lib/navigation/workflow";
 
-
 export function WorkflowProgress() {
-  const { projectDefinition, requirementAnalysis, selectedComponentIds, validationReport, blueprint } = useTechStack();
+  const {
+    projectDefinition,
+    requirementAnalysis,
+    selectedComponentIds,
+    validationReport,
+    blueprint,
+    architecture,
+    architectureValidation,
+    developmentPlan,
+  } = useTechStack();
   const hasProject = Boolean(projectDefinition.name.trim() || projectDefinition.description.trim() || projectDefinition.requirements.trim());
   const hasRecommendations = Boolean(requirementAnalysis);
   const hasStack = selectedComponentIds.length > 0;
+  const hasArchitecture = Boolean(architecture);
+  const hasValidation = Boolean(hasArchitecture && architectureValidation && architectureValidation.valid && validationReport.valid);
+  const hasPlan = Boolean(developmentPlan);
   const hasBlueprint = Boolean(blueprint);
 
   const completed = [
-    hasProject && hasRecommendations,
+    hasProject,
     hasRecommendations,
-    hasRecommendations && hasStack,
+    hasRecommendations,
     hasStack,
-    hasStack && Boolean(validationReport),
+    hasArchitecture,
+    hasValidation,
+    hasPlan,
     hasBlueprint,
   ];
   const activeIndex = hasBlueprint
-    ? 5
-    : hasStack && validationReport
-      ? 4
-      : hasStack
-        ? 3
-        : hasRecommendations
-          ? 2
-          : 0;
+    ? 7
+    : hasPlan
+      ? 6
+      : hasValidation
+        ? 6
+        : hasArchitecture
+          ? 5
+          : hasStack
+            ? 4
+            : hasRecommendations
+              ? 2
+              : hasProject
+                ? 1
+                : 0;
 
   return (
     <section aria-label="Architecture progress" className="rounded-xl border border-border bg-card p-3 shadow-xs sm:p-4">
@@ -39,9 +58,9 @@ export function WorkflowProgress() {
           <p className="text-xs font-bold text-foreground">Your architecture journey</p>
           <p className="text-xs leading-relaxed text-muted-foreground">Complete one step at a time. You can always go back and adjust.</p>
         </div>
-        <Badge variant="outline" className="hidden shrink-0 text-xs sm:inline-flex">Step {activeIndex + 1} of 6</Badge>
+        <Badge variant="outline" className="hidden shrink-0 text-xs sm:inline-flex">Step {activeIndex + 1} of 8</Badge>
       </div>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 xl:grid-cols-8">
         {WORKFLOW_STEPS.map((step, index) => {
           const isDone = completed[index] && index < activeIndex;
           const isActive = index === activeIndex;
