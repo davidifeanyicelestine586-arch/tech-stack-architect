@@ -44,7 +44,7 @@ const requireSelectedComponents = (selectedComponents) => {
   }
 };
 
-export const getArchitectureSourceSignature = (project, selectedComponents, answers = {}) =>
+export const getArchitectureSourceSignature = (project, selectedComponents) =>
   JSON.stringify({
     project: {
       name: project?.name || "",
@@ -156,7 +156,7 @@ export const generateArchitecture = ({
 
   return {
     schemaVersion: 1,
-    sourceSignature: getArchitectureSourceSignature(project, selectedComponents, answers),
+    sourceSignature: getArchitectureSourceSignature(project, selectedComponents),
     components,
     relationships,
     decisions,
