@@ -24,6 +24,7 @@ export interface ArchitectureDecision {
 
 export interface ArchitectureSpecification {
   schemaVersion: 1;
+  sourceSignature: string;
   components: ArchitectureComponent[];
   relationships: ArchitectureRelationship[];
   decisions: ArchitectureDecision[];
