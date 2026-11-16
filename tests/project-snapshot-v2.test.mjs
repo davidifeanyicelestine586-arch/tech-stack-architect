@@ -30,6 +30,7 @@ test("legacy V1 projects migrate to V2 without losing existing project decisions
 
 const architecture = {
   schemaVersion: 1,
+  sourceSignature: "test-project-stack-signature",
   components: [
     { id: "web", name: "Web client", type: "client", responsibility: "Render the user interface.", technologyIds: ["nextjs"] },
     { id: "api", name: "Application API", type: "api", responsibility: "Handle application requests.", technologyIds: ["nodejs"] },
@@ -46,6 +47,7 @@ const architecture = {
 
 const developmentPlan = {
   schemaVersion: 1,
+  sourceSignature: "test-project-architecture-signature",
   milestones: [
     { id: "mvp", title: "MVP complete", description: "The core workflow is usable.", completionCriteria: ["Users can create and save a project."] },
   ],
