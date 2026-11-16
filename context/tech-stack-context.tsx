@@ -213,7 +213,7 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
   }, [components, selectedComponentIds]);
   const validationReport = useMemo(() => architect.validate(selectedComponentIds) as ValidationReport, [architect, selectedComponentIds]);
   const architectureValidation = useMemo(
-    () => architecture ? runArchitectureValidation({ project: projectDefinition, architecture, selectedComponents }) : null,
+    () => architecture ? runArchitectureValidation({ project: projectDefinition, architecture, selectedComponents }) as ArchitectureValidationReport : null,
     [projectDefinition, architecture, selectedComponents]
   );
   const isArchitectureStale = Boolean(
@@ -227,7 +227,7 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
     )
   );
   const generateArchitectureForProject = useCallback((answers: ArchitectureGenerationAnswers = {}) => {
-    const generated = buildArchitecture({ project: projectDefinition, selectedComponents, answers });
+    const generated = buildArchitecture({ project: projectDefinition, selectedComponents, answers }) as ArchitectureSpecification;
     setArchitecture(generated);
     return generated;
   }, [projectDefinition, selectedComponents]);
@@ -236,7 +236,7 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
     if (isArchitectureStale) throw new Error("The architecture is out of date. Regenerate or review it before planning.");
     if (!validationReport.valid) throw new Error("Resolve stack compatibility errors before creating the development plan.");
     if (!architectureValidation?.valid) throw new Error("Resolve architecture validation errors before creating the development plan.");
-    const generated = buildDevelopmentPlan({ project: projectDefinition, architecture, validation: architectureValidation });
+    const generated = buildDevelopmentPlan({ project: projectDefinition, architecture, validation: architectureValidation }) as DevelopmentPlan;
     setDevelopmentPlan(generated);
     return generated;
   }, [projectDefinition, architecture, architectureValidation, isArchitectureStale, validationReport]);
