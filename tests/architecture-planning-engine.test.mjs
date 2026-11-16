@@ -56,7 +56,7 @@ test("development planning derives phases, tasks, acceptance criteria and delive
   const plan = generateDevelopmentPlan({ project, architecture, validation });
 
   assert.ok(plan.phases.length >= 2);
-  assert.equal(plan.tasks.length, architecture.components.length + 2);
+  assert.equal(plan.tasks.length, architecture.components.length + 2 + validation.findings.filter((finding) => finding.severity === "error" || finding.severity === "warning").length);
   assert.ok(plan.tasks.every((task) => task.acceptanceCriteria.length > 0));
   assert.ok(plan.tasks.every((task) => task.deliverables.length > 0));
   assert.ok(plan.phases.every((phase) => phase.taskIds.every((id) => plan.tasks.some((task) => task.id === id))));
@@ -125,4 +125,23 @@ test("architecture style and deployment decisions require explicit approval", ()
   });
   assert.equal(architecture.decisions.find((decision) => decision.id === "decision-architecture-style")?.status, "approved");
   assert.equal(architecture.decisions.find((decision) => decision.id === "decision-deployment-model")?.status, "approved");
+});
+
+test("architecture validation distinguishes unapproved proposals from approved decisions", () => {
+  const proposal = generateArchitecture({ project, selectedComponents });
+  const proposalReport = validateArchitecture({ project, architecture: proposal, selectedComponents });
+  assert.ok(proposalReport.findings.some((finding) => finding.code === "UNAPPROVED_ARCHITECTURE_DECISIONS"));
+
+  const approved = generateArchitecture({
+    project,
+    selectedComponents,
+    answers: {
+      architectureStyleApproved: true,
+      deploymentModelApproved: true,
+      dataFlowReviewed: true,
+      securityReviewed: true,
+    },
+  });
+  const approvedReport = validateArchitecture({ project, architecture: approved, selectedComponents });
+  assert.ok(!approvedReport.findings.some((finding) => finding.code === "UNAPPROVED_ARCHITECTURE_DECISIONS"));
 });
