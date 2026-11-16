@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { BookOpen, FileCode2, Layers, SearchCheck, ShieldCheck } from "lucide-react";

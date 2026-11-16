@@ -68,3 +68,18 @@ test("workflow step labels are derived in workflow-aware components", () => {
   assert.match(read("components/architect/validation-panel.tsx"), /workflowStepLabel\("validate"\)/);
   assert.match(read("components/architect/blueprint-panel.tsx"), /workflowStepLabel\("blueprint"\)/);
 });
+
+test("workspace sidebar exposes the complete Architect and Plan workflow destinations", () => {
+  const sidebarItems = read("app/(dashboard-layout)/layout/vertical/sidebar/sidebaritems.ts");
+  const routes = read("lib/navigation/routes.ts");
+  assert.match(routes, /id: "architect", label: "Architecture Design"/);
+  assert.match(routes, /id: "plan", label: "Development Plan"/);
+  assert.match(sidebarItems, /route\("architect"\)/);
+  assert.match(sidebarItems, /route\("plan"\)/);
+});
+
+test("workflow Define progress requires the required project name and description", () => {
+  const progress = read("components/architect/workflow-progress.tsx");
+  assert.match(progress, /projectDefinition\.name\.trim\(\)\s*&&\s*projectDefinition\.description\.trim\(\)/);
+  assert.doesNotMatch(progress, /name\.trim\(\)\s*\|\|\s*projectDefinition\.description\.trim\(\)\s*\|\|\s*projectDefinition\.requirements\.trim\(\)/);
+});
