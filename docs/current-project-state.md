@@ -3,7 +3,7 @@
 **Project:** Tech Stack Architect  
 **Repository:** `davidifeanyicelestine586-arch/tech-stack-architect`  
 **Primary branch:** `main`  
-**Current main commit checked:** `e5641fe74a8fa302fef2364c998dd0cd816a9b2d`
+**Current main commit checked:** [see the live main branch](https://github.com/davidifeanyicelestine586-arch/tech-stack-architect/tree/main)
 
 ## Product
 
@@ -75,7 +75,7 @@ Use:
 
 - [README](../README.md) for product and contributor orientation.
 - [Vercel Deployment](./vercel-deployment.md) for current deployment operations.
-- [Final QA Evidence](./FINAL_QA_EVIDENCE.md) for verification status.
+- [Final QA Evidence archive](./archive/FINAL_QA_EVIDENCE.md) for verification status.
 - [Documentation Guide](./README.md) for the complete documentation map.
 
 Historical records remain valuable, but they should not override these current-state documents.
