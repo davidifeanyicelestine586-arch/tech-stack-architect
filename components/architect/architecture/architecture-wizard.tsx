@@ -19,8 +19,8 @@ export function ArchitectureWizard() {
     isArchitectureStale,
     generateArchitecture,
   } = useTechStack();
-  const [architectureStyle, setArchitectureStyle] = useState("modular-monolith");
-  const [deploymentModel, setDeploymentModel] = useState("single-deployment");
+  const [architectureStyle, setArchitectureStyle] = useState<"modular-monolith" | "service-oriented" | "serverless">("modular-monolith");
+  const [deploymentModel, setDeploymentModel] = useState<"single-deployment" | "distributed" | "serverless">("single-deployment");
   const [dataFlowReviewed, setDataFlowReviewed] = useState(false);
   const [securityReviewed, setSecurityReviewed] = useState(false);
   const [error, setError] = useState("");
