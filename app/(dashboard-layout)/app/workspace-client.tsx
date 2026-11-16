@@ -9,6 +9,8 @@ import { ComponentBrowser } from "@/components/architect/component-browser";
 import { DomainSelector } from "@/components/architect/domain-selector";
 import { SelectedStack } from "@/components/architect/selected-stack";
 import { ValidationPanel } from "@/components/architect/validation-panel";
+import { ArchitectureWizard } from "@/components/architect/architecture/architecture-wizard";
+import { DevelopmentPlanner } from "@/components/architect/planning/development-planner";
 import { RecipeRecommendations } from "@/components/architect/recipe-recommendations";
 import { workflowStepLabel } from "@/lib/navigation/workflow";
 import { BlueprintPanel } from "@/components/architect/blueprint-panel";
@@ -27,7 +29,7 @@ export default function WorkspacePageClient() {
   const domains = domainsData;
   const components = componentsData;
   const recipes = recipesData;
-  const { requirementAnalysis, selectedComponentIds, validationReport } = useTechStack();
+  const { requirementAnalysis, selectedComponentIds, validationReport, architectureValidation, developmentPlan, isArchitectureStale, isDevelopmentPlanStale } = useTechStack();
 
 
   return (
@@ -114,14 +116,24 @@ export default function WorkspacePageClient() {
           <div className="hidden lg:block">
             <SelectedStack />
           </div>
-          <div id="validation" className="scroll-mt-24">
-            {selectedComponentIds.length > 0 ? <ValidationPanel /> : <LockedSection step={workflowStepLabel("validate")} title="Validation unlocks after you build a stack" description="Add at least one technology, then Architect will check dependencies, conflicts, and architectural rules." />}
-          </div>
         </div>
       </div>
 
+      <div id="architect" className="scroll-mt-24">
+        <ArchitectureWizard />
+      </div>
+
+      <div id="validation" className="scroll-mt-24">
+        {selectedComponentIds.length > 0 ? <ValidationPanel /> : <LockedSection step={workflowStepLabel("validate")} title="Validation unlocks after you build a stack" description="Add at least one technology, then Architect will check dependencies, conflicts, and architectural rules." />}
+        {architectureValidation && !architectureValidation.valid ? <p className="mt-2 text-xs text-muted-foreground">Resolve or explicitly review the architecture findings above before planning.</p> : null}
+      </div>
+
+      <div id="plan" className="scroll-mt-24">
+        <DevelopmentPlanner />
+      </div>
+
       <div id="blueprint" className="scroll-mt-24">
-        {validationReport.valid && selectedComponentIds.length > 0 ? <BlueprintPanel /> : <LockedSection step={workflowStepLabel("blueprint")} title="Blueprint generation comes after validation" description="Resolve the stack first, then turn the validated architecture into a development-ready blueprint." />}
+        {validationReport.valid && architectureValidation?.valid && developmentPlan && !isArchitectureStale && !isDevelopmentPlanStale ? <BlueprintPanel /> : <LockedSection step={workflowStepLabel("blueprint")} title="Blueprint generation comes after planning" description="Complete the architecture review and generate the development roadmap before assembling the full engineering handoff." />}
       </div>
 
       <Card id="docs" className="border-primary/20 bg-primary/5">

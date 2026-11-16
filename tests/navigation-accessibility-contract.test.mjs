@@ -50,7 +50,7 @@ test("workspace header controls are rendered inside the sidebar provider shell",
 
 test("workflow stages have one canonical definition", () => {
   assert.match(workflow, /export const WORKFLOW_STEPS = \[/);
-  assert.equal((workflow.match(/id: "/g) ?? []).length, 6);
+  assert.equal((workflow.match(/id: "/g) ?? []).length, 8);
   assert.match(workflowProgress, /WORKFLOW_STEPS\.map/);
   assert.doesNotMatch(workspace, /Step 4 · Build/);
   assert.doesNotMatch(workspace, />Step 4<\/Badge>/);

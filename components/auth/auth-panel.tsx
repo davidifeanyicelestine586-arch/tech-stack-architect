@@ -118,7 +118,7 @@ export function AuthPanel() {
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle>{mode === "sign-in" ? "Sign in to save across devices" : "Create your account"}</DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-foreground">
             {mode === "sign-in"
               ? "Anonymous projects remain disposable. Sign in to attach saved projects to your account."
               : "Your account gives saved projects a durable owner instead of an anonymous browser session."}

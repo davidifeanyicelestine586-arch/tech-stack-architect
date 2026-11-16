@@ -7,15 +7,17 @@
 
 ## Product
 
-Tech Stack Architect turns project requirements into explainable technology-stack proposals and architecture blueprints.
+Tech Stack Architect is a guided software architecture and development planning platform. It turns project requirements into explainable technology choices, a structured architecture proposal, architecture validation, an actionable development roadmap, and a consolidated blueprint.
 
 The canonical user journey is:
 
 ```text
-Define → Analyze → Review → Build → Validate → Blueprint
+Define → Analyze → Review → Build → Architect → Validate → Plan → Blueprint
 ```
 
-The recommendation and validation logic is deterministic and registry-based.
+The recommendation, architecture generation, architecture validation, and planning logic is deterministic and registry-based. Architecture components map to selected catalog entries; declared registry dependencies form the initial relationship graph. User review is required for communication paths and security/data-flow assumptions. The architecture validator reports structural and requirement-coverage findings; it does not perform penetration testing or prove production readiness. The planner derives dependency-ordered phases and editable tasks without inventing dates or effort estimates.
+
+Saved projects use versioned V2 snapshots. V1 projects migrate on read while preserving the project definition, selected technologies, and recipe. Architecture and development-plan decisions are persisted as canonical state; derived recommendations and validation results are recomputed.
 
 ## Canonical architecture
 
