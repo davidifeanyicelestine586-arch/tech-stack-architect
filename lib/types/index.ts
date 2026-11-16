@@ -5,3 +5,5 @@ export * from "./blueprint";
 export * from "./validation";
 export * from "./plugin";
 export * from "./project";
+export * from "./architecture";
+export * from "./development-plan";
