@@ -138,8 +138,8 @@ export const generateDevelopmentPlan = ({ project, architecture, validation }) =
   const verificationPhaseId = "verification";
   const validationFindings = Array.isArray(validation?.findings) ? validation.findings : [];
   const validationTaskIds = [];
-  for (const item of validationFindings.filter((finding) => finding.severity === "error" || finding.severity === "warning")) {
-    const taskId = `task-address-${slug(item.code)}`;
+  for (const [findingIndex, item] of validationFindings.filter((finding) => finding.severity === "error" || finding.severity === "warning").entries()) {
+    const taskId = `task-address-${slug(item.code)}-${slug(item.location)}-${findingIndex + 1}`;
     validationTaskIds.push(taskId);
     const matchingComponent = components.find((component) => component.name === item.location);
     tasks.push(task({
