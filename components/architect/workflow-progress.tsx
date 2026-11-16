@@ -38,7 +38,7 @@ export function WorkflowProgress() {
   const activeIndex = hasBlueprint
     ? 7
     : hasPlan
-      ? 6
+      ? 7
       : hasValidation
         ? 6
         : hasArchitecture
