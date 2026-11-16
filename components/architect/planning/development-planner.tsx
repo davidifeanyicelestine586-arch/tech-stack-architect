@@ -10,11 +10,19 @@ export function DevelopmentPlanner() {
   const {
     architecture,
     developmentPlan,
+    setDevelopmentPlan,
     generateDevelopmentPlan,
     isArchitectureStale,
     isDevelopmentPlanStale,
   } = useTechStack();
   const canGenerate = Boolean(architecture && !isArchitectureStale);
+  const updateTask = (taskId: string, patch: Record<string, unknown>) => {
+    if (!developmentPlan) return;
+    setDevelopmentPlan({
+      ...developmentPlan,
+      tasks: developmentPlan.tasks.map((task) => task.id === taskId ? { ...task, ...patch } : task),
+    });
+  };
   const handleGenerate = () => {
     try {
       generateDevelopmentPlan();
@@ -69,7 +77,10 @@ export function DevelopmentPlanner() {
                     {phaseTasks.map((task) => (
                       <details key={task.id} className="group rounded-lg border border-border p-3">
                         <summary className="cursor-pointer list-none text-sm font-semibold text-foreground marker:hidden">{task.title}<span className="ml-2 text-xs font-normal text-muted-foreground">{task.componentIds.length ? `· ${task.componentIds.length} architecture component(s)` : "· Project task"}</span></summary>
-                        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{task.description}</p>
+                        <div className="mt-3 grid gap-3 md:grid-cols-2">
+                          <label className="text-[11px] font-semibold text-muted-foreground">Task title<input className="mt-1 h-9 w-full rounded-md border border-input bg-background px-2 text-xs text-foreground" value={task.title} onChange={(event) => updateTask(task.id, { title: event.target.value })} /></label>
+                          <label className="text-[11px] font-semibold text-muted-foreground">Description<textarea className="mt-1 min-h-16 w-full rounded-md border border-input bg-background p-2 text-xs text-foreground" value={task.description} onChange={(event) => updateTask(task.id, { description: event.target.value })} /></label>
+                        </div>
                         {task.dependsOn.length ? <p className="mt-2 text-xs text-muted-foreground">Prerequisites: {task.dependsOn.join(", ")}</p> : null}
                         <div className="mt-3 grid gap-3 md:grid-cols-2">
                           <div><p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Acceptance criteria</p><ul className="mt-1 list-disc space-y-1 pl-4 text-xs text-foreground">{task.acceptanceCriteria.map((item) => <li key={item}>{item}</li>)}</ul></div>
