@@ -25,12 +25,16 @@ export function WorkspaceOnboarding() {
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
+    let initialDismissed = false;
     try {
-      setDismissed(window.localStorage.getItem(DISMISS_KEY) === "true");
+      initialDismissed = window.localStorage.getItem(DISMISS_KEY) === "true";
     } catch {
-      setDismissed(false);
+      initialDismissed = false;
     }
-    setReady(true);
+    queueMicrotask(() => {
+      setDismissed(initialDismissed);
+      setReady(true);
+    });
   }, []);
 
   const hasDefinition = Boolean(
