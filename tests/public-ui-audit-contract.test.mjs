@@ -36,13 +36,13 @@ test("account trigger retains an accessible name when its label is hidden respon
   assert.match(headerStyles, /\.site-header__auth span\s*\{\s*display:\s*none;/);
 });
 
-test("workflow navigation preserves the canonical six-stage order", () => {
+test("workflow navigation preserves the canonical eight-stage order", () => {
   const workflow = read("lib/navigation/workflow.ts");
   const routes = read("lib/navigation/routes.ts");
-  const labels = [...workflow.matchAll(/label: "(Define|Analyze|Review|Build|Validate|Blueprint)"/g)].map((match) => match[1]);
-  assert.deepEqual(labels, ["Define", "Analyze", "Review", "Build", "Validate", "Blueprint"]);
-  for (const routeId of ['routeId: "define"', 'routeId: "recommendations"', 'routeId: "components"', 'routeId: "validation"', 'routeId: "blueprint"']) {
-    assert.ok(workflow.includes(routeId), `missing workflow route: ${routeId}`);
+  const labels = [...workflow.matchAll(/label: "(Define|Analyze|Review|Build|Architect|Validate|Plan|Blueprint)"/g)].map((match) => match[1]);
+  assert.deepEqual(labels, ["Define", "Analyze", "Review", "Build", "Architect", "Validate", "Plan", "Blueprint"]);
+  for (const href of ['href: "/app#define"', 'href: "/app#recommendations"', 'href: "/app#components"', 'href: "/app#architect"', 'href: "/app#validation"', 'href: "/app#plan"', 'href: "/app#blueprint"']) {
+    assert.ok(workflow.includes(href), `missing workflow destination: ${href}`);
   }
   assert.ok(routes.includes('id: "recommendations", label: "Recommended Stack", href: "/app#recommendations"'));
   assert.ok(routes.includes('id: "components", label: "Component Library", href: "/app#components"'));
@@ -104,7 +104,7 @@ test("redesigned landing remains registry-driven and exposes the full architectu
   for (const source of ["getAllComponents()", "getAllDomains()", "getAllRecipes()"]) {
     assert.ok(landing.includes(source), `landing must continue using registry source: ${source}`);
   }
-  for (const stage of ["Define", "Analyze", "Review", "Build", "Validate", "Blueprint"]) {
+  for (const stage of ["Define", "Analyze", "Review", "Build", "Architect", "Validate", "Plan", "Blueprint"]) {
     assert.ok(landing.includes(stage), `landing is missing workflow stage: ${stage}`);
   }
   assert.ok(landing.includes('href="/app#define"'));
