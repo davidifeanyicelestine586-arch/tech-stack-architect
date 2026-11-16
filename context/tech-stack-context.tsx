@@ -234,10 +234,12 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
   const generateDevelopmentPlanForProject = useCallback(() => {
     if (!architecture) throw new Error("Generate and review an architecture before creating the development plan.");
     if (isArchitectureStale) throw new Error("The architecture is out of date. Regenerate or review it before planning.");
+    if (!validationReport.valid) throw new Error("Resolve stack compatibility errors before creating the development plan.");
+    if (!architectureValidation?.valid) throw new Error("Resolve architecture validation errors before creating the development plan.");
     const generated = buildDevelopmentPlan({ project: projectDefinition, architecture, validation: architectureValidation });
     setDevelopmentPlan(generated);
     return generated;
-  }, [projectDefinition, architecture, architectureValidation, isArchitectureStale]);
+  }, [projectDefinition, architecture, architectureValidation, isArchitectureStale, validationReport]);
   const recipeRecommendations = useMemo(() => architect.recommendRecipes(selectedComponentIds) as RecipeMatch[], [architect, selectedComponentIds]);
 
   const analyzeProject = useCallback((project: ProjectDefinition): RequirementAnalysis => {
