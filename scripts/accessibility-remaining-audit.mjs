@@ -20,6 +20,13 @@ const viewports = [
   { width: 1440, height: 900 },
 ];
 const pages = [
+  { id: "about", route: "/about" },
+  { id: "technologies", route: "/technologies" },
+  { id: "technology-nextjs", route: "/technologies/nextjs" },
+  { id: "domains", route: "/domains" },
+  { id: "domain-web-saas", route: "/domains/web-saas" },
+  { id: "stacks", route: "/stacks" },
+  { id: "stack-payment-dashboard", route: "/stacks/bootstrapped-payment-dashboard" },
   { id: "contact", route: "/contact" },
   { id: "documentation", route: "/content-detail" },
   { id: "privacy", route: "/privacy" },
@@ -158,6 +165,7 @@ try {
     violations: results.flatMap((r) => r.axe.violations.map((v) => ({ route:r.route, state:r.state, width:r.width, id:v.id, impact:v.impact, nodes:v.nodes.length }))),
     incomplete: results.flatMap((r) => r.axe.incomplete.map((v) => ({ route:r.route, state:r.state, width:r.width, id:v.id, nodes:v.nodes.length }))),
     geometryFindings: results.flatMap((r) => [
+      ...(r.httpStatus < 200 || r.httpStatus >= 400 ? [{route:r.route,state:r.state,width:r.width,type:"http-status",extra:{httpStatus:r.httpStatus}}] : []),
       ...(r.geometry.document.scrollWidth > r.geometry.document.clientWidth ? [{route:r.route,state:r.state,width:r.width,type:"document-overflow",extra:r.geometry.document}] : []),
       ...r.geometry.intersections.map((x) => ({route:r.route,state:r.state,width:r.width,type:"intersection",extra:x})),
       ...r.geometry.targets.filter((t) => t.rect.x < -1 || t.rect.right > r.geometry.viewport.width+1).map((t) => ({route:r.route,state:r.state,width:r.width,type:"horizontal-clipping",extra:t})),
