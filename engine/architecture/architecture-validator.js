@@ -5,7 +5,7 @@ const hasCategory = (categories, names) =>
   names.some((name) => categories.has(name));
 
 const finding = (severity, code, title, location, explanation, evidence, recommendation) => ({
-  id: code.toLowerCase().replace(/[^a-z0-9-]+/g, "-") + "-" + String(location).toLowerCase().replace(/[^a-z0-9-]+/g, "-"),
+  id: code.toLowerCase().replace(/[^a-z0-9-]+/g, "-") + "-" + String(location).toLowerCase().replace(/[^a-z0-9-]+/g, "-") + "-" + String(evidence.join("-") || "finding").toLowerCase().replace(/[^a-z0-9-]+/g, "-"),
   severity,
   code,
   title,
