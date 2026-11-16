@@ -17,8 +17,10 @@ const WORKFLOW = [
   ["02", "Analyze", "Match the brief against registered technologies and deterministic rules."],
   ["03", "Review", "Understand why each recommendation fits and compare the trade-offs."],
   ["04", "Build", "Shape the proposed stack with a curated technology catalog."],
-  ["05", "Validate", "Check dependencies, conflicts, and architecture constraints."],
-  ["06", "Blueprint", "Turn a validated stack into a practical engineering handoff."],
+  ["05", "Architect", "Generate and review components and declared technology relationships."],
+  ["06", "Validate", "Check stack compatibility, architecture structure, and requirement coverage."],
+  ["07", "Plan", "Turn architecture into dependency-ordered phases, milestones, and tasks."],
+  ["08", "Blueprint", "Consolidate project decisions into an exportable engineering handoff."],
 ] as const;
 
 const PRINCIPLES = [
@@ -96,7 +98,7 @@ export default function LandingPage() {
         </section>
 
         <section aria-labelledby="workflow-heading">
-          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">The workflow</p><h2 id="workflow-heading" className="mt-3 text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">From first idea to build-ready blueprint.</h2></div><p className="max-w-md text-sm leading-6 text-muted-foreground">Each stage builds on the last. No mystery jumps, no unsupported shortcuts—just a clear path from requirements to validated decisions.</p></div>
+          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">The workflow</p><h2 id="workflow-heading" className="mt-3 text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">From first idea to build-ready blueprint.</h2></div><p className="max-w-md text-sm leading-6 text-muted-foreground">Each stage builds on the last: from explainable technology choices to a reviewed architecture, actionable plan, and engineering handoff.</p></div>
           <ol className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {WORKFLOW.map(([number, title, description], index) => <li key={title} className="relative rounded-2xl border border-border bg-card p-5 sm:p-6"><div className="flex items-center justify-between"><span className="font-mono text-xs font-semibold text-primary">{number}</span>{index < WORKFLOW.length - 1 ? <ArrowUpRight className="size-4 text-muted-foreground/70" aria-hidden="true" /> : <Check className="size-4 text-primary" aria-hidden="true" />}</div><h3 className="mt-5 text-lg font-semibold">{title}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p></li>)}
           </ol>
@@ -110,7 +112,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="relative overflow-hidden rounded-[2rem] bg-primary px-6 py-10 text-primary-foreground sm:px-10 sm:py-12 lg:px-14"><div aria-hidden="true" className="pointer-events-none absolute -right-10 -top-24 size-72 rounded-full border border-primary-foreground/10" /><div aria-hidden="true" className="pointer-events-none absolute -right-2 -top-16 size-56 rounded-full border border-primary-foreground/10" /><div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between"><div className="max-w-2xl"><p className="text-xs font-bold uppercase tracking-[0.18em] text-primary-foreground/70">Start with the problem</p><h2 className="mt-3 text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">Make the next architecture decision with confidence.</h2><p className="mt-3 text-sm leading-6 text-primary-foreground/80 sm:text-base">Define your requirements, examine the reasoning, validate the stack, and leave with a blueprint your team can use.</p></div><Link href="/app#define" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-background px-5 font-semibold text-foreground transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background focus-visible:ring-offset-2 focus-visible:ring-offset-primary">Open the workspace <ArrowRight className="size-4" aria-hidden="true" /></Link></div></section>
+        <section className="relative overflow-hidden rounded-[2rem] bg-primary px-6 py-10 text-primary-foreground sm:px-10 sm:py-12 lg:px-14"><div aria-hidden="true" className="pointer-events-none absolute -right-10 -top-24 size-72 rounded-full border border-primary-foreground/10" /><div aria-hidden="true" className="pointer-events-none absolute -right-2 -top-16 size-56 rounded-full border border-primary-foreground/10" /><div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between"><div className="max-w-2xl"><p className="text-xs font-bold uppercase tracking-[0.18em] text-primary-foreground/70">Start with the problem</p><h2 className="mt-3 text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">Make the next architecture decision with confidence.</h2><p className="mt-3 text-sm leading-6 text-primary-foreground/80 sm:text-base">Define requirements, examine the reasoning, validate the architecture, and leave with a roadmap and blueprint your team can use.</p></div><Link href="/app#define" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-background px-5 font-semibold text-foreground transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background focus-visible:ring-offset-2 focus-visible:ring-offset-primary">Open the workspace <ArrowRight className="size-4" aria-hidden="true" /></Link></div></section>
       </div>
     </PublicShell>
   );
