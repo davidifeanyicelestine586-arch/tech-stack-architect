@@ -42,6 +42,9 @@ const requireSelectedComponents = (selectedComponents) => {
   if (new Set(ids).size !== ids.length) {
     throw new Error("Selected technologies must have unique registry IDs.");
   }
+  if (selectedComponents.some((component) => typeof component.name !== "string" || !component.name.trim() || typeof component.category !== "string" || !component.category.trim())) {
+    throw new Error("Every selected technology must include a name and category from the registry.");
+  }
 };
 
 export const getArchitectureSourceSignature = (project, selectedComponents) =>
@@ -74,6 +77,9 @@ export const generateArchitecture = ({
     responsibility: technology.description || `Provide the capability represented by ${technology.name}.`,
     technologyIds: [technology.id],
   }));
+  if (new Set(components.map((component) => component.id)).size !== components.length) {
+    throw new Error("Selected technology IDs do not produce unique architecture component IDs.");
+  }
   const architectureIdByTechnologyId = new Map(
     selectedComponents.map((technology) => [technology.id, toArchitectureId(technology.id)])
   );
