@@ -19,7 +19,7 @@ const registries = {
 const sessionA = "11111111-1111-4111-8111-111111111111";
 const sessionB = "22222222-2222-4222-8222-222222222222";
 const baseSnapshot = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   projectDefinition: {
     name: "AI Document Q&A Platform",
     description: "A SaaS application for document questions.",
@@ -29,6 +29,8 @@ const baseSnapshot = {
   },
   selectedComponentIds: ["nextjs", "nodejs", "vercel"],
   activeRecipeId: "bootstrapped-payment-dashboard",
+  architecture: null,
+  developmentPlan: null,
 };
 
 const readResponse = async (response) => ({
