@@ -70,6 +70,73 @@ export default class Exporter {
 
         }
 
+        if (report.architecture) {
+
+            md += `## Architecture Specification\n\n`;
+            if (report.architecture.decisions?.length) {
+                md += `### Architecture Decisions\n`;
+                report.architecture.decisions.forEach(decision => {
+                    md += `- **${decision.title}:** ${decision.decision} — ${decision.rationale}\n`;
+                });
+                md += `\n`;
+            }
+            if (report.architecture.components?.length) {
+                md += `### Components and Responsibilities\n`;
+                report.architecture.components.forEach(component => {
+                    md += `- **${component.name}** (${component.type}): ${component.responsibility}\n`;
+                });
+                md += `\n`;
+            }
+            if (report.architecture.relationships?.length) {
+                md += `### Declared Relationships\n`;
+                report.architecture.relationships.forEach(relationship => {
+                    md += `- ${relationship.sourceId} → ${relationship.targetId} (${relationship.relationshipType}): ${relationship.description}\n`;
+                });
+                md += `\n`;
+            }
+            if (report.architecture.assumptions?.length) {
+                md += `### Assumptions\n`;
+                report.architecture.assumptions.forEach(item => { md += `- ${item}\n`; });
+                md += `\n`;
+            }
+            if (report.architecture.unresolvedQuestions?.length) {
+                md += `### Unresolved Questions\n`;
+                report.architecture.unresolvedQuestions.forEach(item => { md += `- ${item}\n`; });
+                md += `\n`;
+            }
+
+        }
+
+        if (report.architectureValidation) {
+            md += `## Architecture Validation\n`;
+            md += `- Valid: ${report.architectureValidation.valid ? "Yes" : "No"}\n`;
+            md += `- Score: ${report.architectureValidation.score}/100\n`;
+            md += `- Status: ${report.architectureValidation.status}\n`;
+            report.architectureValidation.findings?.forEach(item => {
+                md += `- [${item.severity.toUpperCase()}] ${item.title}: ${item.explanation} Recommendation: ${item.recommendation}\n`;
+            });
+            md += `\n`;
+        }
+
+        if (report.developmentPlan) {
+            md += `## Development Roadmap\n\n`;
+            report.developmentPlan.phases?.forEach(phase => {
+                md += `### ${phase.title}\n`;
+                md += `${phase.objective}\n`;
+                phase.deliverables?.forEach(deliverable => { md += `- Deliverable: ${deliverable}\n`; });
+                const phaseTasks = (report.developmentPlan.tasks || []).filter(task => phase.taskIds.includes(task.id));
+                phaseTasks.forEach(task => {
+                    md += `\n#### ${task.title}\n`;
+                    md += `${task.description}\n`;
+                    if (task.dependsOn?.length) md += `- Prerequisites: ${task.dependsOn.join(", ")}\n`;
+                    task.acceptanceCriteria?.forEach(item => { md += `- Acceptance: ${item}\n`; });
+                    task.deliverables?.forEach(item => { md += `- Output: ${item}\n`; });
+                    task.suggestedTests?.forEach(item => { md += `- Suggested test: ${item}\n`; });
+                });
+                md += `\n`;
+            });
+        }
+
         if (report.domain) {
 
             md += `## Domain\n`;
