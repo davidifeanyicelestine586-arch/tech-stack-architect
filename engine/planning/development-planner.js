@@ -34,6 +34,18 @@ const task = ({ id, title, description, phaseId, componentIds = [], dependsOn = 
   learningResources,
 });
 
+export const getDevelopmentPlanSourceSignature = (project, architecture) =>
+  JSON.stringify({
+    project: {
+      name: project?.name || "",
+      description: project?.description || "",
+      domain: project?.domain || "",
+      difficulty: project?.difficulty || "",
+      requirements: project?.requirements || "",
+    },
+    architecture,
+  });
+
 export const generateDevelopmentPlan = ({ project, architecture, validation }) => {
   if (!project || typeof project !== "object") {
     throw new Error("A project definition is required to generate a development plan.");
@@ -170,5 +182,5 @@ export const generateDevelopmentPlan = ({ project, architecture, validation }) =
     reviewTask.description += ` Blocking architecture findings remain: ${validationFindings.filter((item) => item.severity === "error").map((item) => item.title).join("; ")}.`;
   }
 
-  return { schemaVersion: 1, milestones, phases, tasks };
+  return { schemaVersion: 1, sourceSignature: getDevelopmentPlanSourceSignature(project, architecture), milestones, phases, tasks };
 };
