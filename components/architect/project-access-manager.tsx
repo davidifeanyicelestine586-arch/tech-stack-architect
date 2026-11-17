@@ -13,6 +13,7 @@ type ProjectMember = {
   email: string | null;
   displayName: string | null;
   role: ProjectRole;
+  workspaceRole: "owner" | "admin" | "member" | "viewer";
   assignedAt: string;
 };
 type AvailableMember = {
@@ -169,12 +170,12 @@ export function ProjectAccessManager({ projectId }: { projectId: string }) {
                     {member.displayName && member.email ? <p className="truncate text-xs text-muted-foreground">{member.email}</p> : null}
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline">{roleLabel[member.role]}</Badge>
+                    <Badge variant="outline">{roleLabel[member.workspaceRole === "viewer" ? "viewer" : member.role]}</Badge>
                     <select
                       aria-label={`Project role for ${member.email || member.userId}`}
                       value={member.role}
                       onChange={(event) => void grant(member.userId, event.target.value as ProjectRole)}
-                      disabled={saving || loading}
+                      disabled={saving || loading || member.workspaceRole === "viewer"}
                       className="h-9 rounded-md border border-input bg-background px-2 text-xs"
                     >
                       <option value="project_admin">Project Admin</option>
@@ -197,7 +198,12 @@ export function ProjectAccessManager({ projectId }: { projectId: string }) {
             <select
               aria-label="Choose workspace member"
               value={selectedUserId}
-              onChange={(event) => setSelectedUserId(event.target.value)}
+              onChange={(event) => {
+                const nextId = event.target.value;
+                setSelectedUserId(nextId);
+                const selected = availableMembers.find((member) => member.userId === nextId);
+                if (selected?.workspaceRole === "viewer") setSelectedRole("viewer");
+              }}
               disabled={loading || saving || availableMembers.length === 0}
               className="h-10 min-w-0 rounded-md border border-input bg-background px-3 text-sm"
             >
@@ -215,8 +221,8 @@ export function ProjectAccessManager({ projectId }: { projectId: string }) {
               disabled={saving || selectedMember?.workspaceRole === "viewer"}
               className="h-10 rounded-md border border-input bg-background px-3 text-sm"
             >
-              <option value="project_admin">Project Admin</option>
-              <option value="editor">Editor</option>
+              <option value="project_admin" disabled={selectedMember?.workspaceRole === "viewer"}>Project Admin</option>
+              <option value="editor" disabled={selectedMember?.workspaceRole === "viewer"}>Editor</option>
               <option value="viewer">Viewer</option>
             </select>
           </div>
