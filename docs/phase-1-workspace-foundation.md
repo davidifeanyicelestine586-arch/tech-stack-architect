@@ -32,7 +32,7 @@ This workstream adds the first executable workspace path while preserving the ex
 
 - Email delivery provider integration (current invitation links are copied and sent manually).
 - Background expiry-state materialization for pending invitations (expired invitations are safely treated as expired at read/accept time).
-- Member role changes/removal and required Project Admin reassignment.
+- Workspace ownership transfer and owner succession (current owner is intentionally protected from role changes/removal).
 - User-facing project visibility selection and explicit project-level sharing UI.
 - Workspace activity feed UI and audit events for all membership/visibility mutations.
 - Workspace lifecycle operations (rename, ownership transfer, archive/closure).
