@@ -64,3 +64,12 @@ test("explicit project editor role preserves edit access for a workspace member"
   assert.equal(repository.canAccessProject(project, scope, "member", "editor", "read"), true);
   assert.equal(repository.canAccessProject(project, scope, "member", "editor", "write"), true);
 });
+
+test("workspace viewer cannot write even with an explicit project editor grant", () => {
+  assert.equal(repository.canAccessProject(project, scope, "viewer", "editor", "read"), true);
+  assert.equal(repository.canAccessProject(project, scope, "viewer", "editor", "write"), false);
+});
+
+test("workspace member project-admin grant is capped at editor-level writes", () => {
+  assert.equal(repository.canAccessProject(project, scope, "member", "project_admin", "write"), true);
+});
