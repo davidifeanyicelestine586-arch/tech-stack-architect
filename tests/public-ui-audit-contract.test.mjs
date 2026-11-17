@@ -36,13 +36,13 @@ test("account trigger retains an accessible name when its label is hidden respon
   assert.match(headerStyles, /\.site-header__auth span\s*\{\s*display:\s*none;/);
 });
 
-test("workflow navigation preserves the canonical six-stage order", () => {
+test("workflow navigation preserves the canonical eight-stage order", () => {
   const workflow = read("lib/navigation/workflow.ts");
   const routes = read("lib/navigation/routes.ts");
-  const labels = [...workflow.matchAll(/label: "(Define|Analyze|Review|Build|Validate|Blueprint)"/g)].map((match) => match[1]);
-  assert.deepEqual(labels, ["Define", "Analyze", "Review", "Build", "Validate", "Blueprint"]);
-  for (const routeId of ['routeId: "define"', 'routeId: "recommendations"', 'routeId: "components"', 'routeId: "validation"', 'routeId: "blueprint"']) {
-    assert.ok(workflow.includes(routeId), `missing workflow route: ${routeId}`);
+  const labels = [...workflow.matchAll(/label: "(Define|Analyze|Review|Build|Architect|Validate|Plan|Blueprint)"/g)].map((match) => match[1]);
+  assert.deepEqual(labels, ["Define", "Analyze", "Review", "Build", "Architect", "Validate", "Plan", "Blueprint"]);
+  for (const href of ['href: "/app#define"', 'href: "/app#recommendations"', 'href: "/app#components"', 'href: "/app#architect"', 'href: "/app#validation"', 'href: "/app#plan"', 'href: "/app#blueprint"']) {
+    assert.ok(workflow.includes(href), `missing workflow destination: ${href}`);
   }
   assert.ok(routes.includes('id: "recommendations", label: "Recommended Stack", href: "/app#recommendations"'));
   assert.ok(routes.includes('id: "components", label: "Component Library", href: "/app#components"'));
@@ -79,15 +79,6 @@ test("public catalog and documentation use readable body typography", () => {
   assert.equal(shell.includes(escapedNewline), false);
 });
 
-test("landing hero uses a preloaded font with no late font swap", () => {
-  const layout = read("app/layout.tsx");
-  const landing = read("app/page.tsx");
-  assert.match(layout, /display: "optional"/);
-  assert.match(layout, /preload: true/);
-  assert.match(layout, /className=\{`\$\{geist\.className\}/);
-  assert.ok(landing.includes('className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8"'));
-});
-
 test("documentation stays at its public canonical URL and inherits the public shell", () => {
   const publicLayout = read("app/(public)/layout.tsx");
   const docs = read("app/(public)/content-detail/page.tsx");
@@ -113,7 +104,7 @@ test("redesigned landing remains registry-driven and exposes the full architectu
   for (const source of ["getAllComponents()", "getAllDomains()", "getAllRecipes()"]) {
     assert.ok(landing.includes(source), `landing must continue using registry source: ${source}`);
   }
-  for (const stage of ["Define", "Analyze", "Review", "Build", "Validate", "Blueprint"]) {
+  for (const stage of ["Define", "Analyze", "Review", "Build", "Architect", "Validate", "Plan", "Blueprint"]) {
     assert.ok(landing.includes(stage), `landing is missing workflow stage: ${stage}`);
   }
   assert.ok(landing.includes('href="/app#define"'));
@@ -126,11 +117,16 @@ test("redesigned landing remains registry-driven and exposes the full architectu
 });
 
 
+test("landing hero uses a preloaded font with no late font swap", () => {
+  const layout = read("app/layout.tsx");
+  const landing = read("app/page.tsx");
+  assert.match(layout, /display: "optional"/);
+  assert.match(layout, /preload: true/);
+  assert.match(layout, /className=\\{`\\$\\{geist\\.className\\}/);
+  assert.ok(landing.includes('className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8"'));
+});
+
 test("dialog close control has a readable foreground color", () => {
   const dialog = read("components/ui/dialog.tsx");
-  assert.match(
-    dialog,
-    /className="cn-dialog-close absolute top-2 right-2 text-foreground"/,
-    "the icon-only close control must not inherit the low-contrast muted foreground"
-  );
+  assert.match(dialog, /className="cn-dialog-close absolute top-2 right-2 text-foreground"/, "the icon-only close control must not inherit the low-contrast muted foreground");
 });
