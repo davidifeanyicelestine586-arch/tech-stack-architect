@@ -18,6 +18,7 @@ export function WorkspaceSettings({
   workspace: {
     id: string;
     name: string;
+    createdBy: string | null;
     isPersonal: boolean;
     role: Role;
     status: "active" | "archived";
