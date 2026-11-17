@@ -12,7 +12,7 @@ import type { ProjectDefinition } from "@/lib/types";
 import { validateProjectDefinition } from "@/engine/requirementAnalyzer.js";
 
 export function ProjectDefinitionForm() {
-  const { domains, projectDefinition, updateProjectDefinition, analyzeProject } = useTechStack();
+  const { domains, projectDefinition, projectVisibility, setProjectVisibility, updateProjectDefinition, analyzeProject } = useTechStack();
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [isPending, startTransition] = useTransition();
@@ -185,6 +185,26 @@ export function ProjectDefinitionForm() {
               </select>
               <span id="project-difficulty-error" className="min-h-4 text-[11px] font-normal text-rose-600 dark:text-rose-400">
                 
+              </span>
+            </label>
+          </fieldset>
+
+          <fieldset className="grid min-w-0 gap-2">
+            <legend className="text-sm font-bold text-foreground">Project access</legend>
+            <label htmlFor="project-visibility" className="grid min-w-0 max-w-sm gap-1.5 text-xs font-semibold text-foreground">
+              Who can access this project?
+              <select
+                id="project-visibility"
+                value={projectVisibility}
+                onChange={(event) => setProjectVisibility(event.target.value as "private" | "workspace")}
+                disabled={isPending}
+                className="h-11 w-full min-w-0 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <option value="private">Private — only me and authorised workspace admins</option>
+                <option value="workspace">Workspace — workspace members can access</option>
+              </select>
+              <span className="text-[11px] font-normal leading-relaxed text-muted-foreground">
+                Workspace visibility is available when you have selected a workspace. Project Admins can change this later.
               </span>
             </label>
           </fieldset>
