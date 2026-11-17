@@ -89,6 +89,34 @@ export class WorkspaceService {
     }
   }
 
+  async listActivity({ userId, workspaceId }: { userId: string; workspaceId: string }) {
+    await this.getWorkspaceForMember({ userId, workspaceId });
+    try {
+      const result = await this.client
+        .from("workspace_activity_events")
+        .select("id, actor_id, action, subject_type, subject_id, metadata, created_at")
+        .eq("workspace_id", workspaceId)
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (result.error) throw result.error;
+      return await Promise.all((result.data || []).map(async (event) => {
+        const account = await this.client.auth.admin.getUserById(event.actor_id);
+        return {
+          id: event.id,
+          actorId: event.actor_id,
+          actorEmail: account.data?.user?.email || null,
+          action: event.action,
+          subjectType: event.subject_type,
+          subjectId: event.subject_id,
+          metadata: event.metadata || {},
+          createdAt: event.created_at,
+        };
+      }));
+    } catch (cause) {
+      return mapFailure("load workspace activity for", cause);
+    }
+  }
+
   async listMembers({ userId, workspaceId }: { userId: string; workspaceId: string }) {
     await this.getWorkspaceForMember({ userId, workspaceId });
     try {
