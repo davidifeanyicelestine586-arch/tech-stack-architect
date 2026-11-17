@@ -7,6 +7,7 @@ import { getSupabaseBrowserClient } from "@/lib/auth/supabase-browser";
 import { WorkspaceInvitations } from "@/components/workspaces/workspace-invitations";
 import { WorkspaceMembers } from "@/components/workspaces/workspace-members";
 import { WorkspaceActivity } from "@/components/workspaces/workspace-activity";
+import { WorkspaceSettings } from "@/components/workspaces/workspace-settings";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,8 +18,11 @@ type Workspace = {
   id: string;
   name: string;
   isPersonal: boolean;
+  createdBy: string | null;
   role: "owner" | "admin" | "member" | "viewer";
   createdAt: string;
+  status: "active" | "archived";
+  visibility: "private" | "discoverable";
 };
 
 const roleLabel: Record<Workspace["role"], string> = {
@@ -195,7 +199,7 @@ export function WorkspaceManager() {
                         Created {new Date(workspace.createdAt).toLocaleDateString()}
                       </p>
                     </div>
-                    <Badge variant="secondary">{roleLabel[workspace.role]}</Badge>
+                    <div className="flex flex-col items-end gap-1"><Badge variant="secondary">{roleLabel[workspace.role]}</Badge>{workspace.status === "archived" ? <Badge variant="outline">Archived</Badge> : null}</div>
                   </div>
                   {workspace.isPersonal ? <p className="mt-3 text-xs text-muted-foreground">Personal workspace</p> : null}
                   <Button
@@ -204,15 +208,20 @@ export function WorkspaceManager() {
                     size="sm"
                     className="mt-4 w-full"
                     onClick={() => void selectWorkspace(workspace.id)}
-                    disabled={!authenticated || selectingId !== null}
+                    disabled={!authenticated || selectingId !== null || workspace.status !== "active"}
                   >
                     {selectingId === workspace.id ? <LoaderCircle className="mr-2 size-4 animate-spin" aria-hidden="true" /> : null}
                     Open workspace
                   </Button>
-                  <WorkspaceMembers workspaceId={workspace.id} workspaceRole={workspace.role} />
-                  <WorkspaceActivity workspaceId={workspace.id} />
-                  {workspace.role === "owner" || workspace.role === "admin" ? (
-                    <WorkspaceInvitations workspaceId={workspace.id} />
+                  <WorkspaceSettings workspace={workspace} onChanged={() => void loadWorkspaces()} />
+                  {workspace.status === "active" ? (
+                    <>
+                      <WorkspaceMembers workspaceId={workspace.id} workspaceRole={workspace.role} />
+                      <WorkspaceActivity workspaceId={workspace.id} />
+                      {workspace.role === "owner" || workspace.role === "admin" ? (
+                        <WorkspaceInvitations workspaceId={workspace.id} />
+                      ) : null}
+                    </>
                   ) : null}
                 </li>
               ))}
