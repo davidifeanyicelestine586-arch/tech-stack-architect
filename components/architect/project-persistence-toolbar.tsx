@@ -68,7 +68,8 @@ export function ProjectPersistenceToolbar() {
         try {
           const { data } = await getSupabaseBrowserClient().auth.getSession();
           const token = data.session?.access_token;
-          const headers = token ? { authorization: `Bearer ${token}` } : {};
+          const headers = new Headers();
+          if (token) headers.set("authorization", `Bearer ${token}`);
 
           if (token) {
             const activeWorkspaceResponse = await fetch("/api/workspaces/active", {
@@ -87,7 +88,7 @@ export function ProjectPersistenceToolbar() {
                   if (activeWorkspaces.length === 1) {
                     await fetch("/api/workspaces/active", {
                       method: "POST",
-                      headers: { ...headers, "content-type": "application/json" },
+                      headers: new Headers([...headers.entries(), ["content-type", "application/json"]]),
                       body: JSON.stringify({ workspaceId: activeWorkspaces[0].id }),
                     });
                   }
