@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { ACTIVE_WORKSPACE_COOKIE, createWorkspaceSelectionApi } from "../lib/workspaces/workspace-selection-api.js";
+import { PersistenceError } from "../lib/persistence/project-serialization.js";
 import { resetRequestGuardState } from "../lib/security/request-guards.js";
 
 const userId = "22222222-2222-4222-8222-222222222222";
@@ -53,10 +54,10 @@ test("active workspace selection rejects unknown fields and malformed identifier
 test("active workspace selection does not set a cookie when membership is denied", async () => {
   resetRequestGuardState();
   const api = createWorkspaceSelectionApi({
-    service: { getWorkspaceForMember: async () => { const error = new Error("denied"); error.code = "FORBIDDEN"; throw error; } },
+    service: { getWorkspaceForMember: async () => { throw new PersistenceError("FORBIDDEN", "denied"); } },
     getAuthenticatedUserId: async () => userId,
   });
   const response = await api.select(makeRequest({ workspaceId }));
-  assert.equal(response.status, 503);
+  assert.equal(response.status, 403);
   assert.equal(response.headers.get("set-cookie"), null);
 });
