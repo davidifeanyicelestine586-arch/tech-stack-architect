@@ -18,6 +18,27 @@ alter table public.workspaces
   add constraint workspaces_archive_check
     check ((status = 'active' and archived_at is null) or (status = 'archived' and archived_at is not null));
 
+create or replace function public.current_user_has_workspace_role(
+  p_workspace_id uuid,
+  p_roles text[] default null
+)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public, auth
+as $
+  select auth.uid() is not null and exists (
+    select 1
+    from public.workspace_memberships wm
+    join public.workspaces w on w.id = wm.workspace_id
+    where wm.workspace_id = p_workspace_id
+      and wm.user_id = auth.uid()
+      and w.status = 'active'
+      and (p_roles is null or wm.role = any(p_roles))
+  );
+$;
+
 create table if not exists public.workspace_access_requests (
   id uuid primary key default extensions.gen_random_uuid(),
   workspace_id uuid not null references public.workspaces(id) on delete cascade,
