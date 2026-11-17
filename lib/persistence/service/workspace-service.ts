@@ -89,6 +89,118 @@ export class WorkspaceService {
     }
   }
 
+  async assertProjectAdministrator({ userId, workspaceId, projectId }: {
+    userId: string;
+    workspaceId: string;
+    projectId: string;
+  }) {
+    const workspace = await this.getWorkspaceForMember({ userId, workspaceId });
+    if (workspace.role === "owner" || workspace.role === "admin") return workspace;
+    if (workspace.role !== "member") {
+      throw new PersistenceError("FORBIDDEN", "Project administrator permission is required.");
+    }
+    try {
+      const project = await this.client
+        .from("projects")
+        .select("id")
+        .eq("id", projectId)
+        .eq("workspace_id", workspaceId)
+        .maybeSingle();
+      if (project.error) throw project.error;
+      if (!project.data) throw new PersistenceError("PERSISTENCE_NOT_FOUND", "Project not found.");
+      const membership = await this.client
+        .from("project_memberships")
+        .select("role")
+        .eq("project_id", projectId)
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (membership.error) throw membership.error;
+      if (membership.data?.role !== "project_admin") {
+        throw new PersistenceError("FORBIDDEN", "Project administrator permission is required.");
+      }
+      return workspace;
+    } catch (cause) {
+      return mapFailure("check project administration for", cause);
+    }
+  }
+
+  async listProjectMembers({ userId, workspaceId, projectId }: {
+    userId: string;
+    workspaceId: string;
+    projectId: string;
+  }) {
+    await this.assertProjectAdministrator({ userId, workspaceId, projectId });
+    try {
+      const result = await this.client
+        .from("project_memberships")
+        .select("user_id, role, created_at")
+        .eq("project_id", projectId)
+        .order("created_at", { ascending: true });
+      if (result.error) throw result.error;
+      return await Promise.all((result.data || []).map(async (membership) => {
+        const account = await this.client.auth.admin.getUserById(membership.user_id);
+        return {
+          userId: membership.user_id,
+          email: account.data?.user?.email || null,
+          displayName: account.data?.user?.user_metadata?.full_name || null,
+          role: membership.role,
+          assignedAt: membership.created_at,
+        };
+      }));
+    } catch (cause) {
+      return mapFailure("list project members for", cause);
+    }
+  }
+
+  async grantProjectMember({ userId, workspaceId, projectId, memberId, role }: {
+    userId: string;
+    workspaceId: string;
+    projectId: string;
+    memberId: string;
+    role: "project_admin" | "editor" | "viewer";
+  }) {
+    await this.assertProjectAdministrator({ userId, workspaceId, projectId });
+    const targetWorkspace = await this.getWorkspaceForMember({ userId: memberId, workspaceId });
+    if (targetWorkspace.role === "viewer" && role !== "viewer") {
+      throw new PersistenceError("FORBIDDEN", "Workspace viewers cannot receive project write permissions.");
+    }
+    if (!["project_admin", "editor", "viewer"].includes(role)) {
+      throw new PersistenceError("VALIDATION_FAILURE", "Project role is invalid.");
+    }
+    try {
+      const result = await this.client.rpc("grant_project_member", {
+        p_project_id: projectId,
+        p_user_id: memberId,
+        p_role: role,
+        p_actor_id: userId,
+      });
+      if (result.error) throw result.error;
+      return { userId: memberId, role: result.data };
+    } catch (cause) {
+      return mapFailure("grant project access for", cause);
+    }
+  }
+
+  async removeProjectMember({ userId, workspaceId, projectId, memberId }: {
+    userId: string;
+    workspaceId: string;
+    projectId: string;
+    memberId: string;
+  }) {
+    await this.assertProjectAdministrator({ userId, workspaceId, projectId });
+    try {
+      const result = await this.client.rpc("remove_project_member", {
+        p_project_id: projectId,
+        p_user_id: memberId,
+        p_actor_id: userId,
+      });
+      if (result.error) throw result.error;
+      return { removed: result.data === true };
+    } catch (cause) {
+      return mapFailure("remove project access for", cause);
+    }
+  }
+
   async listActivity({ userId, workspaceId }: { userId: string; workspaceId: string }) {
     await this.getWorkspaceForMember({ userId, workspaceId });
     try {
