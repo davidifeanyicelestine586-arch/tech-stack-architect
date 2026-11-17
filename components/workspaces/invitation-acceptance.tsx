@@ -36,7 +36,7 @@ export function InvitationAcceptance({ token }: { token: string }) {
         throw new Error(payload?.error?.message || "Unable to accept this invitation.");
       }
       setAccepted(true);
-      window.setTimeout(() => router.push("/app/workspaces"), 900);
+      window.setTimeout(() => router.push("/app"), 900);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to accept this invitation.");
     } finally {
