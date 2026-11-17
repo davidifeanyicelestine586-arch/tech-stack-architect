@@ -55,8 +55,8 @@ begin
   from public.project_memberships
   where project_id = p_project_id and user_id = p_actor_id;
 
-  if actor_workspace_role not in ('owner', 'admin')
-    and not (actor_workspace_role = 'member' and actor_project_role = 'project_admin') then
+  if actor_workspace_role is null or (actor_workspace_role not in ('owner', 'admin')
+    and not (actor_workspace_role = 'member' and actor_project_role = 'project_admin')) then
     raise exception 'Project administrator permission is required' using errcode = '42501';
   end if;
 
