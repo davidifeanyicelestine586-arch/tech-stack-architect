@@ -24,6 +24,9 @@ const describe = (event: ActivityEvent) => {
     case "workspace.invitation_revoked": return "Invitation revoked";
     case "project.visibility_changed": return "Project visibility changed";
     case "project.admin_reassigned": return "Project administrator reassigned";
+    case "project.member_added": return "Project member added";
+    case "project.member_role_changed": return "Project member role changed";
+    case "project.member_removed": return "Project member removed";
     default: return "Workspace activity";
   }
 };
