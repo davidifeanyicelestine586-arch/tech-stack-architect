@@ -115,7 +115,7 @@ begin
     else excluded.role
   end,
   updated_at = now()
-  returning role into accepted_role;
+  returning public.workspace_memberships.role into accepted_role;
 
   insert into public.workspace_activity_events (
     workspace_id, actor_id, action, subject_type, subject_id, metadata
