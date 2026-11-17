@@ -20,7 +20,7 @@ begin
   from public.workspace_memberships
   where workspace_id = p_workspace_id and user_id = p_actor_id;
 
-  if actor_role not in ('owner', 'admin') then
+  if actor_role is null or actor_role not in ('owner', 'admin') then
     raise exception 'Workspace administrator permission is required' using errcode = '42501';
   end if;
 
