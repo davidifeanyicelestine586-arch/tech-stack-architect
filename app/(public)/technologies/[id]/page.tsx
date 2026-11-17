@@ -77,7 +77,7 @@ export default async function TechnologyPage({ params }: { params: Promise<{ id:
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
-  return <div className="rounded-xl border border-border p-4"><dt className="text-xs uppercase tracking-wide text-muted-foreground">{label}</dt><dd className="mt-1 font-semibold">{value}</dd></div>;
+  return <dl className="rounded-xl border border-border p-4"><dt className="text-xs uppercase tracking-wide text-muted-foreground">{label}</dt><dd className="mt-1 font-semibold">{value}</dd></dl>;
 }
 
 function ListSection({ title, items, empty = "None registered." }: { title: string; items: React.ReactNode[]; empty?: string }) {
