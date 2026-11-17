@@ -6,6 +6,7 @@ import { BriefcaseBusiness, LoaderCircle, Plus, RefreshCw } from "lucide-react";
 import { getSupabaseBrowserClient } from "@/lib/auth/supabase-browser";
 import { WorkspaceInvitations } from "@/components/workspaces/workspace-invitations";
 import { WorkspaceMembers } from "@/components/workspaces/workspace-members";
+import { WorkspaceActivity } from "@/components/workspaces/workspace-activity";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -209,6 +210,7 @@ export function WorkspaceManager() {
                     Open workspace
                   </Button>
                   <WorkspaceMembers workspaceId={workspace.id} workspaceRole={workspace.role} />
+                  <WorkspaceActivity workspaceId={workspace.id} />
                   {workspace.role === "owner" || workspace.role === "admin" ? (
                     <WorkspaceInvitations workspaceId={workspace.id} />
                   ) : null}
