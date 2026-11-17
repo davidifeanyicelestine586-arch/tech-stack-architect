@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { renderAccessibilityAuditHtml, shouldFailAccessibilityAudit } from "../scripts/accessibility-audit-report.mjs";
 
 test("strict accessibility gate fails on axe violations and geometry findings", () => {
@@ -54,4 +55,12 @@ test("remaining-page accessibility audit covers public catalog and detail routes
   assert.match(audit, /type:"http-status"/);
   const routeBlock = audit.split("const pages = [")[1]?.split("];")[0] ?? "";
   assert.equal((routeBlock.match(/route: "/g) ?? []).length, 11);
+});
+
+test("technology detail stat cards use valid description-list semantics", () => {
+  const page = readFileSync(new URL("../app/(public)/technologies/[id]/page.tsx", import.meta.url), "utf8");
+  const stat = page.split("function Stat(")[1]?.split("\n}\n")[0] ?? "";
+  assert.match(stat, /<dl\b/, "stat terms and descriptions must have a dl parent");
+  assert.match(stat, /<dt\b/);
+  assert.match(stat, /<dd\b/);
 });
