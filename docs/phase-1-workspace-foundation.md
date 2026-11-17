@@ -1,42 +1,51 @@
 # Phase 1 workspace foundation — implementation notes
 
-This workstream adds the first executable workspace path while preserving the existing anonymous and authenticated project persistence paths.
+This workstream adds the workspace and collaboration foundation while preserving the existing anonymous and authenticated project persistence paths.
 
 ## Delivered in this slice
 
 - Workspace, workspace membership, invitation, project membership, and workspace activity schema.
 - Backfill of existing authenticated project owners into personal workspaces.
-- Atomic \`create_workspace_for_user\` RPC, executable only by \`service_role\`.
-- Authenticated \`GET /api/workspaces\` and \`POST /api/workspaces\`.
-- Authenticated \`POST /api/workspaces/active\`, which verifies membership before setting an HTTP-only, same-site cookie scoped to \`/api/projects\`.
-- Workspace management UI at \`/app/workspaces\`, with membership listing, workspace creation, and selection.
+- Atomic `create_workspace_for_user` RPC, executable only by `service_role`.
+- Authenticated workspace listing, creation, and active-workspace selection.
+- Workspace management UI at `/app/workspaces`, with creation, selection, member listing, role changes, removal, and recent activity.
+- Invitation creation, listing, revocation, and acceptance APIs.
+- One-time invitation tokens are generated server-side, SHA-256 hashed before storage, returned once as copyable links, and accepted only by a signed-in account with the matching verified email.
+- Workspace member removal revokes project memberships and reassigns sole Project Admin assignments before removing the member.
 - Project repository scoping to the selected workspace.
+- Private/workspace project visibility selection and persistence.
+- Project access UI to grant Project Admin, Editor, and Viewer roles to existing workspace members.
 - Server-side project permission checks:
   - Workspace owner/admin: workspace-wide administration, including private projects.
-  - Workspace member: read/write workspace-visible projects.
-  - Workspace viewer: read-only workspace-visible projects.
-  - Private project: creator, workspace owner/admin, or explicit project membership.
-  - Project Admin and Editor may write; Viewer may only read.
+  - Workspace member: workspace-visible projects by default; private projects only with explicit project membership.
+  - Workspace viewer: read-only access, even if a project grant would otherwise permit writing.
+  - Project Admin: administers only the assigned project; this does not grant workspace administration.
+  - Editor: may edit assigned projects; Viewer: read-only.
+  - Workspace membership caps project permissions; project grants cannot bypass workspace membership or a workspace Viewer restriction.
 - Database trigger that grants the project creator Project Admin membership atomically when a workspace project is inserted.
-- Regression coverage for API authentication, active workspace selection, role matrix, repository permission checks, migration function grants, and project creator membership.
+- Workspace-aware RLS policies for projects, workspaces, memberships, invitations, project memberships, and activity events. Browser database roles have read-only grants and no direct mutation grants.
+- Last-active workspace cookie and per-workspace last-active project restoration, with server-side authorization rechecked on restoration.
+- Activity events for workspace creation, invitation lifecycle, member changes, Project Admin reassignment, and project visibility changes.
+- Regression coverage for API authentication, active workspace selection, role matrix, project repository authorization, invitation workflows, member management, migration contracts, and RLS grants.
 
 ## Security boundaries
 
-- Workspace and membership data is queried through the server-side service-role client only.
-- Browser roles have no direct table grants on the new workspace tables.
-- The active workspace cookie is not an authorization grant. Each project request still checks workspace membership and project permissions in the repository.
-- Invalid active-workspace cookies fail closed.
-- Private projects are filtered server-side before project records are returned.
+- Workspace and membership mutations use server-side service-role functions only.
+- Browser roles cannot directly insert, update, or delete workspace/project collaboration records.
+- Active workspace and active project cookies are selectors, not authorization grants. Each project request still checks workspace membership and project permissions.
+- Workspace-owned projects are not accessible through the legacy user-owned project scope.
+- Removing a workspace member removes their project memberships; the database reassigns sole Project Admin assignments before revocation.
+- Private projects are filtered server-side and through workspace-aware RLS policies.
+- Invitation links contain a one-time raw token only in the returned URL; the database stores only its SHA-256 hash.
 
 ## Deliberate remaining work
 
 - Email delivery provider integration (current invitation links are copied and sent manually).
-- Background expiry-state materialization for pending invitations (expired invitations are safely treated as expired at read/accept time).
-- Workspace ownership transfer and owner succession (current owner is intentionally protected from role changes/removal).
-- User-facing project visibility selection and explicit project-level sharing UI.
-- Workspace activity feed UI and audit events for all membership/visibility mutations.
-- Workspace lifecycle operations (rename, ownership transfer, archive/closure).
-- Full first-time workspace routing and returning-user last-active workspace persistence.
-- End-to-end cross-tenant tests against a Supabase test database and applied-migration verification.
+- Discoverable workspaces and access-request approval flows.
+- Workspace rename, ownership transfer/succession, and archive/closure lifecycle.
+- Background expiry-state materialization for pending invitations (expired invitations are treated as expired at read/accept time).
+- Full first-time workspace routing after sign-in; users can create/select workspaces through the workspace manager.
+- Cross-tenant integration tests against a running Supabase test database, including applying every migration and verifying real RLS behavior.
+- A durable transactional audit path for project visibility changes (the current repository records these events best-effort after the project update).
 
 This is an implementation progress note, not a claim that Phase 1 is complete or production-ready.
