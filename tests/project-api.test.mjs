@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import test from "node:test";
 import {
+  ACTIVE_PROJECT_COOKIE,
   ANONYMOUS_SESSION_COOKIE,
   createProjectApi,
 } from "../lib/persistence/api/project-api.js";
@@ -346,4 +347,44 @@ test("project API rejects unsupported visibility values before persistence", asy
   assert.equal(response.status, 400);
   assert.equal(payload.error.code, "VALIDATION_FAILURE");
   assert.equal(service.calls.length, 0);
+});
+
+test("creating or opening a project persists its last-active project cookie", async () => {
+  const service = new ApiService();
+  const api = createApi(service);
+  const created = await api.create(request("POST", { snapshot: baseSnapshot }));
+  assert.match(created.headers.get("set-cookie"), new RegExp(ACTIVE_PROJECT_COOKIE));
+  assert.match(created.headers.get("set-cookie"), /HttpOnly/);
+});
+
+test("last-active project restoration returns only a project visible in the resolved scope", async () => {
+  const service = new ApiService();
+  const created = await service.createProject({ scope: { kind: "anonymous", sessionId: sessionA }, snapshot: baseSnapshot });
+  const api = createProjectApi({
+    service,
+    registries,
+    getCookieStore: async () => ({
+      get: (name) => name === ACTIVE_PROJECT_COOKIE ? { value: created.id } : name === ANONYMOUS_SESSION_COOKIE ? { value: sessionA } : undefined,
+    }),
+  });
+  const response = await api.getActive(request("GET"));
+  const payload = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(payload.data.project.id, created.id);
+});
+
+test("last-active project restoration safely clears itself logically when the project is inaccessible", async () => {
+  const service = new ApiService();
+  service.failWith = new PersistenceError("PERSISTENCE_NOT_FOUND", "not found");
+  const api = createProjectApi({
+    service,
+    registries,
+    getCookieStore: async () => ({
+      get: (name) => name === ACTIVE_PROJECT_COOKIE ? { value: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" } : undefined,
+    }),
+  });
+  const response = await api.getActive(request("GET"));
+  const payload = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(payload.data.project, null);
 });
