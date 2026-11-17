@@ -30,6 +30,10 @@ const workspaceLifecycleMigration = readFileSync(
   new URL("../supabase/migrations/20261117070000_workspace_lifecycle_and_access_requests.sql", import.meta.url),
   "utf8",
 );
+const privateRlsMigration = readFileSync(
+  new URL("../supabase/migrations/20261117080000_private_rls_helpers.sql", import.meta.url),
+  "utf8",
+);
 
 test("workspace creation is atomic and records its initial owner", () => {
   assert.match(workspaceMigration, /create or replace function public\.create_workspace_for_user/i);
@@ -173,4 +177,22 @@ test("every existing and future authenticated user receives a private personal w
   assert.match(workspaceLifecycleMigration, /after insert on auth\.users/i);
   assert.match(workspaceLifecycleMigration, /values \('Personal workspace', true, new\.id\)/i);
   assert.match(workspaceLifecycleMigration, /values \(personal_workspace_id, new\.id, 'owner', new\.id\)/i);
+});
+
+test("RLS SECURITY DEFINER helpers and signup trigger live in the non-exposed private schema", () => {
+  assert.match(privateRlsMigration, /create schema if not exists private/i);
+  assert.match(privateRlsMigration, /create or replace function private\.current_user_has_workspace_role/i);
+  assert.match(privateRlsMigration, /create or replace function private\.current_user_can_access_project/i);
+  assert.match(privateRlsMigration, /create or replace function private\.create_personal_workspace_for_new_user/i);
+  assert.match(privateRlsMigration, /using \(private\.current_user_can_access_project/i);
+  assert.match(privateRlsMigration, /using \(private\.current_user_has_workspace_role/i);
+  assert.match(privateRlsMigration, /drop function if exists public\.current_user_can_access_project/i);
+  assert.match(privateRlsMigration, /drop function if exists public\.current_user_has_workspace_role/i);
+  assert.match(privateRlsMigration, /drop function if exists public\.create_personal_workspace_for_new_user/i);
+});
+
+test("server-side workspace mutation RPCs execute with invoker privileges", () => {
+  for (const migration of [projectMembershipManagementMigration]) {
+    assert.doesNotMatch(migration, /security definer/i);
+  }
 });
