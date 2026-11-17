@@ -49,10 +49,10 @@ test("explicit project roles grant access to private projects without exceeding 
   assert.equal(repository.canAccessProject(privateProject, scope, "member", undefined, "read"), false);
 });
 
-test("project creator retains access to their own private project", () => {
+test("project creator retains access through trigger-assigned Project Admin membership", () => {
   const ownProject = { ...project, visibility: "private", owner_id: scope.userId };
-  assert.equal(repository.canAccessProject(ownProject, scope, "member", undefined, "read"), true);
-  assert.equal(repository.canAccessProject(ownProject, scope, "member", undefined, "write"), true);
+  assert.equal(repository.canAccessProject(ownProject, scope, "member", "project_admin", "read"), true);
+  assert.equal(repository.canAccessProject(ownProject, scope, "member", "project_admin", "write"), true);
 });
 
 test("explicit project viewer role restricts a workspace member to read-only", () => {
