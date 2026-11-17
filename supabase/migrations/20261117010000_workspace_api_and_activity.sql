@@ -39,7 +39,7 @@ create or replace function public.create_workspace_for_user(
 )
 returns uuid
 language plpgsql
-security definer
+security invoker
 set search_path = public, extensions
 as $$
 declare
