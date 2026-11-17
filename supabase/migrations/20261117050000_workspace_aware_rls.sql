@@ -42,8 +42,7 @@ as $$
       p_workspace_id is not null
       and public.current_user_has_workspace_role(p_workspace_id)
       and (
-        p_owner_id = auth.uid()
-        or public.current_user_has_workspace_role(p_workspace_id, array['owner', 'admin'])
+        public.current_user_has_workspace_role(p_workspace_id, array['owner', 'admin'])
         or p_visibility = 'workspace'
         or exists (
           select 1
