@@ -185,7 +185,7 @@ create or replace function public.rename_workspace(
 )
 returns text
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 declare
@@ -232,7 +232,7 @@ create or replace function public.transfer_workspace_ownership(
 )
 returns boolean
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 declare
@@ -295,7 +295,7 @@ create or replace function public.archive_workspace(
 )
 returns boolean
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 begin
@@ -331,7 +331,7 @@ create or replace function public.restore_workspace(
 )
 returns boolean
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 begin
@@ -368,7 +368,7 @@ create or replace function public.set_workspace_visibility(
 )
 returns text
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 declare
@@ -418,7 +418,7 @@ create or replace function public.request_workspace_access(
 )
 returns uuid
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 declare
@@ -471,7 +471,7 @@ create or replace function public.review_workspace_access_request(
 )
 returns text
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 declare
