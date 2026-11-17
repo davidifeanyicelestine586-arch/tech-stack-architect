@@ -77,9 +77,9 @@ test("workspace project creator receives project-admin membership in the insert 
 
 test("invitation creation, acceptance and revocation are atomic server-only RPCs", () => {
   for (const functionName of ["create_workspace_invitation", "accept_workspace_invitation", "revoke_workspace_invitation"]) {
-    assert.match(invitationMigration, new RegExp("create or replace function public\\." + functionName, "i"));
-    assert.match(invitationMigration, new RegExp("revoke all on function public\\." + functionName, "i"));
-    assert.match(invitationMigration, new RegExp("grant execute on function public\\." + functionName, "i"));
+    assert.match(invitationMigration, new RegExp("create or replace function public\." + functionName, "i"));
+    assert.match(invitationMigration, new RegExp("revoke all on function public\." + functionName, "i"));
+    assert.match(invitationMigration, new RegExp("grant execute on function public\." + functionName, "i"));
   }
   assert.match(invitationMigration, /token_hash/i);
   assert.match(invitationMigration, /expires_at/i);
@@ -121,7 +121,7 @@ test("workspace RLS replaces legacy owner-only project policies", () => {
     "authenticated users can update own projects",
     "authenticated users can delete own projects",
   ]) {
-    assert.match(rlsMigration, new RegExp("drop policy if exists \"" + legacyPolicy + "\" on public\\.projects", "i"));
+    assert.match(rlsMigration, new RegExp("drop policy if exists \"" + legacyPolicy + "\" on public\.projects", "i"));
   }
   assert.match(rlsMigration, /workspace members can read authorised projects/i);
   assert.match(rlsMigration, /current_user_can_access_project/i);
@@ -131,9 +131,9 @@ test("workspace RLS replaces legacy owner-only project policies", () => {
 
 test("workspace, invitation, project membership and activity RLS are scoped and read-only to browser roles", () => {
   for (const table of ["workspaces", "workspace_memberships", "workspace_invitations", "project_memberships", "workspace_activity_events", "projects"]) {
-    assert.match(rlsMigration, new RegExp("alter table public\\." + table + " enable row level security", "i"));
-    assert.match(rlsMigration, new RegExp("revoke all on public\\." + table + " from anon, authenticated", "i"));
-    assert.match(rlsMigration, new RegExp("grant select on public\\." + table + " to authenticated", "i"));
+    assert.match(rlsMigration, new RegExp("alter table public\." + table + " enable row level security", "i"));
+    assert.match(rlsMigration, new RegExp("revoke all on public\." + table + " from anon, authenticated", "i"));
+    assert.match(rlsMigration, new RegExp("grant select on public\." + table + " to authenticated", "i"));
   }
   assert.match(rlsMigration, /workspace admins can read invitations/i);
   assert.match(rlsMigration, /workspace members can read workspace activity/i);
@@ -196,8 +196,8 @@ test("RLS SECURITY DEFINER helpers and signup trigger live in the non-exposed pr
   assert.match(privateRlsMigration, /create or replace function private\.current_user_has_workspace_role/i);
   assert.match(privateRlsMigration, /create or replace function private\.current_user_can_access_project/i);
   assert.match(privateRlsMigration, /create or replace function private\.create_personal_workspace_for_new_user/i);
-  assert.match(privateRlsMigration, /using\\s*\\(\\s*private\\.current_user_can_access_project/i);
-  assert.match(privateRlsMigration, /using\\s*\\(\\s*private\\.current_user_has_workspace_role/i);
+  assert.match(privateRlsMigration, /using\s*\(\s*private\.current_user_can_access_project/i);
+  assert.match(privateRlsMigration, /using\s*\(\s*private\.current_user_has_workspace_role/i);
   assert.match(privateRlsMigration, /drop function if exists public\.current_user_can_access_project/i);
   assert.match(privateRlsMigration, /drop function if exists public\.current_user_has_workspace_role/i);
   assert.match(privateRlsMigration, /drop function if exists public\.create_personal_workspace_for_new_user/i);
