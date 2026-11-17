@@ -18,6 +18,10 @@ const membershipManagementMigration = readFileSync(
   new URL("../supabase/migrations/20261117040000_workspace_membership_management.sql", import.meta.url),
   "utf8",
 );
+const rlsMigration = readFileSync(
+  new URL("../supabase/migrations/20261117050000_workspace_aware_rls.sql", import.meta.url),
+  "utf8",
+);
 
 test("workspace creation is atomic and records its initial owner", () => {
   assert.match(workspaceMigration, /create or replace function public\.create_workspace_for_user/i);
@@ -84,4 +88,29 @@ test("removing a sole project admin reassigns project administration before revo
   assert.match(membershipManagementMigration, /delete from public\.project_memberships/i);
   assert.match(membershipManagementMigration, /delete from public\.workspace_memberships/i);
   assert.match(membershipManagementMigration, /'workspace\.member_removed'/i);
+});
+
+test("workspace RLS replaces legacy owner-only project policies", () => {
+  for (const legacyPolicy of [
+    "authenticated users can read own projects",
+    "authenticated users can create own projects",
+    "authenticated users can update own projects",
+    "authenticated users can delete own projects",
+  ]) {
+    assert.match(rlsMigration, new RegExp("drop policy if exists \"" + legacyPolicy + "\" on public\\.projects", "i"));
+  }
+  assert.match(rlsMigration, /workspace members can read authorised projects/i);
+  assert.match(rlsMigration, /current_user_can_access_project/i);
+  assert.match(rlsMigration, /p_owner_id = auth\.uid\(\)/i);
+  assert.match(rlsMigration, /current_user_has_workspace_role\(p_workspace_id, array\['owner', 'admin'\]\)/i);
+});
+
+test("workspace, invitation, project membership and activity RLS are scoped and read-only to browser roles", () => {
+  for (const table of ["workspaces", "workspace_memberships", "workspace_invitations", "project_memberships", "workspace_activity_events", "projects"]) {
+    assert.match(rlsMigration, new RegExp("alter table public\\." + table + " enable row level security", "i"));
+    assert.match(rlsMigration, new RegExp("revoke all on public\\." + table + " from anon, authenticated", "i"));
+    assert.match(rlsMigration, new RegExp("grant select on public\\." + table + " to authenticated", "i"));
+  }
+  assert.match(rlsMigration, /workspace admins can read invitations/i);
+  assert.match(rlsMigration, /workspace members can read workspace activity/i);
 });
