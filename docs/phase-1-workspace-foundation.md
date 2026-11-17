@@ -12,7 +12,8 @@ This workstream adds the workspace and collaboration foundation while preserving
 - Invitation creation, listing, revocation, and acceptance APIs.
 - One-time invitation tokens are generated server-side, SHA-256 hashed before storage, returned once as copyable links, and accepted only by a signed-in account with the matching verified email.
 - Workspace member removal revokes project memberships and reassigns sole Project Admin assignments before removing the member.
-- Discoverable workspaces with access-request creation, requester status tracking, and owner/admin approval or rejection.
+- One-owner-per-workspace database invariant and protected ownership transfer; the former owner becomes an Admin.
+- Discoverable workspaces with access-request creation, requester status tracking, and owner/admin approval or rejection. Requests require a verified account email and can only grant Member or Viewer roles.
 - Workspace ownership transfer, protected owner roles, archive and restore lifecycle, and active-workspace suspension while archived.
 - Project repository scoping to the selected workspace.
 - Private/workspace project visibility selection and persistence.
@@ -27,7 +28,7 @@ This workstream adds the workspace and collaboration foundation while preserving
 - Database trigger that grants the project creator Project Admin membership atomically when a workspace project is inserted.
 - Workspace-aware RLS policies for projects, workspaces, memberships, invitations, project memberships, and activity events. Browser database roles have read-only grants and no direct mutation grants.
 - Last-active workspace cookie and per-workspace last-active project restoration, with server-side authorization rechecked on restoration.
-- Activity events for workspace creation, invitation lifecycle, member changes, Project Admin reassignment, and project visibility changes.
+- Activity events for workspace creation, invitation lifecycle, member changes, ownership transfer, archive/restore, access-request review, Project Admin reassignment, project membership changes, and project visibility changes.
 - Regression coverage for API authentication, active workspace selection, role matrix, project repository authorization, invitation workflows, member management, migration contracts, and RLS grants.
 
 ## Security boundaries
