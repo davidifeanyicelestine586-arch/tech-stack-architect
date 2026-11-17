@@ -87,9 +87,9 @@ test("workflow Define progress requires the required project name and descriptio
 test("workspace onboarding follows every canonical workflow stage and remains resumable", () => {
   const onboarding = read("components/architect/workspace-onboarding.tsx");
   const workspace = read("app/(dashboard-layout)/app/workspace-client.tsx");
-  assert.match(workspace, /<WorkspaceOnboarding\\s*\\/>/);
-  assert.match(onboarding, /localStorage\\.getItem/);
-  assert.match(onboarding, /localStorage\\.setItem/);
+  assert.ok(workspace.includes("<WorkspaceOnboarding />"));
+  assert.ok(onboarding.includes("localStorage.getItem"));
+  assert.ok(onboarding.includes("localStorage.setItem"));
   for (const label of [
     "Define your project",
     "Analyze requirements",
@@ -104,5 +104,5 @@ test("workspace onboarding follows every canonical workflow stage and remains re
   }
   assert.match(onboarding, /aria-label="Getting started"/);
   assert.match(onboarding, /Show getting-started guide/);
-  assert.match(onboarding, /aria-valuemax=\\{tasks\\.length\\}/);
+  assert.ok(onboarding.includes("aria-valuemax={tasks.length}"));
 });
