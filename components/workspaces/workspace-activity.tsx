@@ -17,6 +17,13 @@ type ActivityEvent = {
 const describe = (event: ActivityEvent) => {
   switch (event.action) {
     case "workspace.created": return "Workspace created";
+    case "workspace.updated": return "Workspace settings updated";
+    case "workspace.owner_transferred": return "Workspace ownership transferred";
+    case "workspace.archived": return "Workspace archived";
+    case "workspace.restored": return "Workspace restored";
+    case "workspace.access_request_created": return "Access request received";
+    case "workspace.access_request_approved": return "Access request approved";
+    case "workspace.access_request_rejected": return "Access request rejected";
     case "workspace.member_added": return "Member added";
     case "workspace.member_role_changed": return "Member role changed";
     case "workspace.member_removed": return "Member removed";
