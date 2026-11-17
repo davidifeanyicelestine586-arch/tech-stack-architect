@@ -26,6 +26,10 @@ const projectMembershipManagementMigration = readFileSync(
   new URL("../supabase/migrations/20261117060000_project_membership_management.sql", import.meta.url),
   "utf8",
 );
+const workspaceLifecycleMigration = readFileSync(
+  new URL("../supabase/migrations/20261117070000_workspace_lifecycle_and_access_requests.sql", import.meta.url),
+  "utf8",
+);
 
 test("workspace creation is atomic and records its initial owner", () => {
   assert.match(workspaceMigration, /create or replace function public\.create_workspace_for_user/i);
@@ -134,4 +138,30 @@ test("project membership removal protects the final Project Admin and records ac
   assert.match(projectMembershipManagementMigration, /'project\.admin_reassigned'/i);
   assert.match(projectMembershipManagementMigration, /'project\.member_removed'/i);
   assert.match(projectMembershipManagementMigration, /grant execute on function public\.remove_project_member/i);
+});
+
+test("workspace lifecycle protects ownership and suspends archived workspaces", () => {
+  assert.match(workspaceLifecycleMigration, /add column if not exists status text/i);
+  assert.match(workspaceLifecycleMigration, /add column if not exists archived_at timestamptz/i);
+  assert.match(workspaceLifecycleMigration, /create or replace function public\.rename_workspace/i);
+  assert.match(workspaceLifecycleMigration, /create or replace function public\.transfer_workspace_ownership/i);
+  assert.match(workspaceLifecycleMigration, /workspace_record\.is_personal/i);
+  assert.match(workspaceLifecycleMigration, /create or replace function public\.archive_workspace/i);
+  assert.match(workspaceLifecycleMigration, /create or replace function public\.restore_workspace/i);
+  assert.match(workspaceLifecycleMigration, /status = 'archived'/i);
+  assert.match(workspaceLifecycleMigration, /status = 'active'/i);
+  assert.match(workspaceLifecycleMigration, /create or replace function public\.current_user_has_workspace_role/i);
+});
+
+test("discoverable workspace access requests are approval-based and role-limited", () => {
+  assert.match(workspaceLifecycleMigration, /create table if not exists public\.workspace_access_requests/i);
+  assert.match(workspaceLifecycleMigration, /visibility = 'discoverable'/i);
+  assert.match(workspaceLifecycleMigration, /create or replace function public\.request_workspace_access/i);
+  assert.match(workspaceLifecycleMigration, /create or replace function public\.review_workspace_access_request/i);
+  assert.match(workspaceLifecycleMigration, /p_requested_role not in \('member', 'viewer'\)/i);
+  assert.match(workspaceLifecycleMigration, /p_decision not in \('approve', 'reject'\)/i);
+  assert.match(workspaceLifecycleMigration, /workspace\.access_request_approved/i);
+  assert.match(workspaceLifecycleMigration, /workspace\.access_request_rejected/i);
+  assert.match(workspaceLifecycleMigration, /revoke all on public\.workspace_access_requests from anon, authenticated/i);
+  assert.match(workspaceLifecycleMigration, /grant select on public\.workspace_access_requests to authenticated/i);
 });
