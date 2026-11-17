@@ -67,7 +67,7 @@ export function WorkspaceManager() {
   }, []);
 
   useEffect(() => {
-    void loadWorkspaces();
+    queueMicrotask(() => { void loadWorkspaces(); });
   }, [loadWorkspaces]);
 
   const selectWorkspace = async (workspaceId: string) => {
