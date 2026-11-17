@@ -61,59 +61,71 @@ export function ProjectPersistenceToolbar() {
   const restoreAttempted = useRef(false);
 
   useEffect(() => {
-    if (restoreAttempted.current || currentProjectId) return;
-    restoreAttempted.current = true;
-    queueMicrotask(() => {
-      void (async () => {
-        try {
-          const { data } = await getSupabaseBrowserClient().auth.getSession();
-          const token = data.session?.access_token;
-          const headers = new Headers();
-          if (token) headers.set("authorization", `Bearer ${token}`);
+    const restoreActiveProject = () => {
+      if (restoreAttempted.current || currentProjectId) return;
+      restoreAttempted.current = true;
+      queueMicrotask(() => {
+        void (async () => {
+          try {
+            const { data } = await getSupabaseBrowserClient().auth.getSession();
+            const token = data.session?.access_token;
+            const headers = new Headers();
+            if (token) headers.set("authorization", `Bearer ${token}`);
 
-          if (token) {
-            const activeWorkspaceResponse = await fetch("/api/workspaces/active", {
-              headers,
-              cache: "no-store",
-            });
-            if (activeWorkspaceResponse.ok) {
-              const activeWorkspacePayload = await activeWorkspaceResponse.json();
-              if (!activeWorkspacePayload?.data?.workspace) {
-                const workspacesResponse = await fetch("/api/workspaces", { headers, cache: "no-store" });
-                if (workspacesResponse.ok) {
-                  const workspacesPayload = await workspacesResponse.json();
-                  const activeWorkspaces = (workspacesPayload?.data?.workspaces || []).filter(
-                    (workspace: { status?: string }) => workspace.status === "active",
-                  );
-                  if (activeWorkspaces.length === 1) {
-                    const selectionHeaders = new Headers(headers);
-                    selectionHeaders.set("content-type", "application/json");
-                    await fetch("/api/workspaces/active", {
-                      method: "POST",
-                      headers: selectionHeaders,
-                      body: JSON.stringify({ workspaceId: activeWorkspaces[0].id }),
-                    });
+            if (token) {
+              const activeWorkspaceResponse = await fetch("/api/workspaces/active", {
+                headers,
+                cache: "no-store",
+              });
+              if (activeWorkspaceResponse.ok) {
+                const activeWorkspacePayload = await activeWorkspaceResponse.json();
+                if (!activeWorkspacePayload?.data?.workspace) {
+                  const workspacesResponse = await fetch("/api/workspaces", { headers, cache: "no-store" });
+                  if (workspacesResponse.ok) {
+                    const workspacesPayload = await workspacesResponse.json();
+                    const activeWorkspaces = (workspacesPayload?.data?.workspaces || []).filter(
+                      (workspace: { status?: string }) => workspace.status === "active",
+                    );
+                    if (activeWorkspaces.length === 1) {
+                      const selectionHeaders = new Headers(headers);
+                      selectionHeaders.set("content-type", "application/json");
+                      await fetch("/api/workspaces/active", {
+                        method: "POST",
+                        headers: selectionHeaders,
+                        body: JSON.stringify({ workspaceId: activeWorkspaces[0].id }),
+                      });
+                    }
                   }
                 }
               }
             }
-          }
 
-          const response = await fetch("/api/projects/active", {
-            headers,
-            cache: "no-store",
-          });
-          if (!response.ok) return;
-          const payload = await response.json();
-          const activeProjectId = payload?.data?.project?.id;
-          if (payload?.ok === true && typeof activeProjectId === "string") {
-            await loadProject(activeProjectId);
+            const response = await fetch("/api/projects/active", {
+              headers,
+              cache: "no-store",
+            });
+            if (!response.ok) return;
+            const payload = await response.json();
+            const activeProjectId = payload?.data?.project?.id;
+            if (payload?.ok === true && typeof activeProjectId === "string") {
+              await loadProject(activeProjectId);
+            }
+          } catch {
+            // A stale or inaccessible active-project cookie must not block the workspace.
           }
-        } catch {
-          // A stale or inaccessible active-project cookie must not block the workspace.
-        }
-      })();
+        })();
+      });
+    };
+
+    restoreActiveProject();
+    const { data } = getSupabaseBrowserClient().auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" && !currentProjectId) {
+        restoreAttempted.current = false;
+        restoreActiveProject();
+      }
     });
+
+    return () => data.subscription.unsubscribe();
   }, [currentProjectId, loadProject]);
 
   const isDirty = persistenceDirty;
