@@ -14,6 +14,10 @@ const invitationMigration = readFileSync(
   new URL("../supabase/migrations/20261117030000_workspace_invitation_lifecycle.sql", import.meta.url),
   "utf8",
 );
+const membershipManagementMigration = readFileSync(
+  new URL("../supabase/migrations/20261117040000_workspace_membership_management.sql", import.meta.url),
+  "utf8",
+);
 
 test("workspace creation is atomic and records its initial owner", () => {
   assert.match(workspaceMigration, /create or replace function public\.create_workspace_for_user/i);
@@ -62,4 +66,22 @@ test("invitation acceptance preserves stronger existing membership roles", () =>
   assert.match(invitationMigration, /workspace_memberships\.role = 'owner'/i);
   assert.match(invitationMigration, /workspace_memberships\.role = 'admin'/i);
   assert.match(invitationMigration, /workspace_memberships\.role = 'member' and excluded\.role = 'viewer'/i);
+});
+
+test("workspace member management protects owners and administrator boundaries", () => {
+  assert.match(membershipManagementMigration, /create or replace function public\.update_workspace_member_role/i);
+  assert.match(membershipManagementMigration, /create or replace function public\.remove_workspace_member/i);
+  assert.match(membershipManagementMigration, /actor_role is null or actor_role not in \('owner', 'admin'\)/i);
+  assert.match(membershipManagementMigration, /member_role = 'owner'/i);
+  assert.match(membershipManagementMigration, /actor_role = 'admin' and member_role = 'admin'/i);
+  assert.match(membershipManagementMigration, /grant execute on function public\.update_workspace_member_role/i);
+  assert.match(membershipManagementMigration, /grant execute on function public\.remove_workspace_member/i);
+});
+
+test("removing a sole project admin reassigns project administration before revoking membership", () => {
+  assert.match(membershipManagementMigration, /not exists \([\s\S]*other_pm\.role = 'project_admin'[\s\S]*\)/i);
+  assert.match(membershipManagementMigration, /'project\.admin_reassigned'/i);
+  assert.match(membershipManagementMigration, /delete from public\.project_memberships/i);
+  assert.match(membershipManagementMigration, /delete from public\.workspace_memberships/i);
+  assert.match(membershipManagementMigration, /'workspace\.member_removed'/i);
 });
