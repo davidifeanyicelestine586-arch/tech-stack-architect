@@ -54,3 +54,13 @@ test("project creator retains access to their own private project", () => {
   assert.equal(repository.canAccessProject(ownProject, scope, "member", undefined, "read"), true);
   assert.equal(repository.canAccessProject(ownProject, scope, "member", undefined, "write"), true);
 });
+
+test("explicit project viewer role restricts a workspace member to read-only", () => {
+  assert.equal(repository.canAccessProject(project, scope, "member", "viewer", "read"), true);
+  assert.equal(repository.canAccessProject(project, scope, "member", "viewer", "write"), false);
+});
+
+test("explicit project editor role preserves edit access for a workspace member", () => {
+  assert.equal(repository.canAccessProject(project, scope, "member", "editor", "read"), true);
+  assert.equal(repository.canAccessProject(project, scope, "member", "editor", "write"), true);
+});
