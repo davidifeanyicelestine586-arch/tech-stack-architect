@@ -201,7 +201,7 @@ export function ProjectDefinitionForm() {
                 disabled={isPending}
                 className="h-11 w-full min-w-0 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                <option value="private">Private — only me and authorised workspace admins</option>
+                <option value="private">Private — creator, authorised workspace admins and explicitly shared members</option>
                 <option value="workspace">Workspace — workspace members can access</option>
               </select>
               <span className="text-[11px] font-normal leading-relaxed text-muted-foreground">
@@ -210,7 +210,7 @@ export function ProjectDefinitionForm() {
             </label>
           </fieldset>
 
-          {currentProjectId ? <ProjectAccessManager projectId={currentProjectId} /> : (
+          {currentProjectId ? <ProjectAccessManager projectId={currentProjectId} visibility={projectVisibility} /> : (
             <p className="text-xs text-muted-foreground">Save this project to manage individual project access.</p>
           )}
 
