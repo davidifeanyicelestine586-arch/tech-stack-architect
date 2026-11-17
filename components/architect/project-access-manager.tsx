@@ -63,7 +63,10 @@ export function ProjectAccessManager({ projectId }: { projectId: string }) {
       setAvailableMembers(payload.data.availableMembers);
       if (!selectedUserId) {
         const firstAvailable = payload.data.availableMembers.find((member: AvailableMember) => !member.assigned);
-        if (firstAvailable) setSelectedUserId(firstAvailable.userId);
+        if (firstAvailable) {
+          setSelectedUserId(firstAvailable.userId);
+          if (firstAvailable.workspaceRole === "viewer") setSelectedRole("viewer");
+        }
       }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to load project access.");
