@@ -223,7 +223,7 @@ export function WorkspaceManager() {
                       {workspace.role === "owner" || workspace.role === "admin" ? (
                         <>
                           <WorkspaceInvitations workspaceId={workspace.id} />
-                          {workspace.visibility === "discoverable" ? <WorkspaceAccessRequests workspaceId={workspace.id} /> : null}
+                          <WorkspaceAccessRequests workspaceId={workspace.id} />
                         </>
                       ) : null}
                     </>
