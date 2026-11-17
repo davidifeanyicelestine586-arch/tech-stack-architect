@@ -17,4 +17,7 @@ const api = () => createWorkspaceSelectionApi({
 export async function POST(request: Request) {
   return api().select(request);
 }
-\nexport async function GET(request: Request) {\n  return api().current(request);\n}\n
+
+export async function GET(request: Request) {
+  return api().current(request);
+}
