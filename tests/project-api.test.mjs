@@ -337,8 +337,8 @@ test("authentication is not required for anonymous project creation", async () =
 test("project API rejects unsupported visibility values before persistence", async () => {
   const service = new ApiService();
   const api = createApi(service);
-  const response = await api.create(jsonRequest("POST", {
-    snapshot: validSnapshot(),
+  const response = await api.create(request("POST", {
+    snapshot: baseSnapshot,
     visibility: "public",
   }));
   const payload = await response.json();
