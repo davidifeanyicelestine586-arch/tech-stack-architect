@@ -1,6 +1,7 @@
 -- Phase 1 workspace, membership, invitation, and project-access foundation.
 -- Existing authenticated projects are preserved by assigning each owner a
--- personal workspace before workspace_id is made part of their project scope.
+-- personal workspace. New project creation remains backward-compatible until
+-- the workspace-selection API and UI are rolled out in a later workstream.
 
 create table if not exists public.workspaces (
   id uuid primary key default extensions.gen_random_uuid(),
@@ -123,13 +124,6 @@ on conflict (project_id, user_id) do nothing;
 alter table public.projects
   add constraint projects_visibility_check
   check (visibility in ('private', 'workspace'));
-
-alter table public.projects
-  add constraint projects_authenticated_workspace_check
-  check (
-    (owner_id is not null and anonymous_session_id is null and workspace_id is not null)
-    or (owner_id is null and anonymous_session_id is not null and workspace_id is null)
-  );
 
 create index if not exists projects_workspace_updated_idx
   on public.projects (workspace_id, updated_at desc)
