@@ -9,7 +9,7 @@ create or replace function public.update_workspace_member_role(
 )
 returns text
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 declare
@@ -68,7 +68,7 @@ create or replace function public.remove_workspace_member(
 )
 returns boolean
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 declare
