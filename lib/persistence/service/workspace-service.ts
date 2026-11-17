@@ -35,7 +35,7 @@ export class WorkspaceService {
       const workspaceIds = rows.map((membership) => membership.workspace_id);
       const workspaces = await this.client
         .from("workspaces")
-        .select("id, name, is_personal, created_by, created_at, updated_at")
+        .select("id, name, is_personal, created_by, created_at, updated_at, status, visibility")
         .in("id", workspaceIds)
         .order("created_at", { ascending: true });
 
@@ -48,6 +48,8 @@ export class WorkspaceService {
         createdBy: workspace.created_by,
         createdAt: workspace.created_at,
         updatedAt: workspace.updated_at,
+        status: workspace.status,
+        visibility: workspace.visibility,
         role: roleByWorkspace.get(workspace.id) || "viewer",
       }));
     } catch (cause) {
@@ -75,6 +77,7 @@ export class WorkspaceService {
         .single();
 
       if (result.error || !result.data) throw result.error || new Error("Workspace not found.");
+      if (result.data.status !== "active") throw new PersistenceError("FORBIDDEN", "This workspace is archived. Restore it before continuing.");
       return {
         id: result.data.id,
         name: result.data.name,
@@ -82,6 +85,8 @@ export class WorkspaceService {
         createdBy: result.data.created_by,
         createdAt: result.data.created_at,
         updatedAt: result.data.updated_at,
+        status: result.data.status,
+        visibility: result.data.visibility,
         role: membership.data.role,
       };
     } catch (cause) {
@@ -443,6 +448,200 @@ export class WorkspaceService {
     } catch (cause) {
       return mapFailure("accept invitation for", cause);
     }
+  }
+
+  async renameWorkspace({ userId, workspaceId, name }: { userId: string; workspaceId: string; name: string }) {
+    const workspace = await this.getWorkspaceForMember({ userId, workspaceId });
+    if (workspace.role !== "owner" && workspace.role !== "admin") throw new PersistenceError("FORBIDDEN", "Only workspace owners and admins can rename a workspace.");
+    const normalizedName = typeof name === "string" ? name.trim() : "";
+    if (normalizedName.length < 2 || normalizedName.length > 80) throw new PersistenceError("VALIDATION_FAILURE", "Workspace name must contain 2 to 80 characters.");
+    try {
+      const result = await this.client.rpc("rename_workspace", {
+        p_workspace_id: workspaceId,
+        p_name: normalizedName,
+        p_actor_id: userId,
+      });
+      if (result.error) throw result.error;
+      return { name: result.data };
+    } catch (cause) { return mapFailure("rename", cause); }
+  }
+
+  async transferWorkspaceOwnership({ userId, workspaceId, newOwnerId }: { userId: string; workspaceId: string; newOwnerId: string }) {
+    const workspace = await this.getWorkspaceForMember({ userId, workspaceId });
+    if (workspace.role !== "owner") throw new PersistenceError("FORBIDDEN", "Only the workspace owner can transfer ownership.");
+    try {
+      const result = await this.client.rpc("transfer_workspace_ownership", {
+        p_workspace_id: workspaceId,
+        p_new_owner_id: newOwnerId,
+        p_actor_id: userId,
+      });
+      if (result.error) throw result.error;
+      return { transferred: result.data === true, newOwnerId };
+    } catch (cause) { return mapFailure("transfer workspace ownership for", cause); }
+  }
+
+  async archiveWorkspace({ userId, workspaceId }: { userId: string; workspaceId: string }) {
+    const workspace = await this.getWorkspaceForMember({ userId, workspaceId });
+    if (workspace.role !== "owner") throw new PersistenceError("FORBIDDEN", "Only the workspace owner can archive a workspace.");
+    try {
+      const result = await this.client.rpc("archive_workspace", {
+        p_workspace_id: workspaceId,
+        p_actor_id: userId,
+      });
+      if (result.error) throw result.error;
+      return { archived: result.data === true };
+    } catch (cause) { return mapFailure("archive", cause); }
+  }
+
+  async restoreWorkspace({ userId, workspaceId }: { userId: string; workspaceId: string }) {
+    try {
+      const result = await this.client.rpc("restore_workspace", {
+        p_workspace_id: workspaceId,
+        p_actor_id: userId,
+      });
+      if (result.error) throw result.error;
+      return { restored: result.data === true };
+    } catch (cause) { return mapFailure("restore", cause); }
+  }
+
+  async setWorkspaceVisibility({ userId, workspaceId, visibility }: {
+    userId: string;
+    workspaceId: string;
+    visibility: "private" | "discoverable";
+  }) {
+    const workspace = await this.getWorkspaceForMember({ userId, workspaceId });
+    if (workspace.role !== "owner" && workspace.role !== "admin") throw new PersistenceError("FORBIDDEN", "Only workspace owners and admins can change visibility.");
+    if (workspace.isPersonal && visibility !== "private") throw new PersistenceError("FORBIDDEN", "Personal workspaces cannot be discoverable.");
+    try {
+      const result = await this.client.rpc("set_workspace_visibility", {
+        p_workspace_id: workspaceId,
+        p_visibility: visibility,
+        p_actor_id: userId,
+      });
+      if (result.error) throw result.error;
+      return { visibility: result.data };
+    } catch (cause) { return mapFailure("update workspace visibility for", cause); }
+  }
+
+  async listDiscoverableWorkspaces({ userId, search = "" }: { userId: string; search?: string }) {
+    if (!userId) throw new PersistenceError("UNAUTHORIZED", "Authentication is required.");
+    try {
+      const memberships = await this.client.from("workspace_memberships").select("workspace_id").eq("user_id", userId);
+      if (memberships.error) throw memberships.error;
+      const memberIds = new Set((memberships.data || []).map((row) => row.workspace_id));
+      let query = this.client.from("workspaces")
+        .select("id, name, created_at")
+        .eq("status", "active")
+        .eq("visibility", "discoverable")
+        .order("created_at", { ascending: false })
+        .limit(50);
+      const normalizedSearch = typeof search === "string" ? search.trim().slice(0, 80) : "";
+      if (normalizedSearch) query = query.ilike("name", `%${normalizedSearch.replace(/[%_]/g, "\\  async createWorkspace({ userId, name }: { userId: string; name: string }) {")}%`);
+      const result = await query;
+      if (result.error) throw result.error;
+      return (result.data || []).filter((workspace) => !memberIds.has(workspace.id)).map((workspace) => ({
+        id: workspace.id,
+        name: workspace.name,
+        createdAt: workspace.created_at,
+      }));
+    } catch (cause) { return mapFailure("discover workspaces for", cause); }
+  }
+
+  async requestWorkspaceAccess({ userId, workspaceId, message = "", requestedRole = "member" }: {
+    userId: string;
+    workspaceId: string;
+    message?: string;
+    requestedRole?: "member" | "viewer";
+  }) {
+    if (!userId) throw new PersistenceError("UNAUTHORIZED", "Authentication is required.");
+    if (typeof message !== "string" || message.length > 500) throw new PersistenceError("VALIDATION_FAILURE", "Access request message must be 500 characters or fewer.");
+    if (!["member", "viewer"].includes(requestedRole)) throw new PersistenceError("VALIDATION_FAILURE", "Requested workspace role is invalid.");
+    try {
+      const result = await this.client.rpc("request_workspace_access", {
+        p_workspace_id: workspaceId,
+        p_requester_id: userId,
+        p_message: message,
+        p_requested_role: requestedRole,
+      });
+      if (result.error) throw result.error;
+      return { requestId: result.data, status: "pending" };
+    } catch (cause) { return mapFailure("request workspace access for", cause); }
+  }
+
+  async listAccessRequests({ userId, workspaceId }: { userId: string; workspaceId: string }) {
+    const workspace = await this.getWorkspaceForMember({ userId, workspaceId });
+    if (workspace.role !== "owner" && workspace.role !== "admin") throw new PersistenceError("FORBIDDEN", "Only workspace owners and admins can review access requests.");
+    try {
+      const result = await this.client.from("workspace_access_requests")
+        .select("id, requester_id, message, status, requested_role, created_at, reviewed_at")
+        .eq("workspace_id", workspaceId)
+        .order("created_at", { ascending: false })
+        .limit(100);
+      if (result.error) throw result.error;
+      return await Promise.all((result.data || []).map(async (request) => {
+        const account = await this.client.auth.admin.getUserById(request.requester_id);
+        return {
+          id: request.id,
+          requesterId: request.requester_id,
+          email: account.data?.user?.email || null,
+          displayName: account.data?.user?.user_metadata?.full_name || null,
+          message: request.message,
+          status: request.status,
+          requestedRole: request.requested_role,
+          createdAt: request.created_at,
+          reviewedAt: request.reviewed_at,
+        };
+      }));
+    } catch (cause) { return mapFailure("list workspace access requests for", cause); }
+  }
+
+  async listMyAccessRequests({ userId }: { userId: string }) {
+    if (!userId) throw new PersistenceError("UNAUTHORIZED", "Authentication is required.");
+    try {
+      const result = await this.client.from("workspace_access_requests")
+        .select("id, workspace_id, message, status, requested_role, created_at")
+        .eq("requester_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(100);
+      if (result.error) throw result.error;
+      const workspaceIds = [...new Set((result.data || []).map((request) => request.workspace_id))];
+      const workspaces = workspaceIds.length
+        ? await this.client.from("workspaces").select("id, name").in("id", workspaceIds)
+        : { data: [], error: null };
+      if (workspaces.error) throw workspaces.error;
+      const names = new Map((workspaces.data || []).map((workspace) => [workspace.id, workspace.name]));
+      return (result.data || []).map((request) => ({
+        id: request.id,
+        workspaceId: request.workspace_id,
+        workspaceName: names.get(request.workspace_id) || "Workspace",
+        message: request.message,
+        status: request.status,
+        requestedRole: request.requested_role,
+        createdAt: request.created_at,
+      }));
+    } catch (cause) { return mapFailure("list your workspace access requests for", cause); }
+  }
+
+  async reviewAccessRequest({ userId, workspaceId, requestId, decision, role = "member" }: {
+    userId: string;
+    workspaceId: string;
+    requestId: string;
+    decision: "approve" | "reject";
+    role?: "member" | "viewer";
+  }) {
+    const workspace = await this.getWorkspaceForMember({ userId, workspaceId });
+    if (workspace.role !== "owner" && workspace.role !== "admin") throw new PersistenceError("FORBIDDEN", "Only workspace owners and admins can review access requests.");
+    try {
+      const result = await this.client.rpc("review_workspace_access_request", {
+        p_workspace_id: workspaceId,
+        p_request_id: requestId,
+        p_actor_id: userId,
+        p_decision: decision,
+        p_role: role,
+      });
+      if (result.error) throw result.error;
+      return { status: decision === "approve" ? "approved" : "rejected", role: result.data };
+    } catch (cause) { return mapFailure("review workspace access request for", cause); }
   }
 
   async createWorkspace({ userId, name }: { userId: string; name: string }) {
