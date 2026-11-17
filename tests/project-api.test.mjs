@@ -364,7 +364,7 @@ test("last-active project restoration returns only a project visible in the reso
     service,
     registries,
     getCookieStore: async () => ({
-      get: (name) => name === ACTIVE_PROJECT_COOKIE ? { value: created.id } : name === ANONYMOUS_SESSION_COOKIE ? { value: sessionA } : undefined,
+      get: (name) => name === ACTIVE_PROJECT_COOKIE ? { value: Buffer.from(JSON.stringify({ legacy: created.id })).toString("base64url") } : name === ANONYMOUS_SESSION_COOKIE ? { value: sessionA } : undefined,
     }),
   });
   const response = await api.getActive(request("GET"));
@@ -380,7 +380,7 @@ test("last-active project restoration clears stale cookies when the project is i
     service,
     registries,
     getCookieStore: async () => ({
-      get: (name) => name === ACTIVE_PROJECT_COOKIE ? { value: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" } : undefined,
+      get: (name) => name === ACTIVE_PROJECT_COOKIE ? { value: Buffer.from(JSON.stringify({ legacy: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" })).toString("base64url") } : undefined,
     }),
   });
   const response = await api.getActive(request("GET"));
