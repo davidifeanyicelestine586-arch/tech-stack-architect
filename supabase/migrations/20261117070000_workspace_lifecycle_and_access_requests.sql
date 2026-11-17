@@ -43,6 +43,65 @@ create unique index if not exists workspace_memberships_single_owner_unique_idx
   on public.workspace_memberships (workspace_id)
   where role = 'owner';
 
+-- Ensure every existing and future authenticated account has a personal
+-- workspace. The workspace is private and is not transferable.
+
+insert into public.workspaces (name, is_personal, created_by)
+select 'Personal workspace', true, u.id
+from auth.users u
+on conflict (created_by) where is_personal = true and created_by is not null
+do nothing;
+
+insert into public.workspace_memberships (workspace_id, user_id, role, added_by)
+select w.id, w.created_by, 'owner', w.created_by
+from public.workspaces w
+where w.is_personal = true and w.created_by is not null
+on conflict (workspace_id, user_id) do nothing;
+
+create or replace function public.create_personal_workspace_for_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $
+declare
+  personal_workspace_id uuid;
+begin
+  insert into public.workspaces (name, is_personal, created_by)
+  values ('Personal workspace', true, new.id)
+  on conflict (created_by) where is_personal = true and created_by is not null
+  do nothing
+  returning id into personal_workspace_id;
+
+  if personal_workspace_id is null then
+    select id into personal_workspace_id
+    from public.workspaces
+    where created_by = new.id and is_personal = true;
+  else
+    insert into public.workspace_activity_events (
+      workspace_id, actor_id, action, subject_type, subject_id, metadata
+    )
+    values (
+      personal_workspace_id, new.id, 'workspace.created', 'workspace', personal_workspace_id,
+      jsonb_build_object('personal', true)
+    );
+  end if;
+
+  insert into public.workspace_memberships (workspace_id, user_id, role, added_by)
+  values (personal_workspace_id, new.id, 'owner', new.id)
+  on conflict (workspace_id, user_id) do nothing;
+
+  return new;
+end;
+$;
+
+revoke all on function public.create_personal_workspace_for_new_user() from public, anon, authenticated;
+
+drop trigger if exists on_auth_user_created_create_personal_workspace on auth.users;
+create trigger on_auth_user_created_create_personal_workspace
+after insert on auth.users
+for each row execute function public.create_personal_workspace_for_new_user();
+
 create table if not exists public.workspace_access_requests (
   id uuid primary key default extensions.gen_random_uuid(),
   workspace_id uuid not null references public.workspaces(id) on delete cascade,
