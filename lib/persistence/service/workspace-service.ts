@@ -95,10 +95,6 @@ export class WorkspaceService {
     projectId: string;
   }) {
     const workspace = await this.getWorkspaceForMember({ userId, workspaceId });
-    if (workspace.role === "owner" || workspace.role === "admin") return workspace;
-    if (workspace.role !== "member") {
-      throw new PersistenceError("FORBIDDEN", "Project administrator permission is required.");
-    }
     try {
       const project = await this.client
         .from("projects")
@@ -108,6 +104,10 @@ export class WorkspaceService {
         .maybeSingle();
       if (project.error) throw project.error;
       if (!project.data) throw new PersistenceError("PERSISTENCE_NOT_FOUND", "Project not found.");
+      if (workspace.role === "owner" || workspace.role === "admin") return workspace;
+      if (workspace.role !== "member") {
+        throw new PersistenceError("FORBIDDEN", "Project administrator permission is required.");
+      }
       const membership = await this.client
         .from("project_memberships")
         .select("role")
