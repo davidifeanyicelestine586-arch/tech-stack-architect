@@ -4,6 +4,7 @@ import { WORKFLOW_STEPS, workflowStepNumber } from "@/lib/navigation/workflow";
 import { FormEvent, useRef, useState, useTransition } from "react";
 import { ClipboardList, Loader2, SearchCheck } from "lucide-react";
 import { useTechStack } from "@/hooks/use-tech-stack";
+import { ProjectAccessManager } from "@/components/architect/project-access-manager";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +13,7 @@ import type { ProjectDefinition } from "@/lib/types";
 import { validateProjectDefinition } from "@/engine/requirementAnalyzer.js";
 
 export function ProjectDefinitionForm() {
-  const { domains, projectDefinition, projectVisibility, setProjectVisibility, updateProjectDefinition, analyzeProject } = useTechStack();
+  const { domains, projectDefinition, projectVisibility, setProjectVisibility, currentProjectId, updateProjectDefinition, analyzeProject } = useTechStack();
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [isPending, startTransition] = useTransition();
@@ -208,6 +209,10 @@ export function ProjectDefinitionForm() {
               </span>
             </label>
           </fieldset>
+
+          {currentProjectId ? <ProjectAccessManager projectId={currentProjectId} /> : (
+            <p className="text-xs text-muted-foreground">Save this project to manage individual project access.</p>
+          )}
 
           <div className="flex flex-col gap-3 border-t border-border/50 pt-5 sm:flex-row sm:items-center sm:justify-between">
             <p
