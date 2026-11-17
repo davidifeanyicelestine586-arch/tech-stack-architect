@@ -78,6 +78,7 @@ set search_path = public
 as $$
 declare
   invitation public.workspace_invitations%rowtype;
+  accepted_role text;
 begin
   if p_user_id is null or p_user_email is null or lower(btrim(p_user_email)) = '' then
     raise exception 'An authenticated user email is required' using errcode = '42501';
@@ -106,7 +107,15 @@ begin
 
   insert into public.workspace_memberships (workspace_id, user_id, role, added_by)
   values (invitation.workspace_id, p_user_id, invitation.role, invitation.invited_by)
-  on conflict (workspace_id, user_id) do nothing;
+  on conflict (workspace_id, user_id) do update
+  set role = case
+    when public.workspace_memberships.role = 'owner' then 'owner'
+    when public.workspace_memberships.role = 'admin' then 'admin'
+    when public.workspace_memberships.role = 'member' and excluded.role = 'viewer' then 'member'
+    else excluded.role
+  end,
+  updated_at = now()
+  returning role into accepted_role;
 
   insert into public.workspace_activity_events (
     workspace_id, actor_id, action, subject_type, subject_id, metadata
@@ -116,7 +125,7 @@ begin
     jsonb_build_object('role', invitation.role, 'source', 'invitation')
   );
 
-  return query select invitation.workspace_id, invitation.role;
+  return query select invitation.workspace_id, accepted_role;
 end;
 $$;
 
