@@ -29,7 +29,7 @@ create or replace function public.grant_project_member(
 )
 returns text
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 declare
@@ -106,7 +106,7 @@ create or replace function public.remove_project_member(
 )
 returns boolean
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 declare
