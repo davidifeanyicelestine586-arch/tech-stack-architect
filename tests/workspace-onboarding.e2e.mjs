@@ -23,10 +23,6 @@ try {
   for (const viewport of viewports) {
     const context = await browser.newContext({ viewport });
     const page = await context.newPage();
-    await page.addInitScript(() => {
-      window.localStorage.removeItem("tech-stack-architect:getting-started:dismissed:v1");
-    });
-
     try {
       const response = await page.goto(`${baseUrl}/app`, { waitUntil: "networkidle", timeout: 45000 });
       assert.ok(response && response.ok(), `workspace responds successfully at ${viewport.name}`);
