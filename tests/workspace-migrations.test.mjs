@@ -166,3 +166,11 @@ test("discoverable workspace access requests are approval-based and role-limited
   assert.match(workspaceLifecycleMigration, /revoke all on public\.workspace_access_requests from anon, authenticated/i);
   assert.match(workspaceLifecycleMigration, /grant select on public\.workspace_access_requests to authenticated/i);
 });
+
+test("every existing and future authenticated user receives a private personal workspace", () => {
+  assert.match(workspaceLifecycleMigration, /from auth\.users u/i);
+  assert.match(workspaceLifecycleMigration, /create or replace function public\.create_personal_workspace_for_new_user/i);
+  assert.match(workspaceLifecycleMigration, /after insert on auth\.users/i);
+  assert.match(workspaceLifecycleMigration, /values \('Personal workspace', true, new\.id\)/i);
+  assert.match(workspaceLifecycleMigration, /values \(personal_workspace_id, new\.id, 'owner', new\.id\)/i);
+});
