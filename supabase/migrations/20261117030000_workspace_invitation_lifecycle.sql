@@ -11,7 +11,7 @@ create or replace function public.create_workspace_invitation(
 )
 returns uuid
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 declare
@@ -73,7 +73,7 @@ create or replace function public.accept_workspace_invitation(
 )
 returns table (workspace_id uuid, role text)
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 declare
@@ -136,7 +136,7 @@ create or replace function public.revoke_workspace_invitation(
 )
 returns boolean
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 declare
@@ -221,7 +221,7 @@ create or replace function public.accept_workspace_invitation(
 )
 returns table (workspace_id uuid, role text)
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 declare
@@ -275,7 +275,7 @@ create or replace function public.revoke_workspace_invitation(
 )
 returns boolean
 language plpgsql
-security definer
+security invoker
 set search_path = public
 as $$
 declare
