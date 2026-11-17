@@ -84,15 +84,25 @@ test("workflow Define progress requires the required project name and descriptio
   assert.doesNotMatch(progress, /name\.trim\(\)\s*\|\|\s*projectDefinition\.description\.trim\(\)\s*\|\|\s*projectDefinition\.requirements\.trim\(\)/);
 });
 
-test("workspace onboarding offers a dismissible, resumable contextual checklist", () => {
+test("workspace onboarding follows every canonical workflow stage and remains resumable", () => {
   const onboarding = read("components/architect/workspace-onboarding.tsx");
   const workspace = read("app/(dashboard-layout)/app/workspace-client.tsx");
-  assert.match(workspace, /<WorkspaceOnboarding\s*\/>/);
-  assert.match(onboarding, /localStorage\.getItem/);
-  assert.match(onboarding, /localStorage\.setItem/);
-  for (const target of ["#define", "#recommendations", "#components", "#architect", "#validation", "#plan", "#blueprint"]) {
-    assert.ok(onboarding.includes(target), `onboarding checklist includes ${target}`);
+  assert.ok(workspace.includes("<WorkspaceOnboarding />"));
+  assert.ok(onboarding.includes("localStorage.getItem"));
+  assert.ok(onboarding.includes("localStorage.setItem"));
+  for (const label of [
+    "Define your project",
+    "Analyze requirements",
+    "Review recommendations",
+    "Build your technology stack",
+    "Design the architecture",
+    "Validate the decisions",
+    "Create the development plan",
+    "Generate the blueprint",
+  ]) {
+    assert.ok(onboarding.includes(label), `onboarding checklist includes ${label}`);
   }
   assert.match(onboarding, /aria-label="Getting started"/);
   assert.match(onboarding, /Show getting-started guide/);
+  assert.ok(onboarding.includes("aria-valuemax={tasks.length}"));
 });

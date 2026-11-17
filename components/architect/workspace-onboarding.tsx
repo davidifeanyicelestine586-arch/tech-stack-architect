@@ -53,8 +53,9 @@ export function WorkspaceOnboarding() {
 
   const tasks = useMemo(() => [
     { label: "Define your project", href: "#define", complete: hasDefinition },
-    { label: "Analyze requirements", href: "#recommendations", complete: Boolean(requirementAnalysis) },
-    { label: "Choose technologies", href: "#components", complete: selectedComponentIds.length > 0 },
+    { label: "Analyze requirements", href: "#define", complete: Boolean(requirementAnalysis) },
+    { label: "Review recommendations", href: "#recommendations", complete: Boolean(requirementAnalysis && selectedComponentIds.length > 0) },
+    { label: "Build your technology stack", href: "#components", complete: selectedComponentIds.length > 0 },
     { label: "Design the architecture", href: "#architect", complete: hasArchitecture },
     { label: "Validate the decisions", href: "#validation", complete: Boolean(hasArchitecture && architectureValidation?.valid && validationReport.valid) },
     { label: "Create the development plan", href: "#plan", complete: hasPlan },
@@ -138,13 +139,14 @@ export function WorkspaceOnboarding() {
         ) : null}
       </div>
 
-      <ol className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-        {tasks.map((task) => (
-          <li key={task.href}>
+      <ol className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        {tasks.map((task, index) => (
+          <li key={task.label}>
             <Link
               href={task.href}
               className="flex min-h-11 items-center gap-2 rounded-lg border border-border/70 bg-background/80 px-3 py-2 text-xs font-medium text-foreground transition-colors hover:border-primary/40 hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
+              <span className="text-[10px] font-semibold tabular-nums text-muted-foreground">{index + 1}.</span>
               {task.complete ? (
                 <Check className="size-4 shrink-0 text-primary" aria-hidden="true" />
               ) : (
