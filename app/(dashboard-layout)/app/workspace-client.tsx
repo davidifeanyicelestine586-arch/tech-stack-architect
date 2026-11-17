@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { BookOpen, FileCode2, Layers, SearchCheck, ShieldCheck } from "lucide-react";
@@ -17,6 +15,7 @@ import { BlueprintPanel } from "@/components/architect/blueprint-panel";
 import { ProjectDefinitionForm } from "@/components/architect/project-definition-form";
 import { RecommendationPanel } from "@/components/architect/recommendation-panel";
 import { WorkflowProgress } from "@/components/architect/workflow-progress";
+import { WorkspaceOnboarding } from "@/components/architect/workspace-onboarding";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -34,6 +33,7 @@ export default function WorkspacePageClient() {
 
   return (
     <div className="flex flex-col gap-6 pb-12 sm:gap-8">
+      <WorkspaceOnboarding />
       <section className="relative overflow-hidden rounded-3xl border border-border bg-card p-4 shadow-sm sm:p-6 md:p-8">
         <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center md:gap-6">
           <div className="flex max-w-2xl flex-col gap-2">

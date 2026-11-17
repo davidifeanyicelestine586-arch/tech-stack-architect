@@ -19,7 +19,7 @@ export function WorkflowProgress() {
     isArchitectureStale,
     isDevelopmentPlanStale,
   } = useTechStack();
-  const hasProject = Boolean(projectDefinition.name.trim() || projectDefinition.description.trim() || projectDefinition.requirements.trim());
+  const hasProject = Boolean(projectDefinition.name.trim() && projectDefinition.description.trim() && projectDefinition.domain.trim());
   const hasRecommendations = Boolean(requirementAnalysis);
   const hasStack = selectedComponentIds.length > 0;
   const hasArchitecture = Boolean(architecture && !isArchitectureStale);

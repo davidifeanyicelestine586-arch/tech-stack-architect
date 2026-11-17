@@ -3,7 +3,7 @@
 **Project:** Tech Stack Architect  
 **Repository:** `davidifeanyicelestine586-arch/tech-stack-architect`  
 **Primary branch:** `main`  
-**Current main commit checked:** `42eba999af93c0a8a5b03995cd4e41868e4535cb`
+**Current main commit checked:** [see the live main branch](https://github.com/davidifeanyicelestine586-arch/tech-stack-architect/tree/main)
 
 ## Product
 
@@ -57,7 +57,13 @@ The previous Hostinger deployment path is historical. See [Vercel Deployment](./
 
 ## Verification boundaries
 
-The repository has automated quality checks for dependency installation, ESLint, TypeScript, Node.js tests, production build, browser accessibility regression, header collision, Lighthouse performance, and SEO/keyboard release verification.
+The repository has automated quality checks for:
+
+- dependency installation
+- ESLint
+- TypeScript checking
+- Node.js tests
+- production build
 
 These checks are necessary but not sufficient for full release verification. Browser rendering, responsive behavior, keyboard navigation, screen-reader behavior, reduced-motion behavior, and production smoke testing require explicit runtime evidence.
 
@@ -69,7 +75,7 @@ Use:
 
 - [README](../README.md) for product and contributor orientation.
 - [Vercel Deployment](./vercel-deployment.md) for current deployment operations.
-- [Final QA Evidence](./archive/FINAL_QA_EVIDENCE.md) for the archived verification record.
+- [Final QA Evidence archive](./archive/FINAL_QA_EVIDENCE.md) for verification status.
 - [Documentation Guide](./README.md) for the complete documentation map.
 
 Historical records remain valuable, but they should not override these current-state documents.
