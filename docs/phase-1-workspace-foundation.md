@@ -30,7 +30,8 @@ This workstream adds the first executable workspace path while preserving the ex
 
 ## Deliberate remaining work
 
-- Invitation creation, delivery/copy-link flow, acceptance, expiry and revocation.
+- Email delivery provider integration (current invitation links are copied and sent manually).
+- Background expiry-state materialization for pending invitations (expired invitations are safely treated as expired at read/accept time).
 - Member role changes/removal and required Project Admin reassignment.
 - User-facing project visibility selection and explicit project-level sharing UI.
 - Workspace activity feed UI and audit events for all membership/visibility mutations.
