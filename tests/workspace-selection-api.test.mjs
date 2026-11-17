@@ -37,6 +37,8 @@ test("active workspace selection validates membership before setting a cookie", 
   assert.match(response.headers.get("set-cookie"), new RegExp(ACTIVE_WORKSPACE_COOKIE));
   assert.match(response.headers.get("set-cookie"), /HttpOnly/);
   assert.match(response.headers.get("set-cookie"), /SameSite=Lax/);
+  assert.match(response.headers.get("set-cookie"), /Path=\//);
+  assert.match(response.headers.get("set-cookie"), /Path=\/api\/projects; HttpOnly; SameSite=Lax; Max-Age=0/);
 });
 
 test("active workspace selection rejects unknown fields and malformed identifiers", async () => {
