@@ -35,6 +35,7 @@ This workstream adds the workspace and collaboration foundation while preserving
 
 - Workspace and membership mutations use server-side service-role functions only.
 - Browser roles cannot directly insert, update, or delete workspace/project collaboration records.
+- Server-side mutation RPCs execute as invokers and are granted only to `service_role`; the minimal SECURITY DEFINER RLS helpers and signup trigger live in the non-API-exposed `private` schema.
 - Active workspace and active project cookies are selectors, not authorization grants. Each project request still checks workspace membership and project permissions.
 - Workspace-owned projects are not accessible through the legacy user-owned project scope.
 - Removing a workspace member removes their project memberships; the database reassigns sole Project Admin assignments before revocation.
