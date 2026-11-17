@@ -264,7 +264,7 @@ export function WorkspaceManager() {
         </CardContent>
       </Card>
 
-      <DiscoverableWorkspaces />
+      {authenticated ? <DiscoverableWorkspaces /> : null}
     </div>
   );
 }
