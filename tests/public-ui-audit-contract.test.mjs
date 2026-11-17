@@ -124,3 +124,13 @@ test("redesigned landing remains registry-driven and exposes the full architectu
   assert.ok(tokens.includes("--primary: oklch(0.76 0.13 158);"));
   assert.ok(tokens.includes("@media (prefers-reduced-motion: reduce)"));
 });
+
+
+test("dialog close control has a readable foreground color", () => {
+  const dialog = read("components/ui/dialog.tsx");
+  assert.match(
+    dialog,
+    /className="cn-dialog-close absolute top-2 right-2 text-foreground"/,
+    "the icon-only close control must not inherit the low-contrast muted foreground"
+  );
+});
