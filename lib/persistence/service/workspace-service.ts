@@ -49,6 +49,40 @@ export class WorkspaceService {
     }
   }
 
+  async getWorkspaceForMember({ userId, workspaceId }: { userId: string; workspaceId: string }) {
+    if (!userId) throw new PersistenceError("UNAUTHORIZED", "Authentication is required.");
+    try {
+      const membership = await this.client
+        .from("workspace_memberships")
+        .select("role")
+        .eq("workspace_id", workspaceId)
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (membership.error) throw membership.error;
+      if (!membership.data) throw new PersistenceError("FORBIDDEN", "Workspace membership is required.");
+
+      const result = await this.client
+        .from("workspaces")
+        .select("id, name, is_personal, created_by, created_at, updated_at")
+        .eq("id", workspaceId)
+        .single();
+
+      if (result.error || !result.data) throw result.error || new Error("Workspace not found.");
+      return {
+        id: result.data.id,
+        name: result.data.name,
+        isPersonal: result.data.is_personal,
+        createdBy: result.data.created_by,
+        createdAt: result.data.created_at,
+        updatedAt: result.data.updated_at,
+        role: membership.data.role,
+      };
+    } catch (cause) {
+      return mapFailure("load workspace", cause);
+    }
+  }
+
   async createWorkspace({ userId, name }: { userId: string; name: string }) {
     if (!userId) throw new PersistenceError("UNAUTHORIZED", "Authentication is required.");
     const normalizedName = typeof name === "string" ? name.trim() : "";
