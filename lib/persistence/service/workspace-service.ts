@@ -72,7 +72,7 @@ export class WorkspaceService {
 
       const result = await this.client
         .from("workspaces")
-        .select("id, name, is_personal, created_by, created_at, updated_at")
+        .select("id, name, is_personal, created_by, created_at, updated_at, status, visibility")
         .eq("id", workspaceId)
         .single();
 
@@ -536,7 +536,7 @@ export class WorkspaceService {
         .order("created_at", { ascending: false })
         .limit(50);
       const normalizedSearch = typeof search === "string" ? search.trim().slice(0, 80) : "";
-      if (normalizedSearch) query = query.ilike("name", `%${normalizedSearch.replace(/[%_]/g, "\\  async createWorkspace({ userId, name }: { userId: string; name: string }) {")}%`);
+      if (normalizedSearch) query = query.ilike("name", "%" + normalizedSearch + "%");
       const result = await query;
       if (result.error) throw result.error;
       return (result.data || []).filter((workspace) => !memberIds.has(workspace.id)).map((workspace) => ({
@@ -674,6 +674,8 @@ export class WorkspaceService {
         createdBy: workspaces.data.created_by,
         createdAt: workspaces.data.created_at,
         updatedAt: workspaces.data.updated_at,
+        status: workspaces.data.status,
+        visibility: workspaces.data.visibility,
         role: "owner",
       };
     } catch (cause) {
