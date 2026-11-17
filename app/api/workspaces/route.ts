@@ -9,7 +9,6 @@ export const dynamic = "force-dynamic";
 const api = () => createWorkspaceApi({
   service: new WorkspaceService(createSupabaseServerClient()),
   getAuthenticatedUserId,
-  isProduction: process.env.NODE_ENV === "production",
 });
 
 export async function GET(request: Request) {
