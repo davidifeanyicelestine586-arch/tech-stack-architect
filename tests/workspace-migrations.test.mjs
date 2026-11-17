@@ -146,6 +146,7 @@ test("workspace lifecycle protects ownership and suspends archived workspaces", 
   assert.match(workspaceLifecycleMigration, /create or replace function public\.rename_workspace/i);
   assert.match(workspaceLifecycleMigration, /create or replace function public\.transfer_workspace_ownership/i);
   assert.match(workspaceLifecycleMigration, /workspace_record\.is_personal/i);
+  assert.match(workspaceLifecycleMigration, /workspace_memberships_single_owner_unique_idx/i);
   assert.match(workspaceLifecycleMigration, /create or replace function public\.archive_workspace/i);
   assert.match(workspaceLifecycleMigration, /create or replace function public\.restore_workspace/i);
   assert.match(workspaceLifecycleMigration, /status = 'archived'/i);
