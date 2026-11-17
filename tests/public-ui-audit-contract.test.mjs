@@ -115,3 +115,18 @@ test("redesigned landing remains registry-driven and exposes the full architectu
   assert.ok(tokens.includes("--primary: oklch(0.76 0.13 158);"));
   assert.ok(tokens.includes("@media (prefers-reduced-motion: reduce)"));
 });
+
+
+test("landing hero uses a preloaded font with no late font swap", () => {
+  const layout = read("app/layout.tsx");
+  const landing = read("app/page.tsx");
+  assert.match(layout, /display: "optional"/);
+  assert.match(layout, /preload: true/);
+  assert.ok(layout.includes("className={`${geist.className} antialiased selection:bg-primary/20`}"));
+  assert.ok(landing.includes('className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8"'));
+});
+
+test("dialog close control has a readable foreground color", () => {
+  const dialog = read("components/ui/dialog.tsx");
+  assert.match(dialog, /className="cn-dialog-close absolute top-2 right-2 text-foreground"/, "the icon-only close control must not inherit the low-contrast muted foreground");
+});
