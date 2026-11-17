@@ -74,3 +74,9 @@ test("workspace member project-admin can administer only its assigned project", 
   assert.equal(repository.canAccessProject(project, scope, "member", "project_admin", "write"), true);
   assert.equal(repository.canAccessProject(project, scope, "viewer", "project_admin", "write"), false);
 });
+
+test("workspace project creator loses access when explicit project membership is absent", () => {
+  const ownProject = { ...project, owner_id: scope.userId, visibility: "private" };
+  assert.equal(repository.canAccessProject(ownProject, scope, "member", undefined, "read"), false);
+  assert.equal(repository.canAccessProject(ownProject, scope, "member", undefined, "write"), false);
+});
