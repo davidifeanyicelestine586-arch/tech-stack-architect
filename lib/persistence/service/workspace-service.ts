@@ -1,5 +1,6 @@
 import { PersistenceError } from "../project-serialization.js";
 import { createSupabaseServerClient } from "../supabase/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 const mapFailure = (operation: string, cause: unknown): never => {
   if (cause instanceof PersistenceError) throw cause;
@@ -7,7 +8,7 @@ const mapFailure = (operation: string, cause: unknown): never => {
 };
 
 export class WorkspaceService {
-  private client;
+  private client: SupabaseClient;
 
   constructor(client = createSupabaseServerClient()) {
     this.client = client;
