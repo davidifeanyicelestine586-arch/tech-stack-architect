@@ -70,6 +70,7 @@ test("workspace viewer cannot write even with an explicit project editor grant",
   assert.equal(repository.canAccessProject(project, scope, "viewer", "editor", "write"), false);
 });
 
-test("workspace member project-admin grant is capped at editor-level writes", () => {
+test("workspace member project-admin can administer only its assigned project", () => {
   assert.equal(repository.canAccessProject(project, scope, "member", "project_admin", "write"), true);
+  assert.equal(repository.canAccessProject(project, scope, "viewer", "project_admin", "write"), false);
 });
