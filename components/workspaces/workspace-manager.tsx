@@ -8,6 +8,8 @@ import { WorkspaceInvitations } from "@/components/workspaces/workspace-invitati
 import { WorkspaceMembers } from "@/components/workspaces/workspace-members";
 import { WorkspaceActivity } from "@/components/workspaces/workspace-activity";
 import { WorkspaceSettings } from "@/components/workspaces/workspace-settings";
+import { WorkspaceAccessRequests } from "@/components/workspaces/workspace-access-requests";
+import { DiscoverableWorkspaces } from "@/components/workspaces/discoverable-workspaces";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -219,7 +221,10 @@ export function WorkspaceManager() {
                       <WorkspaceMembers workspaceId={workspace.id} workspaceRole={workspace.role} />
                       <WorkspaceActivity workspaceId={workspace.id} />
                       {workspace.role === "owner" || workspace.role === "admin" ? (
-                        <WorkspaceInvitations workspaceId={workspace.id} />
+                        <>
+                          <WorkspaceInvitations workspaceId={workspace.id} />
+                          {workspace.visibility === "discoverable" ? <WorkspaceAccessRequests workspaceId={workspace.id} /> : null}
+                        </>
                       ) : null}
                     </>
                   ) : null}
@@ -258,6 +263,8 @@ export function WorkspaceManager() {
           </form>
         </CardContent>
       </Card>
+
+      <DiscoverableWorkspaces />
     </div>
   );
 }
