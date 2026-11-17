@@ -18,7 +18,7 @@ const analyzer = new RequirementAnalyzer(registries);
 const serverProjectId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 const serverProjectIdTwo = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
 const baseSnapshot = () => ({
-  schemaVersion: 1,
+  schemaVersion: 2,
   projectDefinition: {
     name: "AI Document Q&A Platform",
     description: "A SaaS application for document questions.",
@@ -28,6 +28,8 @@ const baseSnapshot = () => ({
   },
   selectedComponentIds: ["nextjs", "nodejs", "vercel"],
   activeRecipeId: "bootstrapped-payment-dashboard",
+  architecture: null,
+  developmentPlan: null,
 });
 
 const clone = (value) => JSON.parse(JSON.stringify(value));

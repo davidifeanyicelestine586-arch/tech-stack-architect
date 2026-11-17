@@ -9,10 +9,13 @@ import React, {
   ReactNode,
 } from "react";
 import TechStackArchitect from "@/engine/TechStackArchitect.js";
+import { generateArchitecture as buildArchitecture, getArchitectureSourceSignature } from "@/engine/architecture/architecture-generator.js";
+import { validateArchitecture as runArchitectureValidation } from "@/engine/architecture/architecture-validator.js";
+import { generateDevelopmentPlan as buildDevelopmentPlan, getDevelopmentPlanSourceSignature } from "@/engine/planning/development-planner.js";
 import domainsData from "@/data/domain.json";
 import { createProjectPersistenceClient } from "@/lib/persistence/client/project-persistence-client.js";
 import { createProviderPersistenceController } from "@/lib/persistence/client/provider-persistence.js";
-import type { ProjectSnapshotV1 } from "@/lib/persistence/types";
+import type { ProjectSnapshotV2 } from "@/lib/persistence/types";
 import componentsData from "@/data/components.json";
 import recipesData from "@/data/recipes.json";
 import type {
@@ -25,6 +28,10 @@ import type {
   RecipeMatch,
   ProjectDefinition,
   RequirementAnalysis,
+  ArchitectureSpecification,
+  ArchitectureGenerationAnswers,
+  ArchitectureValidationReport,
+  DevelopmentPlan,
 } from "@/lib/types";
 
 export type PersistenceStatus = "idle" | "saving" | "saved" | "loading" | "error";
@@ -69,6 +76,15 @@ export interface TechStackContextType {
   difficultyFilter: string;
   setDifficultyFilter: (difficulty: string) => void;
   projectDefinition: ProjectDefinition;
+  architecture: ArchitectureSpecification | null;
+  setArchitecture: (architecture: ArchitectureSpecification | null) => void;
+  developmentPlan: DevelopmentPlan | null;
+  setDevelopmentPlan: (plan: DevelopmentPlan | null) => void;
+  architectureValidation: ArchitectureValidationReport | null;
+  isArchitectureStale: boolean;
+  isDevelopmentPlanStale: boolean;
+  generateArchitecture: (answers?: ArchitectureGenerationAnswers) => ArchitectureSpecification;
+  generateDevelopmentPlan: () => DevelopmentPlan;
   updateProjectDefinition: <Key extends keyof ProjectDefinition>(key: Key, value: ProjectDefinition[Key]) => void;
   persistenceDirty: boolean;
   analyzeProject: (project: ProjectDefinition) => RequirementAnalysis;
@@ -113,7 +129,7 @@ export interface TechStackContextType {
 
 const TechStackContext = createContext<TechStackContextType | null>(null);
 
-const canonicalSnapshotSignature = (snapshot: ProjectSnapshotV1) =>
+const canonicalSnapshotSignature = (snapshot: ProjectSnapshotV2) =>
   JSON.stringify({ ...snapshot, selectedComponentIds: [...snapshot.selectedComponentIds].sort() });
 
 const CATEGORY_GROUPS: Record<string, string> = {
@@ -152,6 +168,8 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
   const persistenceClient = useMemo(() => createProjectPersistenceClient(), []);
   const [activeDomain, setActiveDomain] = useState<string>("all");
   const [projectDefinition, setProjectDefinition] = useState<ProjectDefinition>({ name: "", description: "", domain: domains[0]?.id || "web-saas", difficulty: "Intermediate", requirements: "" });
+  const [architecture, setArchitecture] = useState<ArchitectureSpecification | null>(null);
+  const [developmentPlan, setDevelopmentPlan] = useState<DevelopmentPlan | null>(null);
   const [lastPersistedSnapshotSignature, setLastPersistedSnapshotSignature] = useState<string | null>(null);
   const [requirementAnalysis, setRequirementAnalysis] = useState<RequirementAnalysis | null>(null);
   const [ignoredRecommendationIds, setIgnoredRecommendationIds] = useState<string[]>([]);
@@ -168,7 +186,7 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
   const [persistenceStatus, setPersistenceStatus] = useState<PersistenceStatus>("idle");
   const [persistenceError, setPersistenceError] = useState<ProviderPersistenceErrorInfo | null>(null);
 
-  const getCanonicalSnapshot = useCallback((): ProjectSnapshotV1 => ({ schemaVersion: 1, projectDefinition, selectedComponentIds, activeRecipeId }), [projectDefinition, selectedComponentIds, activeRecipeId]);
+  const getCanonicalSnapshot = useCallback((): ProjectSnapshotV2 => ({ schemaVersion: 2, projectDefinition, selectedComponentIds, activeRecipeId, architecture, developmentPlan }), [projectDefinition, selectedComponentIds, activeRecipeId, architecture, developmentPlan]);
   const canonicalSnapshot = getCanonicalSnapshot();
   const updateProjectDefinition = useCallback(<Key extends keyof ProjectDefinition>(key: Key, value: ProjectDefinition[Key]) => {
     setProjectDefinition((previous) => ({ ...previous, [key]: value }));
@@ -194,6 +212,34 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
     return components.filter((c) => idSet.has(c.id));
   }, [components, selectedComponentIds]);
   const validationReport = useMemo(() => architect.validate(selectedComponentIds) as ValidationReport, [architect, selectedComponentIds]);
+  const architectureValidation = useMemo(
+    () => architecture ? runArchitectureValidation({ project: projectDefinition, architecture, selectedComponents }) as ArchitectureValidationReport : null,
+    [projectDefinition, architecture, selectedComponents]
+  );
+  const isArchitectureStale = Boolean(
+    architecture && architecture.sourceSignature !== getArchitectureSourceSignature(projectDefinition, selectedComponents)
+  );
+  const isDevelopmentPlanStale = Boolean(
+    developmentPlan && (
+      !architecture ||
+      isArchitectureStale ||
+      developmentPlan.sourceSignature !== getDevelopmentPlanSourceSignature(projectDefinition, architecture, architectureValidation)
+    )
+  );
+  const generateArchitectureForProject = useCallback((answers: ArchitectureGenerationAnswers = {}) => {
+    const generated = buildArchitecture({ project: projectDefinition, selectedComponents, answers }) as ArchitectureSpecification;
+    setArchitecture(generated);
+    return generated;
+  }, [projectDefinition, selectedComponents]);
+  const generateDevelopmentPlanForProject = useCallback(() => {
+    if (!architecture) throw new Error("Generate and review an architecture before creating the development plan.");
+    if (isArchitectureStale) throw new Error("The architecture is out of date. Regenerate or review it before planning.");
+    if (!validationReport.valid) throw new Error("Resolve stack compatibility errors before creating the development plan.");
+    if (!architectureValidation?.valid) throw new Error("Resolve architecture validation errors before creating the development plan.");
+    const generated = buildDevelopmentPlan({ project: projectDefinition, architecture, validation: architectureValidation }) as DevelopmentPlan;
+    setDevelopmentPlan(generated);
+    return generated;
+  }, [projectDefinition, architecture, architectureValidation, isArchitectureStale, validationReport]);
   const recipeRecommendations = useMemo(() => architect.recommendRecipes(selectedComponentIds) as RecipeMatch[], [architect, selectedComponentIds]);
 
   const analyzeProject = useCallback((project: ProjectDefinition): RequirementAnalysis => {
@@ -231,6 +277,7 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
   }), [components, activeDomain, selectedCategory, difficultyFilter, searchQuery]);
 
   const generateCustomBlueprint = useCallback(() => {
+    if (!architecture || !developmentPlan || isArchitectureStale || isDevelopmentPlanStale) { setBlueprint(null); return; }
     const selectedObjects = selectedComponentIds.map((id) => components.find((c) => c.id === id)).filter(Boolean) as Component[];
     if (selectedObjects.length === 0) { setBlueprint(null); return; }
     const totalHours = selectedObjects.reduce((sum, c) => sum + (c.estimatedLearningHours || 0), 0);
@@ -255,15 +302,16 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
       estimatedHours: totalHours || 12, components: selectedObjects, learningGoals: allLearningGoals.length > 0 ? allLearningGoals : ["Architect custom domain integrations"],
       outputs: allOutputs.length > 0 ? allOutputs : ["architecture-diagram", "starter-code"], starterCommands: commands, warnings: currentWarnings,
       project: projectDefinition.name.trim() || projectDefinition.description.trim() ? projectDefinition : undefined, validation: toValidationSummary(validationReport),
+      architecture, architectureValidation: architectureValidation || undefined, developmentPlan,
     });
-  }, [selectedComponentIds, components, activeDomain, projectDefinition, validationReport]);
+  }, [selectedComponentIds, components, activeDomain, projectDefinition, validationReport, architecture, architectureValidation, developmentPlan, isArchitectureStale, isDevelopmentPlanStale]);
 
   const loadRecipe = useCallback((recipeId: string) => {
     const recipe = recipes.find((r) => r.id === recipeId); if (!recipe) return;
     setActiveRecipeId(recipeId); if (recipe.domain) setActiveDomain(recipe.domain);
     const mergedIds = Array.from(new Set([...selectedComponentIds, ...(recipe.components || [])])); setSelectedComponentIds(mergedIds);
     const result = architect.build({ recipe: recipeId, selectedComponents: mergedIds });
-    if (result.blueprint) setBlueprint({ ...(result.blueprint as Blueprint), project: projectDefinition.name.trim() || projectDefinition.description.trim() ? projectDefinition : undefined, validation: toValidationSummary(result.report) });
+    if (result.blueprint) setBlueprint({ ...result.blueprint, project: projectDefinition.name.trim() || projectDefinition.description.trim() ? projectDefinition : undefined, validation: toValidationSummary(result.report) });
   }, [recipes, selectedComponentIds, architect, projectDefinition]);
   const toggleComponent = useCallback((id: string) => setSelectedComponentIds((prev) => prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]), []);
   const selectComponents = useCallback((ids: string[]) => setSelectedComponentIds(Array.from(new Set(ids))), []);
@@ -277,16 +325,16 @@ export function TechStackProvider({ children }: { children: ReactNode }) {
     const domainObj = domains.find((d) => d.id === activeDomain); const domainTitle = domainObj ? domainObj.title : "Custom Tech Stack";
     const combinedWarnings = [...(report.warnings || [])];
     if (bp.warnings && Array.isArray(bp.warnings)) bp.warnings.forEach((w) => { const msg = typeof w === "string" ? w : w; if (!combinedWarnings.some((cw) => cw.message === msg)) combinedWarnings.push({ component: "Blueprint", severity: "warning", message: typeof msg === "string" ? msg : JSON.stringify(msg) }); });
-    return { title: projectDefinition.name.trim() || bp.title || "Technology Stack Blueprint", score: report.score, status: report.status, domain: bp.domain || domainTitle, components: selectedComponents, warnings: combinedWarnings, suggestions: report.suggestions || [], starterCommands: bp.starterCommands || [], learningGoals: bp.learningGoals || [], outputs: bp.outputs || [], project: projectDefinition.name.trim() || projectDefinition.description.trim() ? projectDefinition : undefined, validation: toValidationSummary(report) };
-  }, [validationReport, blueprint, domains, activeDomain, selectedComponents, projectDefinition]);
+    return { title: projectDefinition.name.trim() || bp.title || "Technology Stack Blueprint", score: report.score, status: report.status, domain: bp.domain || domainTitle, components: selectedComponents, warnings: combinedWarnings, suggestions: report.suggestions || [], starterCommands: bp.starterCommands || [], learningGoals: bp.learningGoals || [], outputs: bp.outputs || [], project: projectDefinition.name.trim() || projectDefinition.description.trim() ? projectDefinition : undefined, validation: toValidationSummary(report), architecture: architecture || undefined, architectureValidation: architectureValidation || undefined, developmentPlan: developmentPlan || undefined };
+  }, [validationReport, blueprint, domains, activeDomain, selectedComponents, projectDefinition, architecture, architectureValidation, developmentPlan]);
   const exportBlueprint = useCallback((format: "json" | "markdown"): string => { try { return architect.export(format, mergedReport); } catch { return format === "json" ? JSON.stringify(mergedReport, null, 2) : `# ${mergedReport.title}\nScore: ${mergedReport.score}`; } }, [architect, mergedReport]);
   const downloadBlueprint = useCallback((format: "json" | "markdown", customFilename?: string): boolean => { try { const sanitizedTitle = (mergedReport.title || "tech-stack-blueprint").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""); architect.download(format, customFilename || `${sanitizedTitle}.${format === "json" ? "json" : "md"}`, mergedReport); return true; } catch (err) { console.error("Blueprint download failed:", err); return false; } }, [architect, mergedReport]);
   const copyBlueprint = useCallback(async (format: "json" | "markdown"): Promise<boolean> => { try { await navigator.clipboard.writeText(exportBlueprint(format)); return true; } catch (err) { console.error("Clipboard copy failed:", err); return false; } }, [exportBlueprint]);
-  const resetProject = useCallback(() => { const nextProjectDefinition: ProjectDefinition = { name: "", description: "", domain: domains[0]?.id || "web-saas", difficulty: "Intermediate", requirements: "" }; setProjectDefinition(nextProjectDefinition); setLastPersistedSnapshotSignature(null); setActiveDomain(nextProjectDefinition.domain); setRequirementAnalysis(null); setIgnoredRecommendationIds([]); setSelectedComponentIds([]); setActiveRecipeId(null); setBlueprint(null); setSearchQuery(""); setSelectedCategory("all"); setDifficultyFilter("all"); setCurrentProjectId(null); setCurrentProjectRevision(null); setPersistenceStatus("idle"); setPersistenceError(null); }, [domains]);
-  const applyLoadedProject = useCallback(({ record, snapshot }: { record: { id: string; revision: number }; snapshot: ProjectSnapshotV1 }) => { setProjectDefinition(snapshot.projectDefinition); setLastPersistedSnapshotSignature(canonicalSnapshotSignature(snapshot)); setSelectedComponentIds(snapshot.selectedComponentIds); setActiveRecipeId(snapshot.activeRecipeId); setActiveDomain(snapshot.projectDefinition.domain); setRequirementAnalysis(architect.analyzeRequirements(snapshot.projectDefinition)); setIgnoredRecommendationIds([]); setBlueprint(null); setCurrentProjectId(record.id); setCurrentProjectRevision(record.revision); }, [architect]);
-  const persistenceActions = useMemo(() => createProviderPersistenceController({ client: persistenceClient, registries: { domains, components, recipes }, getCanonicalSnapshot, getCurrentProjectIdentity: () => ({ id: currentProjectId, revision: currentProjectRevision }), setPersistenceStatus, setPersistenceError, applyLoadedProject, applySavedIdentity: (record: { id: string; revision: number }) => { setCurrentProjectId(record.id); setCurrentProjectRevision(record.revision); }, markPersistenceSaved: (snapshot: ProjectSnapshotV1) => { setLastPersistedSnapshotSignature(canonicalSnapshotSignature(snapshot)); }, clearDeletedIdentity: (projectId: string) => { if (currentProjectId === projectId) { setCurrentProjectId(null); setCurrentProjectRevision(null); setLastPersistedSnapshotSignature(null); } } }), [persistenceClient, domains, components, recipes, getCanonicalSnapshot, currentProjectId, currentProjectRevision, applyLoadedProject]);
+  const resetProject = useCallback(() => { const nextProjectDefinition: ProjectDefinition = { name: "", description: "", domain: domains[0]?.id || "web-saas", difficulty: "Intermediate", requirements: "" }; setProjectDefinition(nextProjectDefinition); setArchitecture(null); setDevelopmentPlan(null); setLastPersistedSnapshotSignature(null); setActiveDomain(nextProjectDefinition.domain); setRequirementAnalysis(null); setIgnoredRecommendationIds([]); setSelectedComponentIds([]); setActiveRecipeId(null); setBlueprint(null); setSearchQuery(""); setSelectedCategory("all"); setDifficultyFilter("all"); setCurrentProjectId(null); setCurrentProjectRevision(null); setPersistenceStatus("idle"); setPersistenceError(null); }, [domains]);
+  const applyLoadedProject = useCallback(({ record, snapshot }: { record: { id: string; revision: number }; snapshot: ProjectSnapshotV2 }) => { setProjectDefinition(snapshot.projectDefinition); setArchitecture(snapshot.architecture); setDevelopmentPlan(snapshot.developmentPlan); setLastPersistedSnapshotSignature(canonicalSnapshotSignature(snapshot)); setSelectedComponentIds(snapshot.selectedComponentIds); setActiveRecipeId(snapshot.activeRecipeId); setActiveDomain(snapshot.projectDefinition.domain); setRequirementAnalysis(architect.analyzeRequirements(snapshot.projectDefinition)); setIgnoredRecommendationIds([]); setBlueprint(null); setCurrentProjectId(record.id); setCurrentProjectRevision(record.revision); }, [architect]);
+  const persistenceActions = useMemo(() => createProviderPersistenceController({ client: persistenceClient, registries: { domains, components, recipes }, getCanonicalSnapshot, getCurrentProjectIdentity: () => ({ id: currentProjectId, revision: currentProjectRevision }), setPersistenceStatus, setPersistenceError, applyLoadedProject, applySavedIdentity: (record: { id: string; revision: number }) => { setCurrentProjectId(record.id); setCurrentProjectRevision(record.revision); }, markPersistenceSaved: (snapshot: ProjectSnapshotV2) => { setLastPersistedSnapshotSignature(canonicalSnapshotSignature(snapshot)); }, clearDeletedIdentity: (projectId: string) => { if (currentProjectId === projectId) { setCurrentProjectId(null); setCurrentProjectRevision(null); setLastPersistedSnapshotSignature(null); } } }), [persistenceClient, domains, components, recipes, getCanonicalSnapshot, currentProjectId, currentProjectRevision, applyLoadedProject]);
   const { saveProject, loadProject, listProjects, deleteProject } = persistenceActions;
-  return <TechStackContext.Provider value={{ domains, components, recipes, categories, projectDefinition, updateProjectDefinition, persistenceDirty, analyzeProject, requirementAnalysis, ignoredRecommendationIds, addRecommendation, addAllCompatibleRecommendations, ignoreRecommendation, activeDomain, setActiveDomain, searchQuery, setSearchQuery, selectedCategory, setSelectedCategory, difficultyFilter, setDifficultyFilter, selectedComponentIds, selectedComponents, toggleComponent, selectComponents, removeComponent, clearSelection, resolveMissingDependencies, activeRecipeId, blueprint, loadRecipe, generateCustomBlueprint, clearBlueprint, validationReport, recipeRecommendations, mergedReport, filteredComponents, activeTab, setActiveTab, isInspectorOpen, setIsInspectorOpen, exportBlueprint, downloadBlueprint, copyBlueprint, currentProjectId, currentProjectRevision, persistenceStatus, persistenceError, saveProject, loadProject, listProjects, deleteProject, resetProject }}>{children}</TechStackContext.Provider>;
+  return <TechStackContext.Provider value={{ domains, components, recipes, categories, projectDefinition, architecture, setArchitecture, developmentPlan, setDevelopmentPlan, architectureValidation, isArchitectureStale, isDevelopmentPlanStale, generateArchitecture: generateArchitectureForProject, generateDevelopmentPlan: generateDevelopmentPlanForProject, updateProjectDefinition, persistenceDirty, analyzeProject, requirementAnalysis, ignoredRecommendationIds, addRecommendation, addAllCompatibleRecommendations, ignoreRecommendation, activeDomain, setActiveDomain, searchQuery, setSearchQuery, selectedCategory, setSelectedCategory, difficultyFilter, setDifficultyFilter, selectedComponentIds, selectedComponents, toggleComponent, selectComponents, removeComponent, clearSelection, resolveMissingDependencies, activeRecipeId, blueprint, loadRecipe, generateCustomBlueprint, clearBlueprint, validationReport, recipeRecommendations, mergedReport, filteredComponents, activeTab, setActiveTab, isInspectorOpen, setIsInspectorOpen, exportBlueprint, downloadBlueprint, copyBlueprint, currentProjectId, currentProjectRevision, persistenceStatus, persistenceError, saveProject, loadProject, listProjects, deleteProject, resetProject }}>{children}</TechStackContext.Provider>;
 }
 
 export function useTechStack() { const context = useContext(TechStackContext); if (!context) throw new Error("useTechStack must be used within a TechStackProvider"); return context; }

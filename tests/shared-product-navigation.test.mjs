@@ -44,6 +44,19 @@ test("shared header wrappers stay server-rendered and interactive behavior stays
   assert.match(workspaceControls, /useSidebar\(\)/);
 });
 
+test("shared product header uses the supplied theme-appropriate responsive wordmarks", () => {
+  const header = read("../components/navigation/product-shell-header.tsx");
+  assert.match(header, /src="\/brand\/logo-full-light\.png"/);
+  assert.match(header, /src="\/brand\/logo-full-dark\.png"/);
+  assert.match(header, /dark:hidden/);
+  assert.match(header, /dark:block/);
+  assert.match(header, /sizes="\(min-width: 640px\) 150px, 124px"/);
+
+  for (const asset of ["logo-full-light.png", "logo-full-dark.png"]) {
+    assert.ok(fs.existsSync(new URL(`../public/brand/${asset}`, import.meta.url)));
+  }
+});
+
 test("primary navigation exposes an accessible disclosure, desktop layout, active page, and Escape focus return", () => {
   const nav = read("../components/navigation/product-primary-nav.tsx");
   assert.match(nav, /aria-expanded=\{open\}/);

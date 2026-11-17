@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1200, initial-scale=1" />
+    <title>Tech Stack Architect — Social Preview</title>
+    <style>
+      * { box-sizing: border-box; }
+      html, body { margin: 0; width: 1200px; background: #f5f8ff; }
+      body { font-family: Arial, Helvetica, sans-serif; color: #111b32; }
+      .canvas {
+        position: relative;
+        isolation: isolate;
+        display: grid;
+        grid-template-columns: minmax(0, 1.32fr) minmax(320px, 0.68fr);
+        align-items: center;
+        gap: 42px;
+        width: 1200px;
+        aspect-ratio: 1200 / 630;
+        overflow: hidden;
+        padding: 54px 78px 54px 84px;
+        background:
+          radial-gradient(ellipse at 84% 16%, rgba(121, 83, 255, .15), transparent 27%),
+          radial-gradient(ellipse at 74% 82%, rgba(0, 166, 255, .13), transparent 32%),
+          linear-gradient(135deg, #f8faff 0%, #eef4ff 52%, #f8f7ff 100%);
+      }
+      .canvas::before {
+        position: absolute;
+        z-index: -1;
+        right: -104px;
+        top: -180px;
+        width: 590px;
+        aspect-ratio: 1;
+        border: 1px solid rgba(68, 105, 205, .12);
+        border-radius: 50%;
+        box-shadow: 0 0 0 38px rgba(93, 105, 233, .035), 0 0 0 82px rgba(0, 165, 255, .025);
+        content: "";
+      }
+      .copy { position: relative; z-index: 1; min-width: 0; }
+      .wordmark { display: block; width: 448px; height: auto; }
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin: 21px 0 13px;
+        color: #3453a7;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+      }
+      .eyebrow::before {
+        width: 26px;
+        height: 3px;
+        border-radius: 3px;
+        background: linear-gradient(90deg, #06a9ef, #6648ee);
+        content: "";
+      }
+      h1 {
+        max-width: 620px;
+        margin: 0;
+        color: #111b32;
+        font-size: 46px;
+        font-weight: 750;
+        letter-spacing: -.045em;
+        line-height: 1.08;
+      }
+      .description {
+        max-width: 590px;
+        margin: 17px 0 0;
+        color: #4c5d7d;
+        font-size: 19px;
+        line-height: 1.52;
+      }
+      .proof-points {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 25px;
+      }
+      .proof-points span {
+        display: inline-flex;
+        align-items: center;
+        min-height: 34px;
+        border: 1px solid rgba(61, 86, 153, .14);
+        border-radius: 999px;
+        padding: 0 13px;
+        background: rgba(255, 255, 255, .68);
+        color: #405273;
+        font-size: 12px;
+        font-weight: 650;
+        letter-spacing: .01em;
+      }
+      .visual {
+        position: relative;
+        display: grid;
+        justify-items: center;
+        gap: 20px;
+        min-width: 0;
+        padding: 30px 24px 25px;
+        border: 1px solid rgba(74, 98, 165, .14);
+        border-radius: 30px;
+        background: rgba(255, 255, 255, .62);
+        box-shadow: 0 28px 70px rgba(33, 54, 107, .12), inset 0 1px rgba(255, 255, 255, .92);
+        backdrop-filter: blur(12px);
+      }
+      .app-icon { display: block; width: 222px; height: auto; filter: drop-shadow(0 24px 25px rgba(24, 41, 84, .2)); }
+      .steps { display: flex; align-items: center; justify-content: center; gap: 8px; color: #596987; font-size: 11px; font-weight: 700; letter-spacing: .055em; text-transform: uppercase; white-space: nowrap; }
+      .steps .dot { width: 5px; height: 5px; border-radius: 50%; background: linear-gradient(135deg, #00a9f1, #6847ef); }
+      .corner-mark {
+        position: absolute;
+        right: 33px;
+        bottom: 24px;
+        width: 78px;
+        height: 4px;
+        border-radius: 99px;
+        background: linear-gradient(90deg, #00a9ef, #3466f5, #7543ed);
+        opacity: .85;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="canvas" aria-label="Tech Stack Architect social preview">
+      <section class="copy">
+        <img class="wordmark" src="../public/brand/logo-full-light.png" alt="Tech Stack Architect" />
+        <p class="eyebrow">Architecture starts with good reasoning</p>
+        <h1>Design a stack you can explain.</h1>
+        <p class="description">Design, validate, understand, and generate production-ready technology stacks.</p>
+        <div class="proof-points" aria-label="Product capabilities">
+          <span>Explainable recommendations</span>
+          <span>Deterministic validation</span>
+        </div>
+      </section>
+      <aside class="visual" aria-label="Tech Stack Architect app icon and workflow">
+        <img class="app-icon" src="../public/brand/app-icon.png" alt="" />
+        <div class="steps"><span>Requirements</span><i class="dot"></i><span>Stack design</span><i class="dot"></i><span>Validation</span></div>
+      </aside>
+      <div class="corner-mark" aria-hidden="true"></div>
+    </main>
+  </body>
+</html>
