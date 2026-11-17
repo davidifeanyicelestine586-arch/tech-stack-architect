@@ -30,7 +30,7 @@ const roleLabel: Record<ProjectRole, string> = {
   viewer: "Viewer",
 };
 
-export function ProjectAccessManager({ projectId }: { projectId: string }) {
+export function ProjectAccessManager({ projectId, visibility }: { projectId: string; visibility: "private" | "workspace" }) {
   const [open, setOpen] = useState(false);
   const [members, setMembers] = useState<ProjectMember[]>([]);
   const [availableMembers, setAvailableMembers] = useState<AvailableMember[]>([]);
@@ -154,6 +154,8 @@ export function ProjectAccessManager({ projectId }: { projectId: string }) {
 
         {error ? <p role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">{error}</p> : null}
         {notice ? <p role="status" className="rounded-md border border-primary/30 bg-primary/5 px-3 py-2 text-sm text-foreground">{notice}</p> : null}
+
+        {visibility === "workspace" ? <p className="rounded-md border border-border bg-muted/40 px-3 py-2 text-xs leading-relaxed text-muted-foreground">This project is visible to all workspace members. Removing an explicit project role does not hide it from members while workspace visibility remains enabled.</p> : null}
 
         <section className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-2">
