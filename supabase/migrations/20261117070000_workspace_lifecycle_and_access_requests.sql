@@ -39,6 +39,10 @@ as $
   );
 $;
 
+create unique index if not exists workspace_memberships_single_owner_unique_idx
+  on public.workspace_memberships (workspace_id)
+  where role = 'owner';
+
 create table if not exists public.workspace_access_requests (
   id uuid primary key default extensions.gen_random_uuid(),
   workspace_id uuid not null references public.workspaces(id) on delete cascade,
