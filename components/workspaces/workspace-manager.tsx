@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { BriefcaseBusiness, LoaderCircle, Plus, RefreshCw } from "lucide-react";
 import { getSupabaseBrowserClient } from "@/lib/auth/supabase-browser";
+import { WorkspaceInvitations } from "@/components/workspaces/workspace-invitations";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -206,6 +207,9 @@ export function WorkspaceManager() {
                     {selectingId === workspace.id ? <LoaderCircle className="mr-2 size-4 animate-spin" aria-hidden="true" /> : null}
                     Open workspace
                   </Button>
+                  {workspace.role === "owner" || workspace.role === "admin" ? (
+                    <WorkspaceInvitations workspaceId={workspace.id} />
+                  ) : null}
                 </li>
               ))}
             </ul>
