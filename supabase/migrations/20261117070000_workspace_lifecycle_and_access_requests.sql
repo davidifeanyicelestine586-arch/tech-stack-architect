@@ -167,7 +167,10 @@ begin
     raise exception 'Personal workspace ownership cannot be transferred' using errcode = '42501';
   end if;
 
-  if workspace_record.created_by <> p_actor_id or p_new_owner_id = p_actor_id then
+  if not exists (
+    select 1 from public.workspace_memberships
+    where workspace_id = p_workspace_id and user_id = p_actor_id and role = 'owner'
+  ) or p_new_owner_id = p_actor_id then
     raise exception 'Only the current owner can transfer ownership to another member' using errcode = '42501';
   end if;
 
@@ -298,6 +301,10 @@ begin
   if p_visibility is null or p_visibility not in ('private', 'discoverable') then
     raise exception 'Workspace visibility is invalid' using errcode = '22023';
   end if;
+  if exists (select 1 from public.workspaces where id = p_workspace_id and is_personal = true)
+    and p_visibility <> 'private' then
+    raise exception 'Personal workspaces cannot be discoverable' using errcode = '42501';
+  end if;
 
   update public.workspaces
   set visibility = p_visibility, updated_at = now()
@@ -395,6 +402,10 @@ begin
     raise exception 'Workspace administrator permission is required' using errcode = '42501';
   end if;
 
+  if not exists (select 1 from public.workspaces where id = p_workspace_id and status = 'active') then
+    raise exception 'Workspace is not active' using errcode = 'P0002';
+  end if;
+
   select * into access_request
   from public.workspace_access_requests
   where id = p_request_id and workspace_id = p_workspace_id
@@ -404,7 +415,7 @@ begin
     raise exception 'Pending access request not found' using errcode = 'P0002';
   end if;
 
-  if p_decision not in ('approve', 'reject') then
+  if p_decision is null or p_decision not in ('approve', 'reject') then
     raise exception 'Access request decision is invalid' using errcode = '22023';
   end if;
 
