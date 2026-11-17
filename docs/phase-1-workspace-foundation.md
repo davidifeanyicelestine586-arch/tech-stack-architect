@@ -8,10 +8,12 @@ This workstream adds the workspace and collaboration foundation while preserving
 - Backfill of existing authenticated project owners into personal workspaces.
 - Atomic `create_workspace_for_user` RPC, executable only by `service_role`.
 - Authenticated workspace listing, creation, and active-workspace selection.
-- Workspace management UI at `/app/workspaces`, with creation, selection, member listing, role changes, removal, and recent activity.
+- Workspace management UI at `/app/workspaces`, with creation, selection, member listing, role changes, removal, recent activity, rename, discoverability, ownership transfer, archive, and restore.
 - Invitation creation, listing, revocation, and acceptance APIs.
 - One-time invitation tokens are generated server-side, SHA-256 hashed before storage, returned once as copyable links, and accepted only by a signed-in account with the matching verified email.
 - Workspace member removal revokes project memberships and reassigns sole Project Admin assignments before removing the member.
+- Discoverable workspaces with access-request creation, requester status tracking, and owner/admin approval or rejection.
+- Workspace ownership transfer, protected owner roles, archive and restore lifecycle, and active-workspace suspension while archived.
 - Project repository scoping to the selected workspace.
 - Private/workspace project visibility selection and persistence.
 - Project access UI to grant Project Admin, Editor, and Viewer roles to existing workspace members.
