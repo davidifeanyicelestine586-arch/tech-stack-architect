@@ -61,6 +61,9 @@ jobs:
       - name: Run accessibility regression audit
         run: pnpm audit:a11y
 
+      - name: Run workspace onboarding browser acceptance
+        run: node tests/workspace-onboarding.e2e.mjs
+
       - name: Save app startup log
         if: always()
         run: |
