@@ -22,6 +22,10 @@ const rlsMigration = readFileSync(
   new URL("../supabase/migrations/20261117050000_workspace_aware_rls.sql", import.meta.url),
   "utf8",
 );
+const projectMembershipManagementMigration = readFileSync(
+  new URL("../supabase/migrations/20261117060000_project_membership_management.sql", import.meta.url),
+  "utf8",
+);
 
 test("workspace creation is atomic and records its initial owner", () => {
   assert.match(workspaceMigration, /create or replace function public\.create_workspace_for_user/i);
@@ -113,4 +117,21 @@ test("workspace, invitation, project membership and activity RLS are scoped and 
   }
   assert.match(rlsMigration, /workspace admins can read invitations/i);
   assert.match(rlsMigration, /workspace members can read workspace activity/i);
+});
+
+test("project access grants are limited to workspace members and project administrators", () => {
+  assert.match(projectMembershipManagementMigration, /create or replace function public\.grant_project_member/i);
+  assert.match(projectMembershipManagementMigration, /actor_workspace_role is null/i);
+  assert.match(projectMembershipManagementMigration, /actor_project_role = 'project_admin'/i);
+  assert.match(projectMembershipManagementMigration, /target user must already belong to the workspace/i);
+  assert.match(projectMembershipManagementMigration, /target_workspace_role = 'viewer' and p_role <> 'viewer'/i);
+  assert.match(projectMembershipManagementMigration, /grant execute on function public\.grant_project_member/i);
+});
+
+test("project membership removal protects the final Project Admin and records activity", () => {
+  assert.match(projectMembershipManagementMigration, /create or replace function public\.remove_project_member/i);
+  assert.match(projectMembershipManagementMigration, /assign another Project Admin before removing the last one/i);
+  assert.match(projectMembershipManagementMigration, /'project\.admin_reassigned'/i);
+  assert.match(projectMembershipManagementMigration, /'project\.member_removed'/i);
+  assert.match(projectMembershipManagementMigration, /grant execute on function public\.remove_project_member/i);
 });
