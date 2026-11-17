@@ -333,3 +333,17 @@ test("authentication is not required for anonymous project creation", async () =
   assert.equal(result.cookie.includes("Secure"), false);
   assert.equal(service.calls[0].scope.kind, "anonymous");
 });
+
+test("project API rejects unsupported visibility values before persistence", async () => {
+  const service = new ApiService();
+  const api = createApi(service);
+  const response = await api.create(jsonRequest("POST", {
+    snapshot: validSnapshot(),
+    visibility: "public",
+  }));
+  const payload = await response.json();
+
+  assert.equal(response.status, 400);
+  assert.equal(payload.error.code, "VALIDATION_FAILURE");
+  assert.equal(service.calls.length, 0);
+});
