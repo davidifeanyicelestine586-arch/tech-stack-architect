@@ -382,3 +382,45 @@ test("repository maps malformed database rows safely", async () => {
     (error) => error instanceof PersistenceError && error.code === "MALFORMED_RECORD"
   );
 });
+
+test("legacy user scope cannot read workspace-owned projects without an active workspace", async () => {
+  const userId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+  const workspaceId = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+  const projectId = "cccccccc-cccc-4ccc-8ccc-cccccccccccc";
+  const row = {
+    id: projectId,
+    owner_id: userId,
+    anonymous_session_id: null,
+    workspace_id: workspaceId,
+    visibility: "private",
+    name: "Workspace private project",
+    description: "Scoped project",
+    domain_id: "web-saas",
+    difficulty: "Intermediate",
+    requirements: "test",
+    selected_component_ids: ["nextjs"],
+    active_recipe_id: null,
+    schema_version: 1,
+    revision: 1,
+    created_at: "2026-08-24T12:00:00.000Z",
+    updated_at: "2026-08-24T12:00:00.000Z",
+  };
+  const repository = createRepository(new FakeSupabase([row]));
+
+  await assert.rejects(
+    () => repository.getProject({ scope: { kind: "user", userId }, id: projectId }),
+    (error) => error instanceof PersistenceError && error.code === "PERSISTENCE_NOT_FOUND",
+  );
+});
+
+test("workspace visibility cannot be enabled from a legacy user or anonymous scope", async () => {
+  const client = new FakeSupabase();
+  const repository = createRepository(client);
+  const userId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+
+  await assert.rejects(
+    () => repository.createProject({ scope: { kind: "user", userId }, snapshot: baseSnapshot(), visibility: "workspace" }),
+    (error) => error instanceof PersistenceError && error.code === "FORBIDDEN",
+  );
+  assert.equal(client.rows.length, 0);
+});
