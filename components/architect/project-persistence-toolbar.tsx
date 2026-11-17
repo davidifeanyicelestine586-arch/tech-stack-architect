@@ -86,9 +86,11 @@ export function ProjectPersistenceToolbar() {
                     (workspace: { status?: string }) => workspace.status === "active",
                   );
                   if (activeWorkspaces.length === 1) {
+                    const selectionHeaders = new Headers(headers);
+                    selectionHeaders.set("content-type", "application/json");
                     await fetch("/api/workspaces/active", {
                       method: "POST",
-                      headers: new Headers([...headers.entries(), ["content-type", "application/json"]]),
+                      headers: selectionHeaders,
                       body: JSON.stringify({ workspaceId: activeWorkspaces[0].id }),
                     });
                   }
