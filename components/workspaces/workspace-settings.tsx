@@ -150,7 +150,7 @@ export function WorkspaceSettings({
   };
 
   const canManage = workspace.role === "owner" || workspace.role === "admin";
-  if (!canManage && workspace.status === "active") return null;
+  if (!canManage) return null;
 
   return (
     <div className="mt-3 border-t border-border/70 pt-3">
