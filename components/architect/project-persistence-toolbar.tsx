@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   AlertCircle,
   CheckCircle2,
@@ -12,6 +12,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useTechStack } from "@/hooks/use-tech-stack";
+import { getSupabaseBrowserClient } from "@/lib/auth/supabase-browser";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
@@ -57,6 +58,32 @@ export function ProjectPersistenceToolbar() {
   const [listError, setListError] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<SavedProjectSummary | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const restoreAttempted = useRef(false);
+
+  useEffect(() => {
+    if (restoreAttempted.current || currentProjectId) return;
+    restoreAttempted.current = true;
+    queueMicrotask(() => {
+      void (async () => {
+        try {
+          const { data } = await getSupabaseBrowserClient().auth.getSession();
+          const token = data.session?.access_token;
+          const response = await fetch("/api/projects/active", {
+            headers: token ? { authorization: `Bearer ${token}` } : {},
+            cache: "no-store",
+          });
+          if (!response.ok) return;
+          const payload = await response.json();
+          const activeProjectId = payload?.data?.project?.id;
+          if (payload?.ok === true && typeof activeProjectId === "string") {
+            await loadProject(activeProjectId);
+          }
+        } catch {
+          // A stale or inaccessible active-project cookie must not block the workspace.
+        }
+      })();
+    });
+  }, [currentProjectId, loadProject]);
 
   const isDirty = persistenceDirty;
   const isBusy = persistenceStatus === "saving" || persistenceStatus === "loading";
