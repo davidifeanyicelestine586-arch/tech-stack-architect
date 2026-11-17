@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { BriefcaseBusiness, LoaderCircle, Plus, RefreshCw } from "lucide-react";
 import { getSupabaseBrowserClient } from "@/lib/auth/supabase-browser";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +26,8 @@ const roleLabel: Record<Workspace["role"], string> = {
 };
 
 export function WorkspaceManager() {
+  const router = useRouter();
+  const [selectingId, setSelectingId] = useState<string | null>(null);
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(true);
@@ -66,6 +69,38 @@ export function WorkspaceManager() {
   useEffect(() => {
     void loadWorkspaces();
   }, [loadWorkspaces]);
+
+  const selectWorkspace = async (workspaceId: string) => {
+    if (selectingId) return;
+    setSelectingId(workspaceId);
+    setError("");
+    try {
+      const { data, error: sessionError } = await getSupabaseBrowserClient().auth.getSession();
+      if (sessionError) throw sessionError;
+      const token = data.session?.access_token;
+      if (!token) {
+        setAuthenticated(false);
+        throw new Error("Sign in before selecting a workspace.");
+      }
+      const response = await fetch("/api/workspaces/active", {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${token}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ workspaceId }),
+      });
+      const payload = await response.json();
+      if (!response.ok || payload?.ok !== true) {
+        throw new Error(payload?.error?.message || "Unable to select workspace.");
+      }
+      router.push("/app");
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Unable to select workspace.");
+    } finally {
+      setSelectingId(null);
+    }
+  };
 
   const createWorkspace = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -160,6 +195,17 @@ export function WorkspaceManager() {
                     <Badge variant="secondary">{roleLabel[workspace.role]}</Badge>
                   </div>
                   {workspace.isPersonal ? <p className="mt-3 text-xs text-muted-foreground">Personal workspace</p> : null}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="mt-4 w-full"
+                    onClick={() => void selectWorkspace(workspace.id)}
+                    disabled={!authenticated || selectingId !== null}
+                  >
+                    {selectingId === workspace.id ? <LoaderCircle className="mr-2 size-4 animate-spin" aria-hidden="true" /> : null}
+                    Open workspace
+                  </Button>
                 </li>
               ))}
             </ul>
