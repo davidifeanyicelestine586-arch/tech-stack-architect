@@ -61,3 +61,37 @@ test("active workspace selection does not set a cookie when membership is denied
   assert.equal(response.status, 403);
   assert.equal(response.headers.get("set-cookie"), null);
 });
+
+test("active workspace lookup returns the current verified membership", async () => {
+  resetRequestGuardState();
+  let received;
+  const api = createWorkspaceSelectionApi({
+    service: { getWorkspaceForMember: async (args) => { received = args; return { id: workspaceId, role: "owner", status: "active" }; } },
+    getAuthenticatedUserId: async () => userId,
+    getCookieStore: async () => ({ get: (name) => name === ACTIVE_WORKSPACE_COOKIE ? { value: workspaceId } : undefined }),
+  });
+  const response = await api.current(new Request("https://example.test/api/workspaces/active"));
+  const payload = await response.json();
+  assert.equal(response.status, 200);
+  assert.deepEqual(received, { userId, workspaceId });
+  assert.equal(payload.data.workspace.id, workspaceId);
+});
+
+test("active workspace lookup returns null for absent or inaccessible selections", async () => {
+  resetRequestGuardState();
+  const noCookieApi = createWorkspaceSelectionApi({
+    service: { getWorkspaceForMember: async () => ({ id: workspaceId }) },
+    getAuthenticatedUserId: async () => userId,
+    getCookieStore: async () => ({ get: () => undefined }),
+  });
+  const noCookie = await noCookieApi.current(new Request("https://example.test/api/workspaces/active"));
+  assert.deepEqual((await noCookie.json()).data, { workspace: null });
+
+  const deniedApi = createWorkspaceSelectionApi({
+    service: { getWorkspaceForMember: async () => { throw new PersistenceError("FORBIDDEN", "archived"); } },
+    getAuthenticatedUserId: async () => userId,
+    getCookieStore: async () => ({ get: () => ({ value: workspaceId }) }),
+  });
+  const denied = await deniedApi.current(new Request("https://example.test/api/workspaces/active"));
+  assert.deepEqual((await denied.json()).data, { workspace: null });
+});
