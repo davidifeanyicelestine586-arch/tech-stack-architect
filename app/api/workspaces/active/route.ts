@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { getAuthenticatedUserId } from "@/lib/auth/supabase-server";
 import { createSupabaseServerClient } from "@/lib/persistence/supabase/server";
 import { WorkspaceService } from "@/lib/persistence/service/workspace-service";
@@ -9,9 +10,11 @@ export const dynamic = "force-dynamic";
 const api = () => createWorkspaceSelectionApi({
   service: new WorkspaceService(createSupabaseServerClient()),
   getAuthenticatedUserId,
+  getCookieStore: cookies,
   isProduction: process.env.NODE_ENV === "production",
 });
 
 export async function POST(request: Request) {
   return api().select(request);
 }
+\nexport async function GET(request: Request) {\n  return api().current(request);\n}\n
