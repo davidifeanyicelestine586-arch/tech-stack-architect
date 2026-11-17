@@ -373,7 +373,7 @@ test("last-active project restoration returns only a project visible in the reso
   assert.equal(payload.data.project.id, created.id);
 });
 
-test("last-active project restoration safely clears itself logically when the project is inaccessible", async () => {
+test("last-active project restoration clears stale cookies when the project is inaccessible", async () => {
   const service = new ApiService();
   service.failWith = new PersistenceError("PERSISTENCE_NOT_FOUND", "not found");
   const api = createProjectApi({
@@ -387,4 +387,5 @@ test("last-active project restoration safely clears itself logically when the pr
   const payload = await response.json();
   assert.equal(response.status, 200);
   assert.equal(payload.data.project, null);
+  assert.match(response.headers.get("set-cookie"), /Max-Age=0/);
 });
