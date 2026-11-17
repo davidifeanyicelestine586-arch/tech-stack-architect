@@ -662,7 +662,7 @@ export class WorkspaceService {
 
       const workspaces = await this.client
         .from("workspaces")
-        .select("id, name, is_personal, created_by, created_at, updated_at")
+        .select("id, name, is_personal, created_by, created_at, updated_at, status, visibility")
         .eq("id", workspaceId)
         .single();
 
