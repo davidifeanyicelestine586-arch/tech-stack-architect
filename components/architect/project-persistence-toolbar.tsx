@@ -68,8 +68,36 @@ export function ProjectPersistenceToolbar() {
         try {
           const { data } = await getSupabaseBrowserClient().auth.getSession();
           const token = data.session?.access_token;
+          const headers = token ? { authorization: `Bearer ${token}` } : {};
+
+          if (token) {
+            const activeWorkspaceResponse = await fetch("/api/workspaces/active", {
+              headers,
+              cache: "no-store",
+            });
+            if (activeWorkspaceResponse.ok) {
+              const activeWorkspacePayload = await activeWorkspaceResponse.json();
+              if (!activeWorkspacePayload?.data?.workspace) {
+                const workspacesResponse = await fetch("/api/workspaces", { headers, cache: "no-store" });
+                if (workspacesResponse.ok) {
+                  const workspacesPayload = await workspacesResponse.json();
+                  const activeWorkspaces = (workspacesPayload?.data?.workspaces || []).filter(
+                    (workspace: { status?: string }) => workspace.status === "active",
+                  );
+                  if (activeWorkspaces.length === 1) {
+                    await fetch("/api/workspaces/active", {
+                      method: "POST",
+                      headers: { ...headers, "content-type": "application/json" },
+                      body: JSON.stringify({ workspaceId: activeWorkspaces[0].id }),
+                    });
+                  }
+                }
+              }
+            }
+          }
+
           const response = await fetch("/api/projects/active", {
-            headers: token ? { authorization: `Bearer ${token}` } : {},
+            headers,
             cache: "no-store",
           });
           if (!response.ok) return;
