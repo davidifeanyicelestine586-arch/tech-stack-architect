@@ -4,6 +4,11 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 const mapFailure = (operation: string, cause: unknown): never => {
   if (cause instanceof PersistenceError) throw cause;
+  const code = cause && typeof cause === "object" && "code" in cause ? String(cause.code) : "";
+  if (code === "42501") throw new PersistenceError("FORBIDDEN", "Workspace administrator permission is required.");
+  if (code === "P0002") throw new PersistenceError("PERSISTENCE_NOT_FOUND", "The invitation is invalid, expired, or no longer available.");
+  if (code === "22023") throw new PersistenceError("VALIDATION_FAILURE", "Invitation details are invalid.");
+  if (code === "23505") throw new PersistenceError("PERSISTENCE_CONFLICT", "An invitation already exists for this request.");
   throw new PersistenceError("DATABASE_FAILURE", `Unable to ${operation} workspace.`);
 };
 
@@ -81,6 +86,122 @@ export class WorkspaceService {
       };
     } catch (cause) {
       return mapFailure("load workspace", cause);
+    }
+  }
+
+  async listInvitations({ userId, workspaceId }: { userId: string; workspaceId: string }) {
+    const workspace = await this.getWorkspaceForMember({ userId, workspaceId });
+    if (workspace.role !== "owner" && workspace.role !== "admin") {
+      throw new PersistenceError("FORBIDDEN", "Only workspace owners and admins can manage invitations.");
+    }
+    try {
+      const result = await this.client
+        .from("workspace_invitations")
+        .select("id, email, role, status, expires_at, created_at, accepted_at, revoked_at")
+        .eq("workspace_id", workspaceId)
+        .order("created_at", { ascending: false });
+      if (result.error) throw result.error;
+      const now = Date.now();
+      return (result.data || []).map((invitation) => ({
+        id: invitation.id,
+        email: invitation.email,
+        role: invitation.role,
+        status: invitation.status === "pending" && new Date(invitation.expires_at).getTime() <= now
+          ? "expired"
+          : invitation.status,
+        expiresAt: invitation.expires_at,
+        createdAt: invitation.created_at,
+        acceptedAt: invitation.accepted_at,
+        revokedAt: invitation.revoked_at,
+      }));
+    } catch (cause) {
+      return mapFailure("list invitations for", cause);
+    }
+  }
+
+  async createInvitation({ userId, workspaceId, email, role, tokenHash, expiresAt }: {
+    userId: string;
+    workspaceId: string;
+    email: string;
+    role: "admin" | "member" | "viewer";
+    tokenHash: string;
+    expiresAt: string;
+  }) {
+    const workspace = await this.getWorkspaceForMember({ userId, workspaceId });
+    if (workspace.role !== "owner" && workspace.role !== "admin") {
+      throw new PersistenceError("FORBIDDEN", "Only workspace owners and admins can invite members.");
+    }
+    const normalizedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail) || normalizedEmail.length > 254) {
+      throw new PersistenceError("VALIDATION_FAILURE", "A valid invitation email is required.");
+    }
+    if (!["admin", "member", "viewer"].includes(role)) {
+      throw new PersistenceError("VALIDATION_FAILURE", "Invitation role is invalid.");
+    }
+    try {
+      const result = await this.client.rpc("create_workspace_invitation", {
+        p_workspace_id: workspaceId,
+        p_email: normalizedEmail,
+        p_role: role,
+        p_token_hash: tokenHash,
+        p_invited_by: userId,
+        p_expires_at: expiresAt,
+      });
+      if (result.error) throw result.error;
+      const invitationId = result.data;
+      if (typeof invitationId !== "string") throw new Error("Invitation creation returned no identifier.");
+      return {
+        id: invitationId,
+        email: normalizedEmail,
+        role,
+        status: "pending",
+        expiresAt,
+      };
+    } catch (cause) {
+      return mapFailure("create invitation for", cause);
+    }
+  }
+
+  async revokeInvitation({ userId, workspaceId, invitationId }: {
+    userId: string;
+    workspaceId: string;
+    invitationId: string;
+  }) {
+    const workspace = await this.getWorkspaceForMember({ userId, workspaceId });
+    if (workspace.role !== "owner" && workspace.role !== "admin") {
+      throw new PersistenceError("FORBIDDEN", "Only workspace owners and admins can revoke invitations.");
+    }
+    try {
+      const result = await this.client.rpc("revoke_workspace_invitation", {
+        p_workspace_id: workspaceId,
+        p_invitation_id: invitationId,
+        p_actor_id: userId,
+      });
+      if (result.error) throw result.error;
+      return { revoked: result.data === true };
+    } catch (cause) {
+      return mapFailure("revoke invitation for", cause);
+    }
+  }
+
+  async acceptInvitation({ userId, email, tokenHash }: {
+    userId: string;
+    email: string;
+    tokenHash: string;
+  }) {
+    if (!userId || !email) throw new PersistenceError("UNAUTHORIZED", "A verified account email is required.");
+    try {
+      const result = await this.client.rpc("accept_workspace_invitation", {
+        p_token_hash: tokenHash,
+        p_user_id: userId,
+        p_user_email: email,
+      });
+      if (result.error) throw result.error;
+      const accepted = Array.isArray(result.data) ? result.data[0] : result.data;
+      if (!accepted?.workspace_id || !accepted?.role) throw new Error("Invitation acceptance returned no workspace.");
+      return { workspaceId: accepted.workspace_id, role: accepted.role };
+    } catch (cause) {
+      return mapFailure("accept invitation for", cause);
     }
   }
 
