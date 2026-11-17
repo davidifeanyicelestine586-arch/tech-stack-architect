@@ -131,22 +131,47 @@ export class WorkspaceService {
   }) {
     await this.assertProjectAdministrator({ userId, workspaceId, projectId });
     try {
-      const result = await this.client
-        .from("project_memberships")
-        .select("user_id, role, created_at")
-        .eq("project_id", projectId)
-        .order("created_at", { ascending: true });
-      if (result.error) throw result.error;
-      return await Promise.all((result.data || []).map(async (membership) => {
-        const account = await this.client.auth.admin.getUserById(membership.user_id);
-        return {
-          userId: membership.user_id,
-          email: account.data?.user?.email || null,
-          displayName: account.data?.user?.user_metadata?.full_name || null,
-          role: membership.role,
-          assignedAt: membership.created_at,
-        };
+      const [projectResult, workspaceResult] = await Promise.all([
+        this.client
+          .from("project_memberships")
+          .select("user_id, role, created_at")
+          .eq("project_id", projectId)
+          .order("created_at", { ascending: true }),
+        this.client
+          .from("workspace_memberships")
+          .select("user_id, role")
+          .eq("workspace_id", workspaceId)
+          .order("created_at", { ascending: true }),
+      ]);
+      if (projectResult.error) throw projectResult.error;
+      if (workspaceResult.error) throw workspaceResult.error;
+
+      const projectRows = projectResult.data || [];
+      const workspaceRows = workspaceResult.data || [];
+      const accountIds = [...new Set(workspaceRows.map((membership) => membership.user_id))];
+      const accounts = await Promise.all(accountIds.map(async (id) => {
+        const result = await this.client.auth.admin.getUserById(id);
+        return [id, {
+          email: result.data?.user?.email || null,
+          displayName: result.data?.user?.user_metadata?.full_name || null,
+        }] as const;
       }));
+      const accountById = new Map(accounts);
+      const members = projectRows.map((membership) => ({
+        userId: membership.user_id,
+        email: accountById.get(membership.user_id)?.email || null,
+        displayName: accountById.get(membership.user_id)?.displayName || null,
+        role: membership.role,
+        assignedAt: membership.created_at,
+      }));
+      const availableMembers = workspaceRows.map((membership) => ({
+        userId: membership.user_id,
+        email: accountById.get(membership.user_id)?.email || null,
+        displayName: accountById.get(membership.user_id)?.displayName || null,
+        workspaceRole: membership.role,
+        assigned: projectRows.some((projectMember) => projectMember.user_id === membership.user_id),
+      }));
+      return { members, availableMembers };
     } catch (cause) {
       return mapFailure("list project members for", cause);
     }
