@@ -157,11 +157,13 @@ export class WorkspaceService {
         }] as const;
       }));
       const accountById = new Map(accounts);
+      const workspaceRoleById = new Map(workspaceRows.map((membership) => [membership.user_id, membership.role]));
       const members = projectRows.map((membership) => ({
         userId: membership.user_id,
         email: accountById.get(membership.user_id)?.email || null,
         displayName: accountById.get(membership.user_id)?.displayName || null,
         role: membership.role,
+        workspaceRole: workspaceRoleById.get(membership.user_id) || "viewer",
         assignedAt: membership.created_at,
       }));
       const availableMembers = workspaceRows.map((membership) => ({
