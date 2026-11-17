@@ -5,7 +5,7 @@ This workstream adds the workspace and collaboration foundation while preserving
 ## Delivered in this slice
 
 - Workspace, workspace membership, invitation, project membership, and workspace activity schema.
-- Backfill of existing authenticated project owners into personal workspaces.
+- Backfill of every existing authenticated account into a private personal workspace, plus an auth-user trigger that provisions one for every new signup.
 - Atomic `create_workspace_for_user` RPC, executable only by `service_role`.
 - Authenticated workspace listing, creation, and active-workspace selection.
 - Workspace management UI at `/app/workspaces`, with creation, selection, member listing, role changes, removal, recent activity, rename, discoverability, ownership transfer, archive, and restore.
@@ -27,7 +27,7 @@ This workstream adds the workspace and collaboration foundation while preserving
   - Workspace membership caps project permissions; project grants cannot bypass workspace membership or a workspace Viewer restriction.
 - Database trigger that grants the project creator Project Admin membership atomically when a workspace project is inserted.
 - Workspace-aware RLS policies for projects, workspaces, memberships, invitations, project memberships, and activity events. Browser database roles have read-only grants and no direct mutation grants.
-- Last-active workspace cookie and per-workspace last-active project restoration, with server-side authorization rechecked on restoration.
+- Last-active workspace cookie and per-workspace last-active project restoration, with server-side authorization rechecked on restoration. When a signed-in user has exactly one active workspace, the app automatically selects it on workspace bootstrap.
 - Activity events for workspace creation, invitation lifecycle, member changes, ownership transfer, archive/restore, access-request review, Project Admin reassignment, project membership changes, and project visibility changes.
 - Regression coverage for API authentication, active workspace selection, role matrix, project repository authorization, invitation workflows, member management, migration contracts, and RLS grants.
 
@@ -47,7 +47,7 @@ This workstream adds the workspace and collaboration foundation while preserving
 - Discoverable workspaces and access-request approval flows.
 - Workspace rename, ownership transfer/succession, and archive/closure lifecycle.
 - Background expiry-state materialization for pending invitations (expired invitations are treated as expired at read/accept time).
-- Full first-time workspace routing after sign-in; users can create/select workspaces through the workspace manager.
+- Automatic routing when a returning user has multiple active workspaces but no valid last-active selection; the workspace manager remains the explicit chooser.
 - Cross-tenant integration tests against a running Supabase test database, including applying every migration and verifying real RLS behavior.
 - A durable transactional audit path for project visibility changes (the current repository records these events best-effort after the project update).
 
