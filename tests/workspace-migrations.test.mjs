@@ -30,6 +30,18 @@ const workspaceLifecycleMigration = readFileSync(
   new URL("../supabase/migrations/20261117070000_workspace_lifecycle_and_access_requests.sql", import.meta.url),
   "utf8",
 );
+const workspaceApiMigration = readFileSync(
+  new URL("../supabase/migrations/20261117010000_workspace_api_and_activity.sql", import.meta.url),
+  "utf8",
+);
+const invitationLifecycleMigration = readFileSync(
+  new URL("../supabase/migrations/20261117030000_workspace_invitation_lifecycle.sql", import.meta.url),
+  "utf8",
+);
+const workspaceMembershipMigration = readFileSync(
+  new URL("../supabase/migrations/20261117040000_workspace_membership_management.sql", import.meta.url),
+  "utf8",
+);
 const privateRlsMigration = readFileSync(
   new URL("../supabase/migrations/20261117080000_private_rls_helpers.sql", import.meta.url),
   "utf8",
@@ -192,7 +204,9 @@ test("RLS SECURITY DEFINER helpers and signup trigger live in the non-exposed pr
 });
 
 test("server-side workspace mutation RPCs execute with invoker privileges", () => {
-  for (const migration of [projectMembershipManagementMigration]) {
+  for (const migration of [workspaceApiMigration, invitationLifecycleMigration, workspaceMembershipMigration, projectMembershipManagementMigration]) {
     assert.doesNotMatch(migration, /security definer/i);
   }
+  const lifecycleMutations = workspaceLifecycleMigration.slice(workspaceLifecycleMigration.indexOf("create or replace function public.rename_workspace"));
+  assert.doesNotMatch(lifecycleMutations, /security definer/i);
 });
