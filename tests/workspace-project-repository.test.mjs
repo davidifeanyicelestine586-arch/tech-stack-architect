@@ -38,7 +38,7 @@ test("repository rejects project access when the actor is not a workspace member
   const repository = new ProjectRepository({ client: createClient({ workspaceRole: null }), registries: {} });
   await assert.rejects(
     repository.assertProjectAccess(row, scope, "read"),
-    (error) => error instanceof PersistenceError && error.code === "UNAUTHORIZED",
+    (error) => error instanceof PersistenceError && error.code === "FORBIDDEN",
   );
 });
 
