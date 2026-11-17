@@ -130,8 +130,8 @@ export function WorkspaceManager() {
         throw new Error(payload?.error?.message || "Unable to create workspace.");
       }
       setName("");
-      setNotice(`Workspace “${payload.data.name}” created. You are its owner.`);
       await loadWorkspaces();
+      setNotice(`Workspace “${payload.data.name}” created. You are its owner.`);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to create workspace.");
     } finally {
