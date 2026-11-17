@@ -122,7 +122,7 @@ test("landing hero uses a preloaded font with no late font swap", () => {
   const landing = read("app/page.tsx");
   assert.match(layout, /display: "optional"/);
   assert.match(layout, /preload: true/);
-  assert.ok(layout.includes("className={`\${geist.className} antialiased selection:bg-primary/20`}"));
+  assert.ok(layout.includes("className={`${geist.className} antialiased selection:bg-primary/20`}"));
   assert.ok(landing.includes('className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8"'));
 });
 
