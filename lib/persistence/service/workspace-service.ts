@@ -89,6 +89,79 @@ export class WorkspaceService {
     }
   }
 
+  async listMembers({ userId, workspaceId }: { userId: string; workspaceId: string }) {
+    await this.getWorkspaceForMember({ userId, workspaceId });
+    try {
+      const result = await this.client
+        .from("workspace_memberships")
+        .select("user_id, role, created_at")
+        .eq("workspace_id", workspaceId)
+        .order("created_at", { ascending: true });
+      if (result.error) throw result.error;
+      return await Promise.all((result.data || []).map(async (membership) => {
+        const account = await this.client.auth.admin.getUserById(membership.user_id);
+        return {
+          userId: membership.user_id,
+          email: account.data?.user?.email || null,
+          displayName: account.data?.user?.user_metadata?.full_name || null,
+          role: membership.role,
+          joinedAt: membership.created_at,
+        };
+      }));
+    } catch (cause) {
+      return mapFailure("list workspace members for", cause);
+    }
+  }
+
+  async updateMemberRole({ userId, workspaceId, memberId, role }: {
+    userId: string;
+    workspaceId: string;
+    memberId: string;
+    role: "admin" | "member" | "viewer";
+  }) {
+    const workspace = await this.getWorkspaceForMember({ userId, workspaceId });
+    if (workspace.role !== "owner" && workspace.role !== "admin") {
+      throw new PersistenceError("FORBIDDEN", "Only workspace owners and admins can change member roles.");
+    }
+    if (!["admin", "member", "viewer"].includes(role)) {
+      throw new PersistenceError("VALIDATION_FAILURE", "Workspace role is invalid.");
+    }
+    try {
+      const result = await this.client.rpc("update_workspace_member_role", {
+        p_workspace_id: workspaceId,
+        p_member_id: memberId,
+        p_new_role: role,
+        p_actor_id: userId,
+      });
+      if (result.error) throw result.error;
+      return { userId: memberId, role: result.data };
+    } catch (cause) {
+      return mapFailure("update workspace member role for", cause);
+    }
+  }
+
+  async removeMember({ userId, workspaceId, memberId }: {
+    userId: string;
+    workspaceId: string;
+    memberId: string;
+  }) {
+    const workspace = await this.getWorkspaceForMember({ userId, workspaceId });
+    if (workspace.role !== "owner" && workspace.role !== "admin") {
+      throw new PersistenceError("FORBIDDEN", "Only workspace owners and admins can remove members.");
+    }
+    try {
+      const result = await this.client.rpc("remove_workspace_member", {
+        p_workspace_id: workspaceId,
+        p_member_id: memberId,
+        p_actor_id: userId,
+      });
+      if (result.error) throw result.error;
+      return { removed: result.data === true };
+    } catch (cause) {
+      return mapFailure("remove workspace member", cause);
+    }
+  }
+
   async listInvitations({ userId, workspaceId }: { userId: string; workspaceId: string }) {
     const workspace = await this.getWorkspaceForMember({ userId, workspaceId });
     if (workspace.role !== "owner" && workspace.role !== "admin") {
