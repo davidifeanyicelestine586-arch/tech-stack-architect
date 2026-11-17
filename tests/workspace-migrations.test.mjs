@@ -196,8 +196,8 @@ test("RLS SECURITY DEFINER helpers and signup trigger live in the non-exposed pr
   assert.match(privateRlsMigration, /create or replace function private\.current_user_has_workspace_role/i);
   assert.match(privateRlsMigration, /create or replace function private\.current_user_can_access_project/i);
   assert.match(privateRlsMigration, /create or replace function private\.create_personal_workspace_for_new_user/i);
-  assert.match(privateRlsMigration, /using \(private\.current_user_can_access_project/i);
-  assert.match(privateRlsMigration, /using \(private\.current_user_has_workspace_role/i);
+  assert.match(privateRlsMigration, /using\\s*\\(\\s*private\\.current_user_can_access_project/i);
+  assert.match(privateRlsMigration, /using\\s*\\(\\s*private\\.current_user_has_workspace_role/i);
   assert.match(privateRlsMigration, /drop function if exists public\.current_user_can_access_project/i);
   assert.match(privateRlsMigration, /drop function if exists public\.current_user_has_workspace_role/i);
   assert.match(privateRlsMigration, /drop function if exists public\.create_personal_workspace_for_new_user/i);
