@@ -45,8 +45,6 @@ This workstream adds the workspace and collaboration foundation while preserving
 ## Deliberate remaining work
 
 - Email delivery provider integration (current invitation links are copied and sent manually).
-- Discoverable workspaces and access-request approval flows.
-- Workspace rename, ownership transfer/succession, and archive/closure lifecycle.
 - Background expiry-state materialization for pending invitations (expired invitations are treated as expired at read/accept time).
 - Automatic routing when a returning user has multiple active workspaces but no valid last-active selection; the workspace manager remains the explicit chooser.
 - Cross-tenant integration tests against a running Supabase test database, including applying every migration and verifying real RLS behavior.
