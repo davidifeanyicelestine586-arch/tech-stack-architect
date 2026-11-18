@@ -4,8 +4,8 @@ import { createWorkspaceLifecycleApi } from "../lib/workspaces/workspace-lifecyc
 import { PersistenceError } from "../lib/persistence/project-serialization.js";
 import { resetRequestGuardState } from "../lib/security/request-guards.js";
 
-const user = { id: "22222222-2222-4222-8222-222222222222" };
-const workspaceId = "33333333-3333-4333-8333-333333333333";
+const user = { id: "550e8400-e29b-41d4-a716-446655440001" };
+const workspaceId = "550e8400-e29b-41d4-a716-446655440002";
 const makeRequest = (method, body) => new Request("https://example.test/api/workspaces/" + workspaceId, {
   method,
   headers: {
