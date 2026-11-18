@@ -26,7 +26,7 @@ test("workspace settings update validates fields and applies only supplied chang
     getAuthenticatedUser: async () => user,
   });
   const response = await api.update(makeRequest("PATCH", { name: "Design Team", visibility: "discoverable" }), workspaceId);
-  assert.equal(response.status, 200);
+  assert.equal(response.status, 200, JSON.stringify(await response.clone().json()));
   assert.equal(calls.length, 2);
   assert.equal(calls[0][1].userId, user.id);
   assert.equal(calls[1][1].visibility, "discoverable");
@@ -56,8 +56,8 @@ test("workspace archive and restore use the authenticated actor", async () => {
   });
   const archived = await api.archive(makeRequest("POST"), workspaceId);
   const restored = await api.restore(makeRequest("POST"), workspaceId);
-  assert.equal(archived.status, 200);
-  assert.equal(restored.status, 200);
+  assert.equal(archived.status, 200, JSON.stringify(await archived.clone().json()));
+  assert.equal(restored.status, 200, JSON.stringify(await restored.clone().json()));
   assert.deepEqual(calls, [
     ["archive", { userId: user.id, workspaceId }],
     ["restore", { userId: user.id, workspaceId }],
@@ -71,5 +71,5 @@ test("workspace lifecycle preserves owner authorization failures", async () => {
     getAuthenticatedUser: async () => user,
   });
   const response = await api.archive(makeRequest("POST"), workspaceId);
-  assert.equal(response.status, 403);
+  assert.equal(response.status, 403, JSON.stringify(await response.clone().json()));
 });
