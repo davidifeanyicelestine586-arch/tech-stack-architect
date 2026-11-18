@@ -24,7 +24,7 @@ test("discoverable workspace search is scoped to the authenticated user", async 
     getAuthenticatedUser: async () => user,
   });
   const response = await api.discover(makeRequest("GET", undefined, "/api/workspaces/discoverable?q=design"));
-  assert.equal(response.status, 200);
+  assert.equal(response.status, 200, JSON.stringify(await response.clone().json()));
   assert.deepEqual(received, { userId: user.id, search: "design" });
 });
 
@@ -48,7 +48,7 @@ test("workspace access requests pass authenticated requester and requested role"
     getAuthenticatedUser: async () => user,
   });
   const response = await api.request(makeRequest("POST", { requestedRole: "viewer", message: "Read-only access, please." }), workspaceId);
-  assert.equal(response.status, 201);
+  assert.equal(response.status, 201, JSON.stringify(await response.clone().json()));
   assert.deepEqual(received, {
     userId: user.id,
     workspaceId,
@@ -94,5 +94,5 @@ test("workspace access request service denial is preserved", async () => {
     getAuthenticatedUser: async () => user,
   });
   const response = await api.listForWorkspace(makeRequest("GET"), workspaceId);
-  assert.equal(response.status, 403);
+  assert.equal(response.status, 403, JSON.stringify(await response.clone().json()));
 });
