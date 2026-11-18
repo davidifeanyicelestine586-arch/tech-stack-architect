@@ -49,7 +49,7 @@ const privateRlsMigration = readFileSync(
 
 test("workspace creation is atomic and records its initial owner", () => {
   assert.match(workspaceMigration, /create or replace function public\.create_workspace_for_user/i);
-  assert.match(workspaceMigration, /security definer/i);
+  assert.match(workspaceMigration, /security invoker/i);
   assert.match(workspaceMigration, /set search_path = public, extensions/i);
   assert.match(workspaceMigration, /insert into public\.workspaces/i);
   assert.match(workspaceMigration, /insert into public\.workspace_memberships/i);
