@@ -27,7 +27,7 @@ language sql
 stable
 security definer
 set search_path = public, auth
-as $
+as $$
   select auth.uid() is not null and exists (
     select 1
     from public.workspace_memberships wm
@@ -37,7 +37,7 @@ as $
       and w.status = 'active'
       and (p_roles is null or wm.role = any(p_roles))
   );
-$;
+$$;
 
 create unique index if not exists workspace_memberships_single_owner_unique_idx
   on public.workspace_memberships (workspace_id)
@@ -63,7 +63,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = public
-as $
+as $$
 declare
   personal_workspace_id uuid;
 begin
@@ -93,7 +93,7 @@ begin
 
   return new;
 end;
-$;
+$$;
 
 revoke all on function public.create_personal_workspace_for_new_user() from public, anon, authenticated;
 
@@ -187,7 +187,7 @@ returns text
 language plpgsql
 security invoker
 set search_path = public
-as $$
+as $$$
 declare
   actor_role text;
   normalized_name text;
@@ -234,7 +234,7 @@ returns boolean
 language plpgsql
 security invoker
 set search_path = public
-as $$
+as $$$
 declare
   workspace_record public.workspaces%rowtype;
 begin
@@ -297,7 +297,7 @@ returns boolean
 language plpgsql
 security invoker
 set search_path = public
-as $$
+as $$$
 begin
   if not exists (
     select 1 from public.workspace_memberships
@@ -333,7 +333,7 @@ returns boolean
 language plpgsql
 security invoker
 set search_path = public
-as $$
+as $$$
 begin
   if not exists (
     select 1 from public.workspace_memberships
@@ -370,7 +370,7 @@ returns text
 language plpgsql
 security invoker
 set search_path = public
-as $$
+as $$$
 declare
   actor_role text;
 begin
@@ -420,7 +420,7 @@ returns uuid
 language plpgsql
 security invoker
 set search_path = public
-as $$
+as $$$
 declare
   request_id uuid;
 begin
@@ -473,7 +473,7 @@ returns text
 language plpgsql
 security invoker
 set search_path = public
-as $$
+as $$$
 declare
   actor_role text;
   access_request public.workspace_access_requests%rowtype;
