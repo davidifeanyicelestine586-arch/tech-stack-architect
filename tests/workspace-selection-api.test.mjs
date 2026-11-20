@@ -79,21 +79,49 @@ test("active workspace lookup returns the current verified membership", async ()
   assert.equal(payload.data.workspace.id, workspaceId);
 });
 
-test("active workspace lookup returns null for absent or inaccessible selections", async () => {
+test("active workspace lookup selects and persists the personal workspace when no last-active selection exists", async () => {
   resetRequestGuardState();
-  const noCookieApi = createWorkspaceSelectionApi({
-    service: { getWorkspaceForMember: async () => ({ id: workspaceId }) },
+  const personal = { id: workspaceId, name: "Personal workspace", isPersonal: true, status: "active", role: "owner" };
+  const api = createWorkspaceSelectionApi({
+    service: {
+      getWorkspaceForMember: async () => { throw new PersistenceError("FORBIDDEN", "stale selection"); },
+      listWorkspaces: async ({ userId: id }) => { assert.equal(id, userId); return [
+        { id: "44444444-4444-4444-8444-444444444444", isPersonal: false, status: "active", role: "member" },
+        personal,
+      ]; },
+    },
     getAuthenticatedUserId: async () => userId,
     getCookieStore: async () => ({ get: () => undefined }),
   });
-  const noCookie = await noCookieApi.current(new Request("https://example.test/api/workspaces/active"));
-  assert.deepEqual((await noCookie.json()).data, { workspace: null });
+  const response = await api.current(new Request("https://example.test/api/workspaces/active"));
+  assert.deepEqual((await response.json()).data.workspace, personal);
+  assert.match(response.headers.get("set-cookie"), new RegExp(ACTIVE_WORKSPACE_COOKIE));
+  assert.match(response.headers.get("set-cookie"), new RegExp(workspaceId));
+});
 
-  const deniedApi = createWorkspaceSelectionApi({
-    service: { getWorkspaceForMember: async () => { throw new PersistenceError("FORBIDDEN", "archived"); } },
+test("active workspace lookup falls back to an active membership when personal workspace is unavailable", async () => {
+  resetRequestGuardState();
+  const team = { id: workspaceId, isPersonal: false, status: "active", role: "member" };
+  const api = createWorkspaceSelectionApi({
+    service: {
+      getWorkspaceForMember: async () => { throw new PersistenceError("FORBIDDEN", "archived selection"); },
+      listWorkspaces: async () => [team],
+    },
     getAuthenticatedUserId: async () => userId,
-    getCookieStore: async () => ({ get: () => ({ value: workspaceId }) }),
+    getCookieStore: async () => ({ get: () => ({ value: "55555555-5555-4555-8555-555555555555" }) }),
   });
-  const denied = await deniedApi.current(new Request("https://example.test/api/workspaces/active"));
-  assert.deepEqual((await denied.json()).data, { workspace: null });
+  const response = await api.current(new Request("https://example.test/api/workspaces/active"));
+  assert.deepEqual((await response.json()).data.workspace, team);
+  assert.match(response.headers.get("set-cookie"), new RegExp(workspaceId));
+});
+
+test("active workspace lookup returns null when the user has no active workspace memberships", async () => {
+  resetRequestGuardState();
+  const api = createWorkspaceSelectionApi({
+    service: { listWorkspaces: async () => [] },
+    getAuthenticatedUserId: async () => userId,
+    getCookieStore: async () => ({ get: () => undefined }),
+  });
+  const response = await api.current(new Request("https://example.test/api/workspaces/active"));
+  assert.deepEqual((await response.json()).data, { workspace: null });
 });
