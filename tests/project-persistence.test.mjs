@@ -72,6 +72,8 @@ test("valid persisted records deserialize to saved metadata plus a canonical sna
     revision: 3,
     createdAt: "2026-08-24T12:00:00.000Z",
     updatedAt: "2026-08-24T12:05:00.000Z",
+    workspaceId: null,
+    visibility: "private",
     snapshot: {
       schemaVersion: 2,
       projectDefinition: {
@@ -295,5 +297,23 @@ test("malformed persisted records are rejected safely", () => {
         registries
       ),
     (error) => error instanceof PersistenceError && error.code === "INVALID_RECORD"
+  );
+});
+
+test("workspace metadata is retained when deserializing persisted project records", () => {
+  const record = deserializeProjectRecord({
+    ...baseRecord(),
+    workspace_id: "22222222-2222-4222-8222-222222222222",
+    visibility: "workspace",
+  }, registries);
+
+  assert.equal(record.workspaceId, "22222222-2222-4222-8222-222222222222");
+  assert.equal(record.visibility, "workspace");
+});
+
+test("invalid project visibility is rejected as malformed persisted metadata", () => {
+  assert.throws(
+    () => deserializeProjectRecord({ ...baseRecord(), visibility: "public" }, registries),
+    (error) => error instanceof PersistenceError && error.code === "INVALID_RECORD",
   );
 });
