@@ -210,3 +210,14 @@ test("server-side workspace mutation RPCs execute with invoker privileges", () =
   const lifecycleMutations = workspaceLifecycleMigration.slice(workspaceLifecycleMigration.indexOf("create or replace function public.rename_workspace"));
   assert.doesNotMatch(lifecycleMutations, /security definer/i);
 });
+
+
+test("workspace lifecycle and invitation migrations have balanced function delimiters and token validation", () => {
+  for (const migration of [invitationMigration, workspaceLifecycleMigration]) {
+    assert.equal((migration.match(/\$\$/g) || []).length % 2, 0, "PL/pgSQL dollar-quoted blocks must be balanced");
+  }
+  assert.match(invitationMigration, /p_token_hash is null or p_token_hash !~ '\^\[0-9a-f\]\{64\}\$' then/i);
+  assert.doesNotMatch(invitationMigration, /service_role;\s*then/i);
+  assert.doesNotMatch(workspaceLifecycleMigration, /^as \$$/m);
+  assert.doesNotMatch(workspaceLifecycleMigration, /^\$$;/m);
+});
