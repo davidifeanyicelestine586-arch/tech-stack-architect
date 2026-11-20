@@ -38,8 +38,7 @@ begin
     raise exception 'Invitation role is invalid' using errcode = '22023';
   end if;
 
-  if p_token_hash is null or p_token_hash !~ '^[0-9a-f]{64}
-    raise exception 'Invitation token hash is invalid' using errcode = '22023';
+  if p_token_hash is null or p_token_hash !~ '^[0-9a-f]{64}    raise exception 'Invitation token hash is invalid' using errcode = '22023';
   end if;
 
   if p_expires_at <= now() or p_expires_at > now() + interval '30 days' then
@@ -185,8 +184,7 @@ revoke all on function public.accept_workspace_invitation(text, uuid, text) from
 revoke all on function public.revoke_workspace_invitation(uuid, uuid, uuid) from public, anon, authenticated;
 grant execute on function public.create_workspace_invitation(uuid, text, text, text, uuid, timestamptz) to service_role;
 grant execute on function public.accept_workspace_invitation(text, uuid, text) to service_role;
-grant execute on function public.revoke_workspace_invitation(uuid, uuid, uuid) to service_role;
- then
+grant execute on function public.revoke_workspace_invitation(uuid, uuid, uuid) to service_role; then
     raise exception 'Invitation token hash is invalid' using errcode = '22023';
   end if;
 
@@ -226,8 +224,9 @@ set search_path = public
 as $$
 declare
   invitation public.workspace_invitations%rowtype;
+  accepted_role text;
 begin
-  if p_user_id is null or lower(btrim(p_user_email)) = '' then
+  if p_user_id is null or p_user_email is null or lower(btrim(p_user_email)) = '' then
     raise exception 'An authenticated user email is required' using errcode = '42501';
   end if;
 
@@ -254,7 +253,15 @@ begin
 
   insert into public.workspace_memberships (workspace_id, user_id, role, added_by)
   values (invitation.workspace_id, p_user_id, invitation.role, invitation.invited_by)
-  on conflict (workspace_id, user_id) do nothing;
+  on conflict (workspace_id, user_id) do update
+  set role = case
+    when public.workspace_memberships.role = 'owner' then 'owner'
+    when public.workspace_memberships.role = 'admin' then 'admin'
+    when public.workspace_memberships.role = 'member' and excluded.role = 'viewer' then 'member'
+    else excluded.role
+  end,
+  updated_at = now()
+  returning public.workspace_memberships.role into accepted_role;
 
   insert into public.workspace_activity_events (
     workspace_id, actor_id, action, subject_type, subject_id, metadata
@@ -264,7 +271,7 @@ begin
     jsonb_build_object('role', invitation.role, 'source', 'invitation')
   );
 
-  return query select invitation.workspace_id, invitation.role;
+  return query select invitation.workspace_id, accepted_role;
 end;
 $$;
 
