@@ -4,6 +4,7 @@ import { WORKFLOW_STEPS, workflowStepNumber } from "@/lib/navigation/workflow";
 import { FormEvent, useRef, useState, useTransition } from "react";
 import { ClipboardList, Loader2, SearchCheck } from "lucide-react";
 import { useTechStack } from "@/hooks/use-tech-stack";
+import { ProjectAccessManager } from "@/components/architect/project-access-manager";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +13,7 @@ import type { ProjectDefinition } from "@/lib/types";
 import { validateProjectDefinition } from "@/engine/requirementAnalyzer.js";
 
 export function ProjectDefinitionForm() {
-  const { domains, projectDefinition, updateProjectDefinition, analyzeProject } = useTechStack();
+  const { domains, projectDefinition, projectVisibility, setProjectVisibility, currentProjectId, updateProjectDefinition, analyzeProject } = useTechStack();
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [isPending, startTransition] = useTransition();
@@ -188,6 +189,30 @@ export function ProjectDefinitionForm() {
               </span>
             </label>
           </fieldset>
+
+          <fieldset className="grid min-w-0 gap-2">
+            <legend className="text-sm font-bold text-foreground">Project access</legend>
+            <label htmlFor="project-visibility" className="grid min-w-0 max-w-sm gap-1.5 text-xs font-semibold text-foreground">
+              Who can access this project?
+              <select
+                id="project-visibility"
+                value={projectVisibility}
+                onChange={(event) => setProjectVisibility(event.target.value as "private" | "workspace")}
+                disabled={isPending}
+                className="h-11 w-full min-w-0 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <option value="private">Private — creator, authorised workspace admins and explicitly shared members</option>
+                <option value="workspace">Workspace — workspace members can access</option>
+              </select>
+              <span className="text-[11px] font-normal leading-relaxed text-muted-foreground">
+                Workspace visibility is available when you have selected a workspace. Project Admins can change this later.
+              </span>
+            </label>
+          </fieldset>
+
+          {currentProjectId ? <ProjectAccessManager projectId={currentProjectId} visibility={projectVisibility} /> : (
+            <p className="text-xs text-muted-foreground">Save this project to manage individual project access.</p>
+          )}
 
           <div className="flex flex-col gap-3 border-t border-border/50 pt-5 sm:flex-row sm:items-center sm:justify-between">
             <p
