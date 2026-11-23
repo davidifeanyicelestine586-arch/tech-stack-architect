@@ -11,8 +11,8 @@ insert into public.projects (
   id, owner_id, workspace_id, visibility, name, description, domain_id, difficulty, updated_at
 )
 select
-  'a0000000-0000-4000-8000-000000000001',
-  '10000000-0000-4000-8000-000000000001',
+  'a0000000-0000-4000-8000-000000000001'::uuid,
+  '10000000-0000-4000-8000-000000000001'::uuid,
   workspace.id,
   'private',
   'Tenant A project',
@@ -25,8 +25,8 @@ where workspace.created_by = '10000000-0000-4000-8000-000000000001'
   and workspace.is_personal = true
 union all
 select
-  'b0000000-0000-4000-8000-000000000002',
-  '20000000-0000-4000-8000-000000000002',
+  'b0000000-0000-4000-8000-000000000002'::uuid,
+  '20000000-0000-4000-8000-000000000002'::uuid,
   workspace.id,
   'private',
   'Tenant B project',
