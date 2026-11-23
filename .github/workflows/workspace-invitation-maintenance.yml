@@ -1,0 +1,47 @@
+name: Workspace invitation maintenance
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: workspace-invitation-maintenance
+  cancel-in-progress: false
+
+jobs:
+  expire-invitations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check protected Supabase credentials
+        id: credentials
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        shell: bash
+        run: |
+          if [[ -z "${SUPABASE_URL}" || -z "${SUPABASE_SERVICE_ROLE_KEY}" ]]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Invitation expiry was skipped because SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY repository secrets are not configured."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Materialize expired invitations
+        if: steps.credentials.outputs.configured == 'true'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        shell: bash
+        run: |
+          response="$(curl --fail-with-body --silent --show-error \
+            "${SUPABASE_URL%/}/rest/v1/rpc/expire_workspace_invitations" \
+            -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Content-Type: application/json" \
+            --data '{}')"
+          printf 'Expired invitation rows materialized: %s\n' "$response"
