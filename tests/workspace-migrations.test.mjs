@@ -221,3 +221,12 @@ test("workspace lifecycle and invitation migrations have balanced function delim
   assert.doesNotMatch(workspaceLifecycleMigration, /^as \$$/m);
   assert.doesNotMatch(workspaceLifecycleMigration, /^\$$;/m);
 });
+
+test("expired invitations are persisted and audited through a protected maintenance RPC", () => {
+  assert.match(workspaceLifecycleMigration, /create or replace function public\\.expire_workspace_invitations/i);
+  assert.match(workspaceLifecycleMigration, /set status = 'expired', updated_at = p_now/i);
+  assert.match(workspaceLifecycleMigration, /expires_at <= p_now/i);
+  assert.match(workspaceLifecycleMigration, /'workspace\\.invitation_expired'/i);
+  assert.match(workspaceLifecycleMigration, /revoke all on function public\\.expire_workspace_invitations\\(timestamptz\\) from public, anon, authenticated/i);
+  assert.match(workspaceLifecycleMigration, /grant execute on function public\\.expire_workspace_invitations\\(timestamptz\\) to service_role/i);
+});
