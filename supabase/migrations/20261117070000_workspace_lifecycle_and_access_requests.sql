@@ -165,6 +165,7 @@ alter table public.workspace_activity_events
     'workspace.member_removed',
     'workspace.invitation_created',
     'workspace.invitation_revoked',
+    'workspace.invitation_expired',
     'workspace.owner_transferred',
     'workspace.archived',
     'workspace.restored',
@@ -557,3 +558,48 @@ grant execute on function public.restore_workspace(uuid, uuid) to service_role;
 grant execute on function public.set_workspace_visibility(uuid, text, uuid) to service_role;
 grant execute on function public.request_workspace_access(uuid, uuid, text, text) to service_role;
 grant execute on function public.review_workspace_access_request(uuid, uuid, uuid, text, text) to service_role;
+
+
+-- Materialize expired invitations so their persisted lifecycle state matches
+-- the expiry timestamp, and record the transition in the workspace audit log.
+create or replace function public.expire_workspace_invitations(
+  p_now timestamptz default now()
+)
+returns integer
+language plpgsql
+security invoker
+set search_path = public
+as $$
+declare
+  expired_count integer;
+begin
+  if p_now is null then
+    raise exception 'Expiry timestamp is required' using errcode = '22023';
+  end if;
+
+  with expired as (
+    update public.workspace_invitations
+    set status = 'expired', updated_at = p_now
+    where status = 'pending'
+      and expires_at <= p_now
+    returning id, workspace_id, invited_by, email, role
+  )
+  insert into public.workspace_activity_events (
+    workspace_id, actor_id, action, subject_type, subject_id, metadata
+  )
+  select
+    workspace_id,
+    invited_by,
+    'workspace.invitation_expired',
+    'invitation',
+    id,
+    jsonb_build_object('email', email, 'role', role)
+  from expired;
+
+  get diagnostics expired_count = row_count;
+  return expired_count;
+end;
+$$;
+
+revoke all on function public.expire_workspace_invitations(timestamptz) from public, anon, authenticated;
+grant execute on function public.expire_workspace_invitations(timestamptz) to service_role;
