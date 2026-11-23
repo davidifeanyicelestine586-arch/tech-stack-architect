@@ -141,6 +141,7 @@ test("workspace project updates use the atomic RPC for visibility and its audit 
   assert.equal(client.calls.rpc.length, 1);
   assert.equal(client.calls.rpc[0].name, "update_workspace_project_with_audit");
   assert.equal(client.calls.rpc[0].args.p_visibility, "workspace");
+  assert.equal(client.calls.rpc[0].args.p_workspace_id, scope.workspaceId);
   assert.equal(client.calls.rpc[0].args.p_actor_id, scope.userId);
   assert.equal(client.calls.tables.includes("workspace_activity_events"), false);
 });
