@@ -66,6 +66,60 @@ end;
 $expiry$;
 reset role;
 
+set local role service_role;
+do $project_update$
+declare
+  project_snapshot jsonb;
+begin
+  select jsonb_build_object(
+    'schema_version', schema_version,
+    'name', name,
+    'description', description,
+    'domain_id', domain_id,
+    'difficulty', difficulty,
+    'requirements', requirements,
+    'selected_component_ids', selected_component_ids,
+    'active_recipe_id', active_recipe_id,
+    'architecture', architecture,
+    'development_plan', development_plan
+  )
+  into project_snapshot
+  from public.projects
+  where id = 'a0000000-0000-4000-8000-000000000001';
+
+  perform * from public.update_workspace_project_with_audit(
+    'a0000000-0000-4000-8000-000000000001',
+    1,
+    project_snapshot,
+    'workspace',
+    '10000000-0000-4000-8000-000000000001'
+  );
+
+  begin
+    perform * from public.update_workspace_project_with_audit(
+      'a0000000-0000-4000-8000-000000000001',
+      2,
+      project_snapshot,
+      'private',
+      '20000000-0000-4000-8000-000000000002'
+    );
+    raise exception 'Tenant B unexpectedly updated Tenant A project';
+  exception when insufficient_privilege then
+    null;
+  end;
+
+  if not exists (
+    select 1 from public.projects
+    where id = 'a0000000-0000-4000-8000-000000000001'
+      and revision = 2
+      and visibility = 'workspace'
+  ) then
+    raise exception 'Atomic project update did not persist expected revision and visibility';
+  end if;
+end;
+$project_update$;
+reset role;
+
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000001', true);
 
@@ -101,8 +155,8 @@ begin
   end if;
 
   select count(*) into visible_count from public.workspace_activity_events;
-  if visible_count <> 2 then
-    raise exception 'Tenant A expected two visible activity events, received %', visible_count;
+  if visible_count <> 3 then
+    raise exception 'Tenant A expected three visible activity events, received %', visible_count;
   end if;
 
   select count(*) into visible_count from public.workspace_invitations
