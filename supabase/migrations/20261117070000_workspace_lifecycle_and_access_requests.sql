@@ -623,6 +623,7 @@ declare
   actor_workspace_role text;
   actor_project_role text;
   next_visibility text;
+  previous_visibility text;
 begin
   if p_project_id is null or p_actor_id is null or p_expected_revision < 1
     or p_snapshot is null or jsonb_typeof(p_snapshot) <> 'object' then
@@ -677,6 +678,7 @@ begin
     raise exception 'Project visibility is invalid' using errcode = '22023';
   end if;
 
+  previous_visibility := current_project.visibility;
   next_visibility := coalesce(p_visibility, current_project.visibility);
   if next_visibility is distinct from current_project.visibility
     and actor_workspace_role not in ('owner', 'admin')
@@ -705,10 +707,21 @@ begin
   where id = p_project_id
   returning * into current_project;
 
-  if next_visibility is distinct from (select visibility from public.projects where id = p_project_id) then
-    -- This branch is intentionally unreachable after the UPDATE above; the
-    -- previous visibility is captured below in a separate variable instead.
-    null;
+  if next_visibility is distinct from previous_visibility then
+    insert into public.workspace_activity_events (
+      workspace_id, actor_id, action, subject_type, subject_id, metadata
+    )
+    values (
+      current_project.workspace_id,
+      p_actor_id,
+      'project.visibility_changed',
+      'project',
+      p_project_id,
+      jsonb_build_object(
+        'previousVisibility', previous_visibility,
+        'newVisibility', next_visibility
+      )
+    );
   end if;
 
   return next current_project;
