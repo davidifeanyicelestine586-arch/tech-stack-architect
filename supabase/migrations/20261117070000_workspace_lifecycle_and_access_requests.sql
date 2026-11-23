@@ -607,6 +607,7 @@ grant execute on function public.expire_workspace_invitations(timestamptz) to se
 -- Update a workspace project and its visibility audit record in one transaction.
 create or replace function public.update_workspace_project_with_audit(
   p_project_id uuid,
+  p_workspace_id uuid,
   p_expected_revision bigint,
   p_snapshot jsonb,
   p_visibility text,
@@ -625,7 +626,7 @@ declare
   next_visibility text;
   previous_visibility text;
 begin
-  if p_project_id is null or p_actor_id is null or p_expected_revision is null or p_expected_revision < 1
+  if p_project_id is null or p_workspace_id is null or p_actor_id is null or p_expected_revision is null or p_expected_revision < 1
     or p_snapshot is null or jsonb_typeof(p_snapshot) <> 'object' then
     raise exception 'Project update details are invalid' using errcode = '22023';
   end if;
@@ -643,7 +644,7 @@ begin
   where id = p_project_id
   for update;
 
-  if not found or current_project.workspace_id is null then
+  if not found or current_project.workspace_id is null or current_project.workspace_id <> p_workspace_id then
     raise exception 'Workspace project not found' using errcode = 'P0002';
   end if;
 
@@ -735,5 +736,5 @@ begin
 end;
 $project_update$;
 
-revoke all on function public.update_workspace_project_with_audit(uuid, bigint, jsonb, text, uuid) from public, anon, authenticated;
+revoke all on function public.update_workspace_project_with_audit(uuid, uuid, bigint, jsonb, text, uuid) from public, anon, authenticated;
 grant execute on function public.update_workspace_project_with_audit(uuid, bigint, jsonb, text, uuid) to service_role;
