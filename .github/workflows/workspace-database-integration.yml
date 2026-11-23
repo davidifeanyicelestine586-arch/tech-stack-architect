@@ -7,7 +7,7 @@ on:
       - "tests/database/**"
       - ".github/workflows/workspace-database-integration.yml"
   push:
-    branches: [main]
+    branches: ["**"]
     paths:
       - "supabase/migrations/**"
       - "tests/database/**"
