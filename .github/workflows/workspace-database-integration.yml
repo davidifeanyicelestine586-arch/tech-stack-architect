@@ -38,6 +38,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes postgresql-client-16
+
       - name: Bootstrap isolated Supabase-compatible database
         run: |
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 <<'SQL'
