@@ -625,7 +625,7 @@ declare
   next_visibility text;
   previous_visibility text;
 begin
-  if p_project_id is null or p_actor_id is null or p_expected_revision < 1
+  if p_project_id is null or p_actor_id is null or p_expected_revision is null or p_expected_revision < 1
     or p_snapshot is null or jsonb_typeof(p_snapshot) <> 'object' then
     raise exception 'Project update details are invalid' using errcode = '22023';
   end if;
@@ -649,6 +649,13 @@ begin
 
   if current_project.revision <> p_expected_revision then
     raise exception 'Project revision changed before the update completed' using errcode = '40001';
+  end if;
+
+  if not exists (
+    select 1 from public.workspaces
+    where id = current_project.workspace_id and status = 'active'
+  ) then
+    raise exception 'Workspace project not found' using errcode = 'P0002';
   end if;
 
   select role into actor_workspace_role
