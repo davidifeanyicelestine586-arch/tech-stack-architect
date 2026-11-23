@@ -6,12 +6,6 @@ on:
       - "supabase/migrations/**"
       - "tests/database/**"
       - ".github/workflows/workspace-database-integration.yml"
-  push:
-    branches: ["**"]
-    paths:
-      - "supabase/migrations/**"
-      - "tests/database/**"
-      - ".github/workflows/workspace-database-integration.yml"
 
 permissions:
   contents: read
