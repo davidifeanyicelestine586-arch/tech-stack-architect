@@ -340,20 +340,21 @@ export class WorkspaceService {
       throw new PersistenceError("FORBIDDEN", "Only workspace owners and admins can manage invitations.");
     }
     try {
+      const expiry = await this.client.rpc("expire_workspace_invitations", {
+        p_now: new Date().toISOString(),
+      });
+      if (expiry.error) throw expiry.error;
       const result = await this.client
         .from("workspace_invitations")
         .select("id, email, role, status, expires_at, created_at, accepted_at, revoked_at")
         .eq("workspace_id", workspaceId)
         .order("created_at", { ascending: false });
       if (result.error) throw result.error;
-      const now = Date.now();
       return (result.data || []).map((invitation) => ({
         id: invitation.id,
         email: invitation.email,
         role: invitation.role,
-        status: invitation.status === "pending" && new Date(invitation.expires_at).getTime() <= now
-          ? "expired"
-          : invitation.status,
+        status: invitation.status,
         expiresAt: invitation.expires_at,
         createdAt: invitation.created_at,
         acceptedAt: invitation.accepted_at,
