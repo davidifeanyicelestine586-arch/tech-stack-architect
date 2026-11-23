@@ -237,6 +237,7 @@ test("workspace project snapshots and visibility audit events commit atomically"
   assert.match(workspaceLifecycleMigration, /revision changed before the update completed/i);
   assert.match(workspaceLifecycleMigration, /insert into public\\.workspace_activity_events/i);
   assert.match(workspaceLifecycleMigration, /'project\\.visibility_changed'/i);
+  assert.match(workspaceLifecycleMigration, /coalesce\\(actor_project_role in \\('project_admin', 'editor'\\), false\\)/i);
   assert.match(workspaceLifecycleMigration, /revoke all on function public\\.update_workspace_project_with_audit/i);
   assert.match(workspaceLifecycleMigration, /grant execute on function public\\.update_workspace_project_with_audit/i);
 });
