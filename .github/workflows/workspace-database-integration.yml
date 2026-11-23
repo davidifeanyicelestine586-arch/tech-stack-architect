@@ -66,22 +66,6 @@ jobs:
             select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid;
           $$;
 
-          create or replace function extensions.gen_random_uuid()
-          returns uuid
-          language sql
-          volatile
-          as $$
-            select pg_catalog.gen_random_uuid();
-          $$;
-
-          -- The application owns the base projects table outside this workspace
-          -- migration set. This fixture supplies the columns these migrations extend.
-          create table public.projects (
-            id uuid primary key default extensions.gen_random_uuid(),
-            owner_id uuid references auth.users(id) on delete cascade,
-            anonymous_session_id text,
-            updated_at timestamptz not null default now()
-          );
           SQL
 
       - name: Apply every workspace migration in order
