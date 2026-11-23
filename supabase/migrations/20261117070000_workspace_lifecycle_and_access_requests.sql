@@ -737,4 +737,4 @@ end;
 $project_update$;
 
 revoke all on function public.update_workspace_project_with_audit(uuid, uuid, bigint, jsonb, text, uuid) from public, anon, authenticated;
-grant execute on function public.update_workspace_project_with_audit(uuid, bigint, jsonb, text, uuid) to service_role;
+grant execute on function public.update_workspace_project_with_audit(uuid, uuid, bigint, jsonb, text, uuid) to service_role;
