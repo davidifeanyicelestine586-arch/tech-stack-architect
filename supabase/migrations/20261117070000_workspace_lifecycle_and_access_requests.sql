@@ -603,6 +603,7 @@ $$;
 
 revoke all on function public.expire_workspace_invitations(timestamptz) from public, anon, authenticated;
 grant execute on function public.expire_workspace_invitations(timestamptz) to service_role;
+grant usage on schema extensions to service_role;
 
 -- Update a workspace project and its visibility audit record in one transaction.
 create or replace function public.update_workspace_project_with_audit(
