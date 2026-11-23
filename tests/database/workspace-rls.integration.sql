@@ -54,7 +54,7 @@ where workspace.created_by = '10000000-0000-4000-8000-000000000001'
   and workspace.is_personal = true;
 
 set local role service_role;
-do $
+do $expiry$
 declare
   expired_count integer;
 begin
@@ -63,7 +63,7 @@ begin
     raise exception 'Expected one expired invitation to be materialized, received %', expired_count;
   end if;
 end;
-$;
+$expiry$;
 reset role;
 
 set local role authenticated;
