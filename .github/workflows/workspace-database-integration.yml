@@ -1,0 +1,90 @@
+name: Workspace database integration
+
+on:
+  pull_request:
+    paths:
+      - "supabase/migrations/**"
+      - "tests/database/**"
+      - ".github/workflows/workspace-database-integration.yml"
+  push:
+    branches: [main]
+    paths:
+      - "supabase/migrations/**"
+      - "tests/database/**"
+      - ".github/workflows/workspace-database-integration.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  workspace-database-integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: workspace_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d workspace_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/workspace_test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bootstrap isolated Supabase-compatible database
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 <<'SQL'
+          create role anon nologin;
+          create role authenticated nologin;
+          create role service_role nologin bypassrls;
+
+          create schema auth;
+          create schema extensions;
+
+          create table auth.users (
+            id uuid primary key,
+            email text unique
+          );
+
+          create or replace function auth.uid()
+          returns uuid
+          language sql
+          stable
+          as $$
+            select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid;
+          $$;
+
+          create or replace function extensions.gen_random_uuid()
+          returns uuid
+          language sql
+          volatile
+          as $$
+            select pg_catalog.gen_random_uuid();
+          $$;
+
+          -- The application owns the base projects table outside this workspace
+          -- migration set. This fixture supplies the columns these migrations extend.
+          create table public.projects (
+            id uuid primary key default extensions.gen_random_uuid(),
+            owner_id uuid references auth.users(id) on delete cascade,
+            anonymous_session_id text,
+            updated_at timestamptz not null default now()
+          );
+          SQL
+
+      - name: Apply every workspace migration in order
+        run: |
+          for migration in supabase/migrations/*.sql; do
+            echo "Applying $migration"
+            psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$migration"
+          done
+
+      - name: Verify tenant isolation through authenticated RLS
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/database/workspace-rls.integration.sql
