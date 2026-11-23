@@ -673,7 +673,7 @@ begin
     or (
       actor_workspace_role = 'member'
       and (
-        actor_project_role in ('project_admin', 'editor')
+        coalesce(actor_project_role in ('project_admin', 'editor'), false)
         or (actor_project_role is distinct from 'viewer' and current_project.visibility = 'workspace')
       )
     )
