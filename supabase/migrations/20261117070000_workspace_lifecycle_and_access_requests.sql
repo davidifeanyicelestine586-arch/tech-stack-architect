@@ -603,3 +603,117 @@ $$;
 
 revoke all on function public.expire_workspace_invitations(timestamptz) from public, anon, authenticated;
 grant execute on function public.expire_workspace_invitations(timestamptz) to service_role;
+
+-- Update a workspace project and its visibility audit record in one transaction.
+create or replace function public.update_workspace_project_with_audit(
+  p_project_id uuid,
+  p_expected_revision bigint,
+  p_snapshot jsonb,
+  p_visibility text,
+  p_actor_id uuid
+)
+returns setof public.projects
+language plpgsql
+security invoker
+set search_path = public
+as $project_update$
+declare
+  current_project public.projects%rowtype;
+  snapshot_patch public.projects%rowtype;
+  actor_workspace_role text;
+  actor_project_role text;
+  next_visibility text;
+begin
+  if p_project_id is null or p_actor_id is null or p_expected_revision < 1
+    or p_snapshot is null or jsonb_typeof(p_snapshot) <> 'object' then
+    raise exception 'Project update details are invalid' using errcode = '22023';
+  end if;
+
+  if not (p_snapshot ?& array[
+    'schema_version', 'name', 'description', 'domain_id', 'difficulty',
+    'requirements', 'selected_component_ids', 'active_recipe_id',
+    'architecture', 'development_plan'
+  ]) then
+    raise exception 'Project snapshot is incomplete' using errcode = '22023';
+  end if;
+
+  select * into current_project
+  from public.projects
+  where id = p_project_id
+  for update;
+
+  if not found or current_project.workspace_id is null then
+    raise exception 'Workspace project not found' using errcode = 'P0002';
+  end if;
+
+  if current_project.revision <> p_expected_revision then
+    raise exception 'Project revision changed before the update completed' using errcode = '40001';
+  end if;
+
+  select role into actor_workspace_role
+  from public.workspace_memberships
+  where workspace_id = current_project.workspace_id
+    and user_id = p_actor_id;
+
+  select role into actor_project_role
+  from public.project_memberships
+  where project_id = p_project_id
+    and user_id = p_actor_id;
+
+  if actor_workspace_role is null or not (
+    actor_workspace_role in ('owner', 'admin')
+    or (
+      actor_workspace_role = 'member'
+      and (
+        actor_project_role in ('project_admin', 'editor')
+        or (actor_project_role is distinct from 'viewer' and current_project.visibility = 'workspace')
+      )
+    )
+  ) then
+    raise exception 'Project write permission is required' using errcode = '42501';
+  end if;
+
+  if p_visibility is not null and p_visibility not in ('private', 'workspace') then
+    raise exception 'Project visibility is invalid' using errcode = '22023';
+  end if;
+
+  next_visibility := coalesce(p_visibility, current_project.visibility);
+  if next_visibility is distinct from current_project.visibility
+    and actor_workspace_role not in ('owner', 'admin')
+    and actor_project_role is distinct from 'project_admin' then
+    raise exception 'Only a Project Admin can change project visibility' using errcode = '42501';
+  end if;
+
+  select * into snapshot_patch
+  from jsonb_populate_record(null::public.projects, p_snapshot);
+
+  update public.projects
+  set
+    name = snapshot_patch.name,
+    description = snapshot_patch.description,
+    domain_id = snapshot_patch.domain_id,
+    difficulty = snapshot_patch.difficulty,
+    requirements = snapshot_patch.requirements,
+    selected_component_ids = snapshot_patch.selected_component_ids,
+    active_recipe_id = snapshot_patch.active_recipe_id,
+    architecture = snapshot_patch.architecture,
+    development_plan = snapshot_patch.development_plan,
+    schema_version = snapshot_patch.schema_version,
+    visibility = next_visibility,
+    revision = current_project.revision + 1,
+    updated_at = timezone('utc', now())
+  where id = p_project_id
+  returning * into current_project;
+
+  if next_visibility is distinct from (select visibility from public.projects where id = p_project_id) then
+    -- This branch is intentionally unreachable after the UPDATE above; the
+    -- previous visibility is captured below in a separate variable instead.
+    null;
+  end if;
+
+  return next current_project;
+end;
+$project_update$;
+
+revoke all on function public.update_workspace_project_with_audit(uuid, bigint, jsonb, text, uuid) from public, anon, authenticated;
+grant execute on function public.update_workspace_project_with_audit(uuid, bigint, jsonb, text, uuid) to service_role;
