@@ -89,6 +89,7 @@ begin
 
   perform * from public.update_workspace_project_with_audit(
     'a0000000-0000-4000-8000-000000000001',
+    (select id from public.workspaces where created_by = '10000000-0000-4000-8000-000000000001' and is_personal = true),
     1,
     project_snapshot,
     'workspace',
@@ -98,6 +99,7 @@ begin
   begin
     perform * from public.update_workspace_project_with_audit(
       'a0000000-0000-4000-8000-000000000001',
+      (select id from public.workspaces where created_by = '10000000-0000-4000-8000-000000000001' and is_personal = true),
       2,
       project_snapshot,
       'private',
