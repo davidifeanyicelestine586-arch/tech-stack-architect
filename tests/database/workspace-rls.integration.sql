@@ -38,6 +38,34 @@ from public.workspaces workspace
 where workspace.created_by = '20000000-0000-4000-8000-000000000002'
   and workspace.is_personal = true;
 
+insert into public.workspace_invitations (
+  workspace_id, email, role, token_hash, status, invited_by, expires_at
+)
+select
+  workspace.id,
+  'expired@example.test',
+  'member',
+  repeat('a', 64),
+  'pending',
+  workspace.created_by,
+  now() - interval '1 day'
+from public.workspaces workspace
+where workspace.created_by = '10000000-0000-4000-8000-000000000001'
+  and workspace.is_personal = true;
+
+set local role service_role;
+do $
+declare
+  expired_count integer;
+begin
+  expired_count := public.expire_workspace_invitations(now());
+  if expired_count <> 1 then
+    raise exception 'Expected one expired invitation to be materialized, received %', expired_count;
+  end if;
+end;
+$;
+reset role;
+
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000001', true);
 
@@ -73,8 +101,14 @@ begin
   end if;
 
   select count(*) into visible_count from public.workspace_activity_events;
+  if visible_count <> 2 then
+    raise exception 'Tenant A expected two visible activity events, received %', visible_count;
+  end if;
+
+  select count(*) into visible_count from public.workspace_invitations
+  where status = 'expired';
   if visible_count <> 1 then
-    raise exception 'Tenant A expected exactly one visible activity event, received %', visible_count;
+    raise exception 'Tenant A expected one persisted expired invitation, received %', visible_count;
   end if;
 end;
 $$;
