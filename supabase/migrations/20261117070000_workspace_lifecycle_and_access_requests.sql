@@ -187,7 +187,7 @@ returns text
 language plpgsql
 security invoker
 set search_path = public
-as $$$
+as $
 declare
   actor_role text;
   normalized_name text;
@@ -234,7 +234,7 @@ returns boolean
 language plpgsql
 security invoker
 set search_path = public
-as $$$
+as $
 declare
   workspace_record public.workspaces%rowtype;
 begin
@@ -297,7 +297,7 @@ returns boolean
 language plpgsql
 security invoker
 set search_path = public
-as $$$
+as $
 begin
   if not exists (
     select 1 from public.workspace_memberships
@@ -333,7 +333,7 @@ returns boolean
 language plpgsql
 security invoker
 set search_path = public
-as $$$
+as $
 begin
   if not exists (
     select 1 from public.workspace_memberships
@@ -370,7 +370,7 @@ returns text
 language plpgsql
 security invoker
 set search_path = public
-as $$$
+as $
 declare
   actor_role text;
 begin
@@ -420,7 +420,7 @@ returns uuid
 language plpgsql
 security invoker
 set search_path = public
-as $$$
+as $
 declare
   request_id uuid;
 begin
@@ -473,7 +473,7 @@ returns text
 language plpgsql
 security invoker
 set search_path = public
-as $$$
+as $
 declare
   actor_role text;
   access_request public.workspace_access_requests%rowtype;
