@@ -9,9 +9,34 @@ insert into auth.users (id, email) values
 
 insert into public.projects (
   id, owner_id, workspace_id, visibility, name, description, domain_id, difficulty, updated_at
-) values
-  ('a0000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000001', 'a1000000-0000-4000-8000-000000000001', 'private', 'Tenant A project', 'Tenant A isolated project', 'web', 'Beginner', now()),
-  ('b0000000-0000-4000-8000-000000000002', '20000000-0000-4000-8000-000000000002', 'b2000000-0000-4000-8000-000000000002', 'private', 'Tenant B project', 'Tenant B isolated project', 'web', 'Beginner', now());
+)
+select
+  'a0000000-0000-4000-8000-000000000001',
+  '10000000-0000-4000-8000-000000000001',
+  workspace.id,
+  'private',
+  'Tenant A project',
+  'Tenant A isolated project',
+  'web',
+  'Beginner',
+  now()
+from public.workspaces workspace
+where workspace.created_by = '10000000-0000-4000-8000-000000000001'
+  and workspace.is_personal = true
+union all
+select
+  'b0000000-0000-4000-8000-000000000002',
+  '20000000-0000-4000-8000-000000000002',
+  workspace.id,
+  'private',
+  'Tenant B project',
+  'Tenant B isolated project',
+  'web',
+  'Beginner',
+  now()
+from public.workspaces workspace
+where workspace.created_by = '20000000-0000-4000-8000-000000000002'
+  and workspace.is_personal = true;
 
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000001', true);
