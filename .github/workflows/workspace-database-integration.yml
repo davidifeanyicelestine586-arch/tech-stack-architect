@@ -53,6 +53,10 @@ jobs:
           create schema auth;
           create schema extensions;
 
+          grant usage on schema public to service_role;
+          alter default privileges in schema public grant all on tables to service_role;
+          alter default privileges in schema public grant all on sequences to service_role;
+
           create table auth.users (
             id uuid primary key,
             email text unique
