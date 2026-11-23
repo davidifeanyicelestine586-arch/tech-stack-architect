@@ -7,27 +7,25 @@ insert into auth.users (id, email) values
   ('10000000-0000-4000-8000-000000000001', 'tenant-a@example.test'),
   ('20000000-0000-4000-8000-000000000002', 'tenant-b@example.test');
 
-insert into public.projects (id, owner_id, workspace_id, visibility, updated_at)
-select
-  'a0000000-0000-4000-8000-000000000001',
-  '10000000-0000-4000-8000-000000000001',
-  id,
-  'private',
-  now()
-from public.workspaces
-where created_by = '10000000-0000-4000-8000-000000000001'
-  and is_personal = true;
+insert into public.workspaces (id, name, is_personal, created_by) values
+  ('a1000000-0000-4000-8000-000000000001', 'Tenant A Personal', true, '10000000-0000-4000-8000-000000000001'),
+  ('b2000000-0000-4000-8000-000000000002', 'Tenant B Personal', true, '20000000-0000-4000-8000-000000000002');
 
-insert into public.projects (id, owner_id, workspace_id, visibility, updated_at)
-select
-  'b0000000-0000-4000-8000-000000000002',
-  '20000000-0000-4000-8000-000000000002',
-  id,
-  'private',
-  now()
-from public.workspaces
-where created_by = '20000000-0000-4000-8000-000000000002'
-  and is_personal = true;
+insert into public.workspace_memberships (workspace_id, user_id, role, added_by) values
+  ('a1000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000001', 'owner', '10000000-0000-4000-8000-000000000001'),
+  ('b2000000-0000-4000-8000-000000000002', '20000000-0000-4000-8000-000000000002', 'owner', '20000000-0000-4000-8000-000000000002');
+
+insert into public.workspace_activity_events (
+  workspace_id, actor_id, action, subject_type, subject_id, metadata
+) values
+  ('a1000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000001', 'workspace.created', 'workspace', 'a1000000-0000-4000-8000-000000000001', '{}'::jsonb),
+  ('b2000000-0000-4000-8000-000000000002', '20000000-0000-4000-8000-000000000002', 'workspace.created', 'workspace', 'b2000000-0000-4000-8000-000000000002', '{}'::jsonb);
+
+insert into public.projects (
+  id, owner_id, workspace_id, visibility, name, description, domain_id, difficulty, updated_at
+) values
+  ('a0000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000001', 'a1000000-0000-4000-8000-000000000001', 'private', 'Tenant A project', 'Tenant A isolated project', 'web', 'Beginner', now()),
+  ('b0000000-0000-4000-8000-000000000002', '20000000-0000-4000-8000-000000000002', 'b2000000-0000-4000-8000-000000000002', 'private', 'Tenant B project', 'Tenant B isolated project', 'web', 'Beginner', now());
 
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000001', true);
