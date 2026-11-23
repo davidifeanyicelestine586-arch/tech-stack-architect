@@ -40,6 +40,7 @@ begin
 
   if p_token_hash is null or p_token_hash !~ '^[0-9a-f]{64}$' then
     raise exception 'Invitation token hash is invalid' using errcode = '22023';
+  end if;
 
   if p_expires_at <= now() or p_expires_at > now() + interval '30 days' then
     raise exception 'Invitation expiry is invalid' using errcode = '22023';
