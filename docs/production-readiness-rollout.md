@@ -1,6 +1,6 @@
 # Phase 1 production-readiness rollout checkpoint
 
-**Last verified:** 24 November 2026  
+**Last verified:** 24 November 2026, 13:12 UTC+1  
 **Repository:** `davidifeanyicelestine586-arch/tech-stack-architect`  
 **Active implementation PR:** [#91 — Phase 1 production readiness foundations](https://github.com/davidifeanyicelestine586-arch/tech-stack-architect/pull/91)  
 **Implementation branch:** `feat/phase-1-production-readiness`
@@ -10,10 +10,10 @@ This is an operational checkpoint, not production deployment approval. No worksp
 ## Verified repository state
 
 - PR #89 (`feat/phase-1-product-blueprint`) remains open and draft.
-- PR #91 is based on PR #89's head and is 55 commits ahead with no commits behind at the time of comparison.
-- PR #91 remains open and draft.
-- PR #91's latest reviewed commit before this checkpoint was `6139ef0`; its six workflows passed: Quality Gate, SEO Release Verification, Header Responsive Collision Audit, Lighthouse Performance Baseline, Accessibility Regression, and Workspace database integration.
-- PR #91 has a successful Vercel preview deployment. A preview deployment is not production smoke-test evidence.
+- PR #91 targets `main`, remains open and draft, and currently points to `fc5fb8773dc0d83b69bb575c66c4cf1c73c09ee3`.
+- PR #89 (`feat/phase-1-product-blueprint`) also remains open and draft; neither PR has been merged.
+- All six required workflows completed successfully on the current PR #91 head: Quality Gate, SEO Release Verification, Header Responsive Collision Audit, Lighthouse Performance Baseline, Accessibility Regression, and Workspace database integration.
+- The Vercel commit status is successful. A preview deployment is not production smoke-test evidence.
 - The active production branch is documented as `main`.
 
 ## Production database observations
@@ -47,7 +47,7 @@ The nine new Phase 1 workspace migrations begin at `20261117000000` and end at `
 
 The workspace database integration workflow was changed from `postgres:16` to `postgres:17` to match the connected production major version.
 
-The PostgreSQL 17 integration run completed successfully on commit `4b28cba`. The migration filename reconciliation has since retriggered the database integration workflow; its result must be green on the current PR head. These CI runs apply the migrations to a disposable database and do not change production.
+The PostgreSQL 17 integration run completed successfully on the current PR #91 head (`fc5fb8773dc0d83b69bb575c66c4cf1c73c09ee3`). The latest current-head run is green. These CI runs apply the migrations to a disposable database and do not change production.
 
 ## Scheduled invitation maintenance
 
@@ -58,33 +58,33 @@ It requires repository Actions secrets:
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
 
-The workflow was hardened to fail visibly if either secret is missing or the URL is not HTTPS. Secret presence and a successful scheduled/manual execution have not yet been verified. Do not treat an unexecuted or skipped maintenance job as evidence that expiry processing is operational.
+The workflow was hardened to fail visibly if either secret is missing or the URL is not HTTPS. The connected GitHub integration does not expose repository-secret endpoints, so secret presence could not be verified without accessing secret values; no secret values were requested or read. The connected GitHub actions also do not provide a workflow-dispatch operation, so a manual maintenance run and successful RPC execution remain unverified. Do not treat the workflow definition or green PR CI as evidence that expiry processing is operational.
 
 ## Supabase security and performance findings
 
-The Supabase security advisor reported:
+The Supabase security advisor was re-run on 24 November 2026 and reported:
 
-- **Warning:** leaked-password protection is disabled in Supabase Auth. Enable and verify this setting in the Supabase Auth security configuration before production rollout.
+- **Warning:** leaked-password protection is disabled in Supabase Auth. Enable and verify this setting in the Supabase Dashboard under Authentication settings before production rollout. Supabase documents this feature as available on Pro plan and above; the connected project plan was not verified in this pass. See [Supabase password security documentation](https://supabase.com/docs/guides/auth/password-security).
 
-The performance advisor reported four existing RLS policy warnings on `public.projects` because `auth.uid()` is re-evaluated per row. The suggested optimization is to wrap the call as `(select auth.uid())`. These are performance findings, not proof of an authorization bypass. Assess them separately and test the replacement policies before applying any production DDL.
+The performance advisor was re-run on 24 November 2026 and reported four existing RLS policy warnings on `public.projects` because `auth.uid()` is re-evaluated per row. The suggested optimization is to wrap the call as `(select auth.uid())`. These are performance findings, not proof of an authorization bypass. The advisor also reported two unused-index informational findings; do not drop either index without workload evidence. The health advisor returned no findings. Assess the RLS and index findings separately and test any proposed changes before applying production DDL.
 
 The health advisor returned no findings at the time of inspection.
 
 ## Remaining release gates
 
-1. Reconcile the two production migration-version mismatches and prove the repository's baseline migration contents match what is already applied.
-2. Add/maintain a PostgreSQL 17 migration and RLS integration gate (now updated; the latest run must be green on the current PR head).
-3. Verify the GitHub Actions secrets are configured without exposing their values, then execute the invitation-maintenance workflow and confirm the RPC succeeds.
-4. Enable Supabase leaked-password protection and record verification.
-5. Review and, if approved, remediate the four existing RLS performance warnings in a separate tested migration.
-6. Prepare a production backup and prove the restore procedure for the deployed Supabase plan.
-7. Review the full Phase 1 migration diff, data backfill effects, RLS and service-role boundaries, and rollback/recovery plan.
-8. Obtain explicit production migration approval before applying any workspace migration.
-9. After an approved migration, run production smoke tests for auth, workspace creation/selection, invitations, membership, project access, persistence, and audit events.
-10. Complete invitation email delivery separately after sender-domain verification and email-provider approval.
+1. **Completed:** baseline migration filenames reconciled with the three production migration versions; confirm once more with `supabase migration list` from the rollout environment before applying anything.
+2. **Completed:** PostgreSQL 17 migration and RLS integration gate; all six required workflows are green on current PR #91 head.
+3. **Blocked/unverified:** verify the repository Actions secrets `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in GitHub Settings without exposing values, then manually run `Workspace invitation maintenance` and confirm the RPC succeeds.
+4. **Blocked/manual dashboard action:** enable Supabase leaked-password protection (if the project plan supports it) and rerun the security advisor.
+5. **Review required:** evaluate four existing RLS performance warnings and two unused-index notices; implement only evidence-backed changes in a separate tested migration.
+6. **Evidence required:** verify backup coverage and execute a restore rehearsal using the project's supported backup/restore process.
+7. **Review required:** complete a production migration diff, data-backfill impact review, RLS/service-role review, and rollback/recovery plan.
+8. **Approval required:** obtain explicit production migration approval before applying any workspace migration.
+9. **Post-approval:** run production smoke tests for auth, workspace creation/selection, invitations, membership, project access, persistence, and audit events.
+10. **Separate product decision:** complete invitation email delivery after sender-domain verification and explicit email-provider approval.
 
 ## Current decision
 
-**Do not merge PR #91 or apply migrations to production yet.** Keep PR #91 as a draft until the current CI run is green, migration history is reconciled, required secrets and Auth security settings are verified, and backup/restore and rollout plans are approved.
+**CI is green; production readiness is not complete. Do not merge PR #91 or apply migrations to production yet.** Keep PR #91 as a draft until the GitHub secret prerequisites and maintenance run are verified, Auth leaked-password protection is enabled, backup/restore and rollout plans are evidenced, and production migration approval is explicitly granted.
 
 Email delivery remains a separate decision and is not silently assumed to use any provider.
