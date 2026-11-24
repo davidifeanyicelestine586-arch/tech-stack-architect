@@ -25,14 +25,15 @@ jobs:
         shell: bash
         run: |
           if [[ -z "${SUPABASE_URL}" || -z "${SUPABASE_SERVICE_ROLE_KEY}" ]]; then
-            echo "configured=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::Invitation expiry was skipped because SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY repository secrets are not configured."
-          else
-            echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "::error::Invitation expiry cannot run: configure SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY repository secrets."
+            exit 1
+          fi
+          if [[ ! "${SUPABASE_URL}" =~ ^https://[A-Za-z0-9.-]+$ ]]; then
+            echo "::error::SUPABASE_URL must be an HTTPS project URL."
+            exit 1
           fi
 
       - name: Materialize expired invitations
-        if: steps.credentials.outputs.configured == 'true'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
