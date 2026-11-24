@@ -1,0 +1,78 @@
+name: Workspace database integration
+
+on:
+  pull_request:
+    paths:
+      - "supabase/migrations/**"
+      - "tests/database/**"
+      - ".github/workflows/workspace-database-integration.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  workspace-database-integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: workspace_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d workspace_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/workspace_test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes postgresql-client
+
+      - name: Bootstrap isolated Supabase-compatible database
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 <<'SQL'
+          create role anon nologin;
+          create role authenticated nologin;
+          create role service_role nologin bypassrls;
+
+          create schema auth;
+          create schema extensions;
+
+          grant usage on schema public to service_role;
+          grant usage on schema extensions to service_role;
+          alter default privileges in schema public grant all on tables to service_role;
+          alter default privileges in schema public grant all on sequences to service_role;
+
+          create table auth.users (
+            id uuid primary key,
+            email text unique
+          );
+
+          create or replace function auth.uid()
+          returns uuid
+          language sql
+          stable
+          as $$
+            select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid;
+          $$;
+
+          SQL
+
+      - name: Apply every workspace migration in order
+        run: |
+          for migration in supabase/migrations/*.sql; do
+            echo "Applying $migration"
+            psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$migration"
+          done
+
+      - name: Verify tenant isolation through authenticated RLS
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/database/workspace-rls.integration.sql

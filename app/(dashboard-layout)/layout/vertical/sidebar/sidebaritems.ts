@@ -6,6 +6,7 @@ import {
   BookMarked,
   ClipboardList,
   Network,
+  BriefcaseBusiness,
   LucideIcon,
 } from "lucide-react";
 import { uniqueId } from "lodash";
@@ -62,6 +63,7 @@ const SidebarContent: MenuItem[] = [
       { id: uniqueId("nav_"), name: route("validation").label, icon: ShieldCheck, url: route("validation").href, routeId: "validation", mobilePrimary: true },
       { id: uniqueId("nav_"), name: route("plan").label, icon: ClipboardList, url: route("plan").href, routeId: "plan" },
       { id: uniqueId("nav_"), name: route("blueprint").label, icon: FileCode2, url: route("blueprint").href, routeId: "blueprint", mobilePrimary: true },
+      { id: uniqueId("nav_"), name: "Workspaces", icon: BriefcaseBusiness, url: "/app/workspaces" },
       { id: uniqueId("nav_"), name: route("docs").label, icon: BookMarked, url: route("docs").href, routeId: "docs" },
     ],
   },
