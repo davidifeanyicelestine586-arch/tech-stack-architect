@@ -30,23 +30,24 @@ The connected Supabase project reported:
 - `pg_cron` is available but not installed; the current expiry scheduler uses GitHub Actions instead.
 - No workspace migration has been applied to this project during this work.
 
-### Migration-history reconciliation — release blocker
+### Migration-history reconciliation — filename mismatch resolved; rollout still gated
 
-The repository migration filenames currently use these versions:
+The two repository migration files whose versions differed from the production history have been renamed on the PR #91 branch to match the exact recorded production versions:
 
-- `20260824000000_create_projects.sql`
-- `20260909000000_add_authenticated_project_rls.sql`
-- `20261116000000_project_snapshot_v2.sql`
+- `20260909131926_add_authenticated_project_rls.sql`
+- `20261116085154_project_snapshot_v2.sql`
 
-The latter two version prefixes do not match the recorded production versions, although their migration names match. Supabase migration identity is version-based. Do not run `supabase db push`, `migration repair`, or apply the Phase 1 migrations until the content of the already-applied production migrations has been reconciled with the repository files and a reviewed migration-history repair plan has been approved.
+The original repository files were not rewritten; the existing SQL blobs were preserved and only the versioned paths changed. The live `public.projects` columns, constraints, and four authenticated-owner RLS policies were inspected and match the definitions in those two baseline migrations. The first migration version, `20260824000000`, already matched.
 
-The Phase 1 workspace migrations are the nine files beginning `20261117000000` through `20261117080000`. Their application must be tested against the production PostgreSQL major version and a production-schema-compatible fixture before rollout.
+This resolves the local filename/version mismatch. It does **not** constitute a migration push or production rollout. Re-run `supabase migration list` after checking out the updated branch and confirm that all three baseline versions match remote history before any apply operation. Do not run `supabase db push`, `migration repair`, or apply the Phase 1 migrations without an explicit production rollout approval.
+
+The nine new Phase 1 workspace migrations begin at `20261117000000` and end at `20261117080000`. Their application must be tested against PostgreSQL 17 and a production-schema-compatible fixture before rollout.
 
 ## CI compatibility change
 
 The workspace database integration workflow was changed from `postgres:16` to `postgres:17` to match the connected production major version.
 
-The PostgreSQL 17 integration run completed successfully on commit `4b28cba`. This verified the migration chain and tenant-isolation SQL in a disposable CI database; it did not change or validate the production database itself.
+The PostgreSQL 17 integration run completed successfully on commit `4b28cba`. The migration filename reconciliation has since retriggered the database integration workflow; its result must be green on the current PR head. These CI runs apply the migrations to a disposable database and do not change production.
 
 ## Scheduled invitation maintenance
 
