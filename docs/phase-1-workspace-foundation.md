@@ -51,6 +51,16 @@ This workstream adds the workspace and collaboration foundation while preserving
 - Fall back to a valid personal workspace when the saved active workspace is missing, malformed, archived, or no longer accessible.
 - Reconcile baseline migration filenames with the versions recorded by the connected production database.
 
+## Operational verification — 24 November 2026
+
+- Current implementation PR #91 head: `36331dc41797a4f97db934da673fc8b7be339224` after the production-readiness record update.
+- All six required CI workflows were green on the preceding code head; the documentation-only update has triggered a fresh PR CI cycle.
+- Connected production Supabase project remains healthy on PostgreSQL 17.11.
+- Only the three baseline migrations are recorded as applied; none of the nine workspace migrations has been applied to production.
+- Supabase security advisor still reports leaked-password protection disabled. Four existing RLS performance warnings and two unused-index informational notices remain for review.
+- GitHub Actions secret presence and a successful invitation-maintenance execution remain unverified because the connected GitHub integration does not expose repository-secret or workflow-dispatch operations.
+- No production database changes, Auth configuration changes, or PR merges were made.
+
 ## Remaining release gates
 
 - Invitation email delivery provider integration (current invitation links are copied and sent manually); sender DNS and provider choice remain unverified.
