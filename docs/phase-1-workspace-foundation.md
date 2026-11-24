@@ -27,7 +27,7 @@ This workstream adds the workspace and collaboration foundation while preserving
   - Workspace membership caps project permissions; project grants cannot bypass workspace membership or a workspace Viewer restriction.
 - Database trigger that grants the project creator Project Admin membership atomically when a workspace project is inserted.
 - Workspace-aware RLS policies for projects, workspaces, memberships, invitations, project memberships, and activity events. Browser database roles have read-only grants and no direct mutation grants.
-- Last-active workspace cookie and per-workspace last-active project restoration, with server-side authorization rechecked on restoration. When a signed-in user has exactly one active workspace, the app automatically selects it on workspace bootstrap.
+- Last-active workspace cookie and per-workspace last-active project restoration, with server-side authorization rechecked on restoration. When the saved selection is absent or invalid, the selector falls back to the user's active personal workspace, then to another active membership; no membership is silently granted.
 - Activity events for workspace creation, invitation lifecycle, member changes, ownership transfer, archive/restore, access-request review, Project Admin reassignment, project membership changes, and project visibility changes.
 - Regression coverage for API authentication, active workspace selection, role matrix, project repository authorization, invitation workflows, member management, migration contracts, and RLS grants.
 
@@ -42,12 +42,23 @@ This workstream adds the workspace and collaboration foundation while preserving
 - Private projects are filtered server-side and through workspace-aware RLS policies.
 - Invitation links contain a one-time raw token only in the returned URL; the database stores only its SHA-256 hash.
 
-## Deliberate remaining work
+## Production-readiness follow-up now implemented in PR #91
 
-- Email delivery provider integration (current invitation links are copied and sent manually).
-- Background expiry-state materialization for pending invitations (expired invitations are treated as expired at read/accept time).
-- Automatic routing when a returning user has multiple active workspaces but no valid last-active selection; the workspace manager remains the explicit chooser.
-- Cross-tenant integration tests against a running Supabase test database, including applying every migration and verifying real RLS behavior.
-- A durable transactional audit path for project visibility changes (the current repository records these events best-effort after the project update).
+- Materialize expired invitation statuses and write expiry activity events; invoke expiry materialization when invitation lists are loaded.
+- Add a daily GitHub Actions maintenance workflow for invitation expiry.
+- Add a PostgreSQL 17 CI integration harness that applies the complete migration chain and tests authenticated cross-tenant RLS isolation.
+- Move project snapshot updates and project-visibility audit writes into one atomic database RPC transaction with workspace scoping, role checks, and optimistic revision protection.
+- Fall back to a valid personal workspace when the saved active workspace is missing, malformed, archived, or no longer accessible.
+- Reconcile baseline migration filenames with the versions recorded by the connected production database.
+
+## Remaining release gates
+
+- Invitation email delivery provider integration (current invitation links are copied and sent manually); sender DNS and provider choice remain unverified.
+- Verify the required GitHub Actions Supabase secrets and a successful scheduled/manual expiry run.
+- Enable Supabase leaked-password protection and review the existing project RLS performance warnings.
+- Verify production backup/restore capability and prepare the migration rollout/rollback plan.
+- Apply the nine new workspace migrations only after explicit production approval, then run production smoke tests.
+
+See [Production Readiness Rollout](./production-readiness-rollout.md) for the live database findings, migration-history notes, and release gates.
 
 This is an implementation progress note, not a claim that Phase 1 is complete or production-ready.
